@@ -8,12 +8,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        umak: {
-          blue: '#1E3A8A', // Official UMak Blue
-          'blue-dark': '#172554',
-          'blue-light': '#3B82F6',
-          yellow: '#FACC15', // Official Yellow
-          'yellow-light': '#FEF08A',
+        brand: {
+          yellow: '#D1CA25',
+          'yellow-light': '#F6F4C5',
+          blue: '#283991',
+          'blue-dark': '#1C2866',
+          'blue-light': '#E9ECF8',
+          cyan: '#21ADE3',
+          'cyan-light': '#E5F6FC',
+          red: '#EC202B',
+          'red-light': '#FDE8E9',
+          white: '#FFFFFF',
+          black: '#000000',
         },
       },
     },
