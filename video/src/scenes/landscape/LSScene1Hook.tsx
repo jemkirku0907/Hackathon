@@ -92,7 +92,7 @@ export const LSScene1Hook: React.FC = () => {
         {/* Live App Interface */}
         <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <Img
-            src={staticFile('screenshots/media_1791867082690_94f8aac9.png')}
+            src={staticFile('screenshots/clean_app_hero.png')}
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
           />
         </div>
