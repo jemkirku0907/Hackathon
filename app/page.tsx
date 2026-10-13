@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { 
   Send, 
   BookOpen, 
@@ -86,7 +87,7 @@ export default function Home() {
     {
       id: 'welcome',
       sender: 'assistant',
-      text: "Mabuhay Herons! Welcome to TAKA-ask AI, your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
+      text: "Mabuhay Herons! Welcome to TAGA-ask AI, your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -259,12 +260,19 @@ export default function Home() {
         {/* Brand Header */}
         <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between min-h-[64px]">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#1C2541] dark:to-[#3F56CA] flex items-center justify-center font-black text-[#3F56CA] dark:text-[#D1CA25] text-lg shadow-xs border-2 border-[#3F56CA]/20 dark:border-[#D1CA25]/80 shrink-0">
-              TAK
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
+              <Image 
+                src="/taga-ask-logo.png" 
+                alt="TAGA-ask AI Heron" 
+                width={36} 
+                height={36} 
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
             {isSidebarOpen && (
               <div className="overflow-hidden whitespace-nowrap animate-in fade-in duration-200">
-                <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAKA-ask AI</h2>
+                <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-ask AI</h2>
                 <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
               </div>
             )}
@@ -425,16 +433,28 @@ export default function Home() {
 
       {/* 2. MAIN WORKSPACE */}
       <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#F8FAFC] dark:bg-[#090E1A] transition-colors duration-200">
-        {/* Top Header: Clean title and single Theme Toggle */}
+        {/* Top Header: Clean title, UMak Seal, and single Theme Toggle */}
         <header className="h-16 px-4 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">UMak Knowledge Base</h1>
-              <span className="bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                Verified RAG
-              </span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs border border-slate-200 dark:border-slate-700 shrink-0">
+              <Image
+                src="/umak-seal.png"
+                alt="University of Makati Seal"
+                width={40}
+                height={40}
+                className="w-full h-full object-contain"
+                priority
+              />
             </div>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">Exclusively referencing Source01 to Source04</p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">UMak Knowledge Base</h1>
+                <span className="bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  Verified RAG
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Exclusively referencing Source01 to Source04</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -482,8 +502,14 @@ export default function Home() {
             >
               {/* Bot Avatar */}
               {msg.sender === 'assistant' && (
-                <div className="w-9 h-9 rounded-xl bg-[#3F56CA] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]/80">
-                  TAK
+                <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
+                  <Image
+                    src="/taga-ask-logo.png"
+                    alt="TAGA-ask AI"
+                    width={32}
+                    height={32}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
               )}
 
@@ -492,7 +518,7 @@ export default function Home() {
                 {/* Meta info */}
                 <div className={`flex items-center gap-2 text-[11px] ${msg.sender === 'user' ? 'justify-end text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {msg.sender === 'user' ? 'You' : 'TAKA-ask AI'}
+                    {msg.sender === 'user' ? 'You' : 'TAGA-ask AI'}
                   </span>
                   <span>•</span>
                   <span>{msg.timestamp}</span>
@@ -659,7 +685,7 @@ export default function Home() {
             </div>
 
             <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">
-              TAKA-ask AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
+              TAGA-ask AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
             </p>
           </div>
         </footer>
