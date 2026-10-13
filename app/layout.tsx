@@ -2,8 +2,17 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'TAKA-ask AI - UMak Knowledge Hub',
+  title: 'TAGA-ask AI - UMak Knowledge Hub',
   description: 'Verified AI knowledge assistant for University of Makati students grounded strictly in official university documents.',
+  icons: {
+    icon: [
+      { url: '/taga-ask-logo.png', type: 'image/png' },
+      { url: '/favicon.ico' },
+    ],
+    apple: [
+      { url: '/taga-ask-logo.png' },
+    ],
+  },
 };
 
 export default function RootLayout({
