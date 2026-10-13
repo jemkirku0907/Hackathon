@@ -235,12 +235,12 @@ export default function Home() {
           bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] shrink-0 overflow-visible
           ${isSidebarOpen ? 'w-72' : 'w-[72px]'}`}
       >
-        {/* Hover Toggle Button on Sidebar Border - Positioned smoothly on the border line */}
+        {/* Hover Toggle Button on Sidebar Border - Centered vertically in the middle (top-1/2 -translate-y-1/2) */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="absolute -right-3.5 top-6 z-30 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA]"
+          className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA]"
         >
           {isSidebarOpen ? (
             <ChevronLeft className="w-4 h-4 transition-transform duration-200" />
