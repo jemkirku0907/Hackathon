@@ -231,21 +231,25 @@ export default function Home() {
         - When Closed: w-18 (72px)
       */}
       <aside 
-        className={`group relative h-screen flex flex-col transition-[width] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
+        className={`group relative z-20 h-screen flex flex-col transition-[width] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
           bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] shrink-0 overflow-visible
           ${isSidebarOpen ? 'w-72' : 'w-[72px]'}`}
       >
         {/* Hover Toggle Button on Sidebar Border - Centered vertically in the middle (top-1/2 -translate-y-1/2) */}
         <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsSidebarOpen((prev) => !prev);
+          }}
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-30 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA]"
+          className="absolute -right-3.5 top-1/2 -translate-y-1/2 z-50 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA] cursor-pointer pointer-events-auto select-none"
         >
           {isSidebarOpen ? (
-            <ChevronLeft className="w-4 h-4 transition-transform duration-200" />
+            <ChevronLeft className="w-4 h-4 transition-transform duration-200 pointer-events-none" />
           ) : (
-            <ChevronRight className="w-4 h-4 transition-transform duration-200" />
+            <ChevronRight className="w-4 h-4 transition-transform duration-200 pointer-events-none" />
           )}
         </button>
 
