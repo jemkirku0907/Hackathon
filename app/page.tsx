@@ -276,12 +276,27 @@ export default function Home() {
                 <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
               </div>
             </div>
+            {/* Collapse Arrow on Sidebar Header */}
             <button 
               onClick={() => setIsSidebarOpen(false)}
-              aria-label="Close sidebar"
-              className="p-2 rounded-lg text-slate-500 dark:text-white/70 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+              aria-label="Collapse sidebar"
+              title="Collapse sidebar"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition group"
             >
-              <X className="w-5 h-5" />
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="transform group-hover:-translate-x-0.5 transition-transform"
+              >
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
             </button>
           </div>
 
@@ -394,18 +409,20 @@ export default function Home() {
 
       {/* 2. MAIN WORKSPACE */}
       <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#F8FAFC] dark:bg-[#090E1A] transition-colors duration-200">
-        {/* Top Header: Balanced, No Grounded Badge, Accessible Sidebar Toggle & Single Theme Toggle */}
+        {/* Top Header: Balanced, No Grounded Badge, Smooth Toggle on demand & Single Theme Toggle */}
         <header className="h-16 px-4 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
           <div className="flex items-center gap-3">
-            {/* Dedicated animated menu button */}
-            <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-              title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-              className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition focus-visible:outline-[#3F56CA]"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+            {/* Show Menu toggle only when sidebar is closed, or on mobile */}
+            {!isSidebarOpen && (
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                aria-label="Open sidebar"
+                title="Open sidebar"
+                className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition focus-visible:outline-[#3F56CA] animate-in fade-in duration-150"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">UMak Knowledge Base</h1>
