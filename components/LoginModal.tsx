@@ -70,7 +70,7 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
           <div className="flex items-center justify-center gap-3 mb-2">
             <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-md">
               <Image 
-                src="/taga-ask-logo.png" 
+                src="/taga-ask-logo-light.png" 
                 alt="TAGA-ask AI" 
                 width={40} 
                 height={40} 
@@ -166,9 +166,17 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
             </button>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-            <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25]" />
-            <span>Encrypted Session • Zero External Leakage</span>
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex flex-col items-center justify-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25]" />
+              <span>Encrypted Session • Verified UMak Students Only</span>
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-slate-500">
+              <div className="w-3.5 h-3.5 rounded-full overflow-hidden shrink-0 bg-slate-900 border border-slate-300 dark:border-slate-700">
+                <Image src="/doerrorin-logo.png" alt="DoError!n" width={14} height={14} className="w-full h-full object-contain" />
+              </div>
+              <span>Developed by DoError!n</span>
+            </div>
           </div>
         </form>
       </div>

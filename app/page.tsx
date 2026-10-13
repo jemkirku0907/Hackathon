@@ -24,6 +24,8 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Menu,
   X,
   LogOut
@@ -113,6 +115,10 @@ export default function Home() {
     page: number;
     quote?: string;
   } | null>(null);
+
+  // Accordion Expand/Collapse States for Sessions and PDFs
+  const [isSessionsExpanded, setIsSessionsExpanded] = useState(true);
+  const [isPdfsExpanded, setIsPdfsExpanded] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -304,7 +310,7 @@ export default function Home() {
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
               <Image 
-                src="/taga-ask-logo.png" 
+                src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'} 
                 alt="TAGA-ask AI Heron" 
                 width={36} 
                 height={36} 
@@ -357,92 +363,124 @@ export default function Home() {
         {/* Mobile Sessions */}
         <div className="flex-1 overflow-y-auto px-2 space-y-4">
           <div>
-            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
-              Verified Sessions
-            </p>
-            <div className="space-y-1">
-              {filteredSessions.map((s) => {
-                const isActive = activeSessionId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      setActiveSessionId(s.id);
-                      setIsMobileMenuOpen(false);
-                    }}
-                    title={s.title}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
-                      isActive
-                        ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
-                    <span className="truncate">{s.title}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsSessionsExpanded(prev => !prev)}
+              className="w-full px-2 py-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition mb-1"
+            >
+              <span>Verified Sessions</span>
+              {isSessionsExpanded ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
+            {isSessionsExpanded && (
+              <div className="space-y-1">
+                {filteredSessions.map((s) => {
+                  const isActive = activeSessionId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setActiveSessionId(s.id);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      title={s.title}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
+                        isActive
+                          ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                      <span className="truncate">{s.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div>
-            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
-              Official PDF Sources (Click to View)
-            </p>
-            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePdfViewer({ source: 'Source01.pdf', page: 1 });
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
-              >
-                <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                <span className="truncate">Source01: Scholarships (14p)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePdfViewer({ source: 'Source02.pdf', page: 1 });
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
-              >
-                <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
-                <span className="truncate">Source02: CCIS & Courses (2p)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePdfViewer({ source: 'Source03.pdf', page: 1 });
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
-              >
-                <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                <span className="truncate">Source03: Campus Map (6p)</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setActivePdfViewer({ source: 'Source04.pdf', page: 1 });
-                  setIsMobileMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
-              >
-                <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
-                <span className="truncate">Source04: Offices (14p)</span>
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setIsPdfsExpanded(prev => !prev)}
+              className="w-full px-2 py-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition mb-1"
+            >
+              <span>Official PDF Sources (Click to View)</span>
+              {isPdfsExpanded ? (
+                <ChevronUp className="w-3.5 h-3.5" />
+              ) : (
+                <ChevronDown className="w-3.5 h-3.5" />
+              )}
+            </button>
+            {isPdfsExpanded && (
+              <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePdfViewer({ source: 'Source01.pdf', page: 1 });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
+                >
+                  <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  <span className="truncate">Source01: Scholarships (14p)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePdfViewer({ source: 'Source02.pdf', page: 1 });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
+                >
+                  <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                  <span className="truncate">Source02: CCIS & Courses (2p)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePdfViewer({ source: 'Source03.pdf', page: 1 });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
+                >
+                  <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  <span className="truncate">Source03: Campus Map (6p)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePdfViewer({ source: 'Source04.pdf', page: 1 });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
+                >
+                  <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                  <span className="truncate">Source04: Offices (14p)</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Mobile Footer */}
         <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#070D1E] space-y-2">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 text-xs px-2 py-1">
-            <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-            <span className="text-[11px] font-medium truncate">Zero Hallucination Grounding</span>
+            <div className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-900">
+              <Image
+                src="/doerrorin-logo.png"
+                alt="DoError!n Logo"
+                width={20}
+                height={20}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="text-[11px] font-medium tracking-tight">
+              Developed by <span className="font-semibold text-slate-800 dark:text-white">DoError!n</span>
+            </span>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-1">
@@ -494,7 +532,7 @@ export default function Home() {
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
               <Image 
-                src="/taga-ask-logo.png" 
+                src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'} 
                 alt="TAGA-ask AI Heron" 
                 width={36} 
                 height={36} 
@@ -555,100 +593,134 @@ export default function Home() {
         {/* Navigation / History list */}
         <div className="flex-1 overflow-y-auto px-2 space-y-4">
           <div>
-            {isSidebarOpen && (
-              <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5 animate-in fade-in">
-                Verified Sessions
-              </p>
+            {isSidebarOpen ? (
+              <button
+                type="button"
+                onClick={() => setIsSessionsExpanded(prev => !prev)}
+                className="w-full px-2 py-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition mb-1.5 animate-in fade-in"
+              >
+                <span>Verified Sessions</span>
+                {isSessionsExpanded ? (
+                  <ChevronUp className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                )}
+              </button>
+            ) : null}
+            {(!isSidebarOpen || isSessionsExpanded) && (
+              <div className="space-y-1">
+                {filteredSessions.map((s) => {
+                  const isActive = activeSessionId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => setActiveSessionId(s.id)}
+                      title={s.title}
+                      className={`w-full flex items-center gap-2.5 rounded-lg text-xs transition text-left truncate ${
+                        isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                      } ${
+                        isActive
+                          ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                      {isSidebarOpen && <span className="truncate">{s.title}</span>}
+                    </button>
+                  );
+                })}
+              </div>
             )}
-            <div className="space-y-1">
-              {filteredSessions.map((s) => {
-                const isActive = activeSessionId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => setActiveSessionId(s.id)}
-                    title={s.title}
-                    className={`w-full flex items-center gap-2.5 rounded-lg text-xs transition text-left truncate ${
-                      isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
-                    } ${
-                      isActive
-                        ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
-                    {isSidebarOpen && <span className="truncate">{s.title}</span>}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           <div>
-            {isSidebarOpen && (
-              <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5 animate-in fade-in">
-                Official PDF Sources (Click to View)
-              </p>
+            {isSidebarOpen ? (
+              <button
+                type="button"
+                onClick={() => setIsPdfsExpanded(prev => !prev)}
+                className="w-full px-2 py-1 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition mb-1.5 animate-in fade-in"
+              >
+                <span>Official PDF Sources (Click to View)</span>
+                {isPdfsExpanded ? (
+                  <ChevronUp className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                )}
+              </button>
+            ) : null}
+            {(!isSidebarOpen || isPdfsExpanded) && (
+              <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                <button 
+                  type="button"
+                  onClick={() => setActivePdfViewer({ source: 'Source01.pdf', page: 1 })}
+                  title="Source01: Scholarships (14p)"
+                  className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
+                    isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                  }`}
+                >
+                  <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  {isSidebarOpen && <span className="truncate">Source01: Scholarships (14p)</span>}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setActivePdfViewer({ source: 'Source02.pdf', page: 1 })}
+                  title="Source02: CCIS & Courses (2p)"
+                  className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
+                    isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                  }`}
+                >
+                  <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                  {isSidebarOpen && <span className="truncate">Source02: CCIS & Courses (2p)</span>}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setActivePdfViewer({ source: 'Source03.pdf', page: 1 })}
+                  title="Source03: Campus Map (6p)"
+                  className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
+                    isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                  }`}
+                >
+                  <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  {isSidebarOpen && <span className="truncate">Source03: Campus Map (6p)</span>}
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => setActivePdfViewer({ source: 'Source04.pdf', page: 1 })}
+                  title="Source04: Offices (14p)"
+                  className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
+                    isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                  {isSidebarOpen && <span className="truncate">Source04: Offices (14p)</span>}
+                </button>
+              </div>
             )}
-            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
-              <button 
-                type="button"
-                onClick={() => setActivePdfViewer({ source: 'Source01.pdf', page: 1 })}
-                title="Source01: Scholarships (14p)"
-                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
-                  isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
-                }`}
-              >
-                <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                {isSidebarOpen && <span className="truncate">Source01: Scholarships (14p)</span>}
-              </button>
-              <button 
-                type="button"
-                onClick={() => setActivePdfViewer({ source: 'Source02.pdf', page: 1 })}
-                title="Source02: CCIS & Courses (2p)"
-                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
-                  isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
-                }`}
-              >
-                <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
-                {isSidebarOpen && <span className="truncate">Source02: CCIS & Courses (2p)</span>}
-              </button>
-              <button 
-                type="button"
-                onClick={() => setActivePdfViewer({ source: 'Source03.pdf', page: 1 })}
-                title="Source03: Campus Map (6p)"
-                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
-                  isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
-                }`}
-              >
-                <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                {isSidebarOpen && <span className="truncate">Source03: Campus Map (6p)</span>}
-              </button>
-              <button 
-                type="button"
-                onClick={() => setActivePdfViewer({ source: 'Source04.pdf', page: 1 })}
-                title="Source04: Offices (14p)"
-                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
-                  isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
-                }`}
-              >
-                <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
-                {isSidebarOpen && <span className="truncate">Source04: Offices (14p)</span>}
-              </button>
-            </div>
           </div>
         </div>
 
         {/* Sidebar Footer */}
         <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#070D1E] space-y-2">
           <div 
-            title="Zero Hallucination Grounding"
+            title="Developed by DoError!n"
             className={`flex items-center gap-2 text-slate-600 dark:text-slate-300 text-xs ${
-              isSidebarOpen ? 'px-2 py-1' : 'justify-center'
+              isSidebarOpen ? 'px-2 py-1' : 'justify-center py-1'
             }`}
           >
-            <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-            {isSidebarOpen && <span className="text-[11px] font-medium truncate">Zero Hallucination Grounding</span>}
+            <div className="w-5 h-5 rounded-full overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-900">
+              <Image
+                src="/doerrorin-logo.png"
+                alt="DoError!n Logo"
+                width={20}
+                height={20}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            {isSidebarOpen && (
+              <span className="text-[11px] font-medium tracking-tight truncate">
+                Developed by <span className="font-semibold text-slate-800 dark:text-white">DoError!n</span>
+              </span>
+            )}
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-1">
@@ -737,9 +809,6 @@ export default function Home() {
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 md:gap-2">
                 <h1 className="font-bold text-slate-900 dark:text-white text-sm md:text-lg truncate">UMak Knowledge Base</h1>
-                <span className="hidden sm:inline-block bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
-                  Verified RAG
-                </span>
               </div>
               <p className="text-[10px] md:text-[11px] text-slate-500 dark:text-slate-400 truncate">Exclusively referencing Source01 to Source04</p>
             </div>
@@ -792,7 +861,7 @@ export default function Home() {
               {msg.sender === 'assistant' && (
                 <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                   <Image
-                    src="/taga-ask-logo.png"
+                    src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
                     alt="TAGA-ask AI"
                     width={32}
                     height={32}
@@ -897,7 +966,7 @@ export default function Home() {
             <div className="flex gap-3.5 items-start">
               <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <Image
-                  src="/taga-ask-logo.png"
+                  src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
                   alt="TAGA-ask AI"
                   width={32}
                   height={32}
@@ -981,6 +1050,19 @@ export default function Home() {
             <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">
               TAGA-ask AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
             </p>
+
+            <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="w-4 h-4 rounded-full overflow-hidden shrink-0 border border-slate-200 dark:border-white/10 bg-slate-900">
+                <Image
+                  src="/doerrorin-logo.png"
+                  alt="DoError!n"
+                  width={16}
+                  height={16}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <span>Developed by <strong className="font-semibold text-slate-700 dark:text-slate-300">DoError!n</strong></span>
+            </div>
           </div>
         </footer>
       </section>
