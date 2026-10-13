@@ -23,7 +23,9 @@ import {
   Sun,
   Moon,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  X
 } from 'lucide-react';
 import { ChatResponse, Citation } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
@@ -96,8 +98,20 @@ export default function Home() {
   const [activeCitation, setActiveCitation] = useState<Citation | null>(null);
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-close mobile menu on desktop resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Initialize theme from localStorage or system preference
   useEffect(() => {
@@ -225,12 +239,157 @@ export default function Home() {
     <div className="flex h-screen w-full bg-[#F8FAFC] dark:bg-[#090E1A] text-slate-900 dark:text-slate-100 font-sans overflow-hidden transition-colors duration-200">
       
       {/* 
-        1. COLLAPSIBLE ICON-STRIP / FULL SIDEBAR:
-        - Outer container manages width transition and holds the hover toggle button
-        - overflow-visible on parent wrapper allows the floating button to sit on the border
-        - overflow-hidden on aside prevents buttons/cards from leaking onto the main chat workspace
+        1. MOBILE SLIDE-OVER DRAWER WITH BACKDROP (Visible only on mobile screens < md)
       */}
-      <div className="relative group shrink-0 h-screen z-20">
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden animate-in fade-in duration-200"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`fixed top-0 bottom-0 left-0 z-50 w-72 bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] flex flex-col md:hidden transition-transform duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] shadow-2xl ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Mobile Drawer Brand Header & Close Button */}
+        <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between min-h-[64px]">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
+              <Image 
+                src="/taga-ask-logo.png" 
+                alt="TAGA-ask AI Heron" 
+                width={36} 
+                height={36} 
+                className="w-full h-full object-contain"
+                priority
+              />
+            </div>
+            <div>
+              <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-ask AI</h2>
+              <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            aria-label="Close menu"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Mobile New Chat & Search */}
+        <div className="p-3 space-y-2">
+          <button
+            onClick={() => {
+              handleNewChat();
+              setIsMobileMenuOpen(false);
+            }}
+            title="New Conversation"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition shadow-xs group font-semibold text-xs bg-[#3F56CA] hover:bg-[#2B3C8E] text-white"
+          >
+            <span className="flex items-center gap-2">
+              <Plus className="w-4 h-4 text-white dark:text-[#D1CA25] group-hover:rotate-90 transition-transform shrink-0" />
+              <span>New Conversation</span>
+            </span>
+          </button>
+
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40" />
+            <input 
+              type="text" 
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              placeholder="Search conversations..." 
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg transition bg-slate-100 dark:bg-[#1C2541]/70 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-white/40 focus:outline-hidden focus:border-[#3F56CA] dark:focus:border-[#D1CA25]"
+            />
+          </div>
+        </div>
+
+        {/* Mobile Sessions */}
+        <div className="flex-1 overflow-y-auto px-2 space-y-4">
+          <div>
+            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
+              Verified Sessions
+            </p>
+            <div className="space-y-1">
+              {filteredSessions.map((s) => {
+                const isActive = activeSessionId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      setActiveSessionId(s.id);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    title={s.title}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
+                      isActive
+                        ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                    <span className="truncate">{s.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
+              Official PDF Sources
+            </p>
+            <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                <span className="truncate">Source01: Scholarships (14p)</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                <span className="truncate">Source02: CCIS & Courses (2p)</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                <span className="truncate">Source03: Campus Map (6p)</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
+                <span className="truncate">Source04: Offices (14p)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Footer */}
+        <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#070D1E] space-y-2">
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 text-xs px-2 py-1">
+            <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+            <span className="text-[11px] font-medium truncate">Zero Hallucination Grounding</span>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-1">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-7 h-7 rounded-full bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#3F56CA] dark:to-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#3F56CA]/30 dark:border-[#D1CA25]/60 shrink-0">
+                UM
+              </div>
+              <div className="text-left truncate">
+                <p className="text-xs font-semibold text-slate-800 dark:text-white truncate">UMak Student</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Verified User</p>
+              </div>
+            </div>
+            <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition shrink-0" />
+          </div>
+        </div>
+      </aside>
+
+      {/* 
+        2. DESKTOP COLLAPSIBLE ICON-STRIP / FULL SIDEBAR (Hidden on mobile < md, visible on md+)
+      */}
+      <div className="hidden md:block relative group shrink-0 h-screen z-20">
         <aside 
           className={`h-screen flex flex-col transition-[width] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
             bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] overflow-hidden
@@ -430,10 +589,20 @@ export default function Home() {
 
       {/* 2. MAIN WORKSPACE */}
       <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#F8FAFC] dark:bg-[#090E1A] transition-colors duration-200">
-        {/* Top Header: Clean title, UMak Seal, and single Theme Toggle */}
-        <header className="h-16 px-4 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs border border-slate-200 dark:border-slate-700 shrink-0">
+        {/* Top Header: Mobile menu button, UMak Seal, Clean title, and single Theme Toggle */}
+        <header className="h-16 px-3 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
+          <div className="flex items-center gap-2.5 md:gap-3 min-w-0">
+            {/* Mobile Menu Button (< md) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+              title="Open menu"
+              className="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition shrink-0"
+            >
+              <Menu className="w-5 h-5 text-[#3F56CA] dark:text-[#D1CA25]" />
+            </button>
+
+            <div className="w-9 h-9 md:w-10 md:h-10 rounded-full overflow-hidden bg-white shadow-xs border border-slate-200 dark:border-slate-700 shrink-0">
               <Image
                 src="/umak-seal.png"
                 alt="University of Makati Seal"
@@ -443,14 +612,14 @@ export default function Home() {
                 priority
               />
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">UMak Knowledge Base</h1>
-                <span className="bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full">
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5 md:gap-2">
+                <h1 className="font-bold text-slate-900 dark:text-white text-sm md:text-lg truncate">UMak Knowledge Base</h1>
+                <span className="hidden sm:inline-block bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
                   Verified RAG
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Exclusively referencing Source01 to Source04</p>
+              <p className="text-[10px] md:text-[11px] text-slate-500 dark:text-slate-400 truncate">Exclusively referencing Source01 to Source04</p>
             </div>
           </div>
 
@@ -604,8 +773,14 @@ export default function Home() {
           {/* Loading Indicator */}
           {isLoading && (
             <div className="flex gap-3.5 items-start">
-              <div className="w-9 h-9 rounded-xl bg-[#3F56CA] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]/80">
-                TAK
+              <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <Image
+                  src="/taga-ask-logo.png"
+                  alt="TAGA-ask AI"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl rounded-tl-none p-4 shadow-2xs flex items-center gap-3">
                 <Loader2 className="w-5 h-5 text-[#3F56CA] animate-spin" />
