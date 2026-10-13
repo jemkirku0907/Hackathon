@@ -84,7 +84,7 @@ export default function Home() {
     {
       id: 'welcome',
       sender: 'assistant',
-      text: "Mabuhay Herons! Welcome to UMak Assistant. I am your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
+      text: "Mabuhay Herons! Welcome to TAGA-asK AI, your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -209,27 +209,27 @@ export default function Home() {
         />
       )}
 
-      {/* 1. SIDEBAR: Official Primary Blue (#283991) & Yellow (#D1CA25) Design System */}
+      {/* 1. SIDEBAR: Sleek Midnight Navy (#0B132B / #0F172A) & Gold Yellow (#D1CA25) */}
       <aside 
-        className={`fixed md:static inset-y-0 left-0 z-50 w-72 flex flex-col bg-[#283991] text-white border-r border-[#1C2866] transition-transform duration-200 ease-in-out ${
+        className={`fixed md:static inset-y-0 left-0 z-50 w-72 flex flex-col bg-[#0B132B] text-white border-r border-[#1C2541] transition-transform duration-200 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Brand Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-black text-[#283991] text-xl shadow-sm border-2 border-[#D1CA25]">
-              U
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1C2541] to-[#283991] flex items-center justify-center font-black text-[#D1CA25] text-lg shadow-md border-2 border-[#D1CA25]/80">
+              TAK
             </div>
             <div>
-              <h2 className="font-bold text-white text-[15px] tracking-tight leading-tight">UMak Assistant</h2>
-              <span className="text-[11px] text-[#D1CA25] font-semibold tracking-wide uppercase">AI Knowledge Hub</span>
+              <h2 className="font-bold text-white text-[16px] tracking-tight leading-tight">TAGA-asK AI</h2>
+              <span className="text-[10px] text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
             </div>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(false)}
             aria-label="Close sidebar"
-            className="md:hidden text-white/80 hover:text-white p-1 rounded-lg hover:bg-white/10"
+            className="md:hidden text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -239,23 +239,23 @@ export default function Home() {
         <div className="p-3 space-y-2">
           <button
             onClick={handleNewChat}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1C2866] hover:bg-[#162052] text-white font-medium text-xs shadow-xs transition border border-white/10 group focus-visible:outline-[#D1CA25]"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1C2541] hover:bg-[#283991] text-white font-semibold text-xs shadow-xs transition border border-white/10 group focus-visible:outline-[#D1CA25]"
           >
             <span className="flex items-center gap-2">
               <Plus className="w-4 h-4 text-[#D1CA25] group-hover:rotate-90 transition-transform" />
               <span>New Conversation</span>
             </span>
-            <kbd className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-white/80 border border-white/10 font-mono">⌘K</kbd>
+            <kbd className="text-[10px] bg-black/40 px-1.5 py-0.5 rounded text-white/70 border border-white/10 font-mono">⌘K</kbd>
           </button>
 
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/60" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
             <input 
               type="text" 
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Search conversations..." 
-              className="w-full pl-8 pr-3 py-1.5 text-xs bg-white/10 border border-white/10 rounded-lg text-white placeholder-white/50 focus:outline-hidden focus:border-[#D1CA25] transition"
+              className="w-full pl-8 pr-3 py-1.5 text-xs bg-[#1C2541]/70 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-hidden focus:border-[#D1CA25] transition"
             />
           </div>
         </div>
@@ -263,7 +263,7 @@ export default function Home() {
         {/* Navigation / History list */}
         <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
           <div>
-            <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-white/60 mb-1.5">
+            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Verified Sessions
             </p>
             <div className="space-y-1">
@@ -276,11 +276,11 @@ export default function Home() {
                   }}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
                     activeSessionId === s.id
-                      ? 'bg-white/20 text-[#D1CA25] font-semibold border-l-4 border-[#D1CA25]'
-                      : 'text-white/80 hover:bg-white/10 hover:text-white'
+                      ? 'bg-[#1C2541] text-[#D1CA25] font-semibold border-l-4 border-[#D1CA25] shadow-xs'
+                      : 'text-slate-300 hover:bg-[#1C2541]/50 hover:text-white'
                   }`}
                 >
-                  <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${activeSessionId === s.id ? 'text-[#D1CA25]' : 'text-white/60'}`} />
+                  <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${activeSessionId === s.id ? 'text-[#D1CA25]' : 'text-slate-400'}`} />
                   <span className="truncate">{s.title}</span>
                 </button>
               ))}
@@ -288,23 +288,23 @@ export default function Home() {
           </div>
 
           <div>
-            <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-white/60 mb-1.5">
+            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
               Official PDF Sources
             </p>
-            <div className="space-y-1 text-xs text-white/90">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+            <div className="space-y-1.5 text-xs text-slate-300">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C2541]/40 border border-white/5">
                 <FileText className="w-3.5 h-3.5 text-[#D1CA25] shrink-0" />
                 <span className="truncate">Source01: Scholarships (14p)</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C2541]/40 border border-white/5">
                 <FileText className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
                 <span className="truncate">Source02: CCIS & Courses (2p)</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C2541]/40 border border-white/5">
                 <MapPin className="w-3.5 h-3.5 text-[#D1CA25] shrink-0" />
                 <span className="truncate">Source03: Campus Map (6p)</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#1C2541]/40 border border-white/5">
                 <Building2 className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
                 <span className="truncate">Source04: Offices (14p)</span>
               </div>
@@ -313,22 +313,22 @@ export default function Home() {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-3 border-t border-white/10 bg-[#1C2866] space-y-2">
-          <div className="flex items-center gap-2 px-2 py-1 text-white/80 text-xs">
+        <div className="p-3 border-t border-white/10 bg-[#070D1E] space-y-2">
+          <div className="flex items-center gap-2 px-2 py-1 text-slate-300 text-xs">
             <ShieldCheck className="w-4 h-4 text-[#D1CA25]" />
             <span className="text-[11px] font-medium">Zero Hallucination Grounding</span>
           </div>
           <div className="flex items-center justify-between pt-2 border-t border-white/10 px-2">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-white text-[#283991] font-bold flex items-center justify-center text-xs border border-[#D1CA25]">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#283991] to-[#1C2541] text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#D1CA25]/60">
                 UM
               </div>
               <div className="text-left">
                 <p className="text-xs font-semibold text-white">UMak Student</p>
-                <p className="text-[10px] text-white/60">Verified User</p>
+                <p className="text-[10px] text-slate-400">Verified User</p>
               </div>
             </div>
-            <Settings className="w-4 h-4 text-white/60 hover:text-white cursor-pointer" />
+            <Settings className="w-4 h-4 text-slate-400 hover:text-white cursor-pointer" />
           </div>
         </div>
       </aside>
@@ -402,7 +402,7 @@ export default function Home() {
                 {/* Meta info */}
                 <div className={`flex items-center gap-2 text-[11px] ${msg.sender === 'user' ? 'justify-end text-slate-400' : 'text-slate-500'}`}>
                   <span className="font-semibold text-slate-700">
-                    {msg.sender === 'user' ? 'You' : 'UMak Assistant'}
+                    {msg.sender === 'user' ? 'You' : 'TAGA-asK AI'}
                   </span>
                   <span>•</span>
                   <span>{msg.timestamp}</span>
@@ -569,7 +569,7 @@ export default function Home() {
             </div>
 
             <p className="text-center text-[11px] text-slate-500">
-              UMak Assistant adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
+              TAGA-asK AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
             </p>
           </div>
         </footer>
