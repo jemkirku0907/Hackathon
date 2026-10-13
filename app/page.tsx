@@ -245,26 +245,24 @@ export default function Home() {
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-2xs transition-opacity"
+          className="fixed inset-0 bg-black/60 z-40 lg:hidden backdrop-blur-2xs transition-opacity duration-200"
           aria-hidden="true"
         />
       )}
 
       {/* 
         1. ANIMATED SIDEBAR:
-        - Smooth transition: 280ms cubic-bezier(0.2, 0.8, 0.2, 1)
-        - Desktop: Push layout (0 width when collapsed, 288px when open)
-        - Mobile: Slide-in overlay from left
-        - Light Mode: White background (#FFFFFF)
-        - Dark Mode: Preserved Deep Navy (#0B132B / #060B18)
+        - Mobile (<1024px): Fixed full-height overlay drawer, w-72, smooth translateX(0) to translateX(-100%).
+        - Desktop (>=1024px): Push layout with smooth w-72 / w-0 width collapse.
       */}
       <aside 
         className={`fixed lg:static inset-y-0 left-0 z-50 h-screen flex flex-col transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]
-          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] overflow-hidden ${
-          isSidebarOpen 
-            ? 'w-72 translate-x-0 shadow-2xl lg:shadow-none' 
-            : 'w-0 -translate-x-full lg:translate-x-0 lg:border-r-0'
-        }`}
+          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] overflow-hidden
+          ${
+            isSidebarOpen
+              ? 'w-72 translate-x-0 shadow-2xl lg:shadow-none'
+              : 'w-0 -translate-x-full lg:w-0 lg:translate-x-0 lg:border-r-0'
+          }`}
       >
         <div className="w-72 flex flex-col h-full shrink-0">
           {/* Brand Header */}
@@ -281,7 +279,7 @@ export default function Home() {
             <button 
               onClick={() => setIsSidebarOpen(false)}
               aria-label="Close sidebar"
-              className="text-slate-500 dark:text-white/70 hover:text-slate-800 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition"
+              className="p-2 rounded-lg text-slate-500 dark:text-white/70 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition"
             >
               <X className="w-5 h-5" />
             </button>
