@@ -14,7 +14,7 @@ export const LSScene2Problem: React.FC = () => {
   });
 
   const card2Spring = spring({
-    frame: frame - 25,
+    frame: frame - 20,
     fps,
     config: { damping: 13, mass: 0.8 },
   });
@@ -77,7 +77,7 @@ export const LSScene2Problem: React.FC = () => {
           </span>
         </div>
 
-        {/* Content Area with 2 Facebook Posts Side-by-Side */}
+        {/* Content Area with TWO REAL FACEBOOK SCREENSHOTS (100% Authentic) */}
         <div
           style={{
             flex: 1,
@@ -85,17 +85,39 @@ export const LSScene2Problem: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 36,
-            padding: '40px 60px',
+            padding: '40px 50px',
           }}
         >
-          {/* Post 1: Real User Uploaded Screenshot (Keli Post) */}
+          {/* Real Post 1: Anonymous participant asking about CIT location */}
           <div
             style={{
               flex: 1,
-              borderRadius: 22,
+              borderRadius: 20,
               overflow: 'hidden',
-              boxShadow: '0 25px 70px rgba(0, 0, 0, 0.8)',
-              border: '2px solid rgba(255, 255, 255, 0.15)',
+              boxShadow: '0 25px 70px rgba(0, 0, 0, 0.85)',
+              border: '2px solid rgba(255, 255, 255, 0.18)',
+              backgroundColor: '#242526',
+            }}
+          >
+            <Img
+              src={staticFile('screenshots/fb_cit_post.png')}
+              style={{
+                width: '100%',
+                display: 'block',
+                objectFit: 'contain',
+              }}
+            />
+          </div>
+
+          {/* Real Post 2: Keli asking about Makati student benefits */}
+          <div
+            style={{
+              flex: 1,
+              transform: `scale(${card2Spring})`,
+              borderRadius: 20,
+              overflow: 'hidden',
+              boxShadow: '0 25px 70px rgba(0, 0, 0, 0.85)',
+              border: '2px solid rgba(255, 255, 255, 0.18)',
               backgroundColor: '#242526',
             }}
           >
@@ -108,94 +130,13 @@ export const LSScene2Problem: React.FC = () => {
               }}
             />
           </div>
-
-          {/* Post 2: Matching Native Dark Mode FB Post (CIT Location Question) */}
-          <div
-            style={{
-              flex: 1,
-              transform: `scale(${card2Spring})`,
-              borderRadius: 22,
-              overflow: 'hidden',
-              boxShadow: '0 25px 70px rgba(0, 0, 0, 0.8)',
-              border: '2px solid rgba(255, 255, 255, 0.15)',
-              backgroundColor: '#242526',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              minHeight: 330,
-            }}
-          >
-            <div>
-              {/* Header */}
-              <div style={{ padding: '20px 24px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: '50%',
-                    backgroundColor: '#3A3B3C',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 24,
-                  }}
-                >
-                  👤
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ color: '#E4E6EB', fontSize: 20, fontWeight: 700 }}>
-                    Anonymous UMak Student
-                  </div>
-                  <div style={{ color: '#B0B3B8', fontSize: 14 }}>5h • 👥 UMak Student Community</div>
-                </div>
-                <span style={{ color: '#B0B3B8', fontSize: 24 }}>•••</span>
-              </div>
-
-              {/* Text */}
-              <div style={{ padding: '0 24px 20px', color: '#E4E6EB', fontSize: 21, lineHeight: 1.45 }}>
-                Hello po! Saan po located yung Center for Information Technology sa Admin Building? Malapit na po exam namin...
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div
-              style={{
-                padding: '16px 24px',
-                borderTop: '1px solid #3E4042',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                backgroundColor: '#1E1F20',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <span style={{ color: '#B0B3B8', fontSize: 16 }}>👍 1</span>
-                <span
-                  style={{
-                    backgroundColor: 'rgba(236, 32, 43, 0.2)',
-                    border: '1.5px solid #EF4444',
-                    color: '#FCA5A5',
-                    padding: '4px 12px',
-                    borderRadius: 8,
-                    fontSize: 15,
-                    fontWeight: 800,
-                  }}
-                >
-                  💬 0 comments
-                </span>
-              </div>
-              <div style={{ color: '#EF4444', fontSize: 15, fontWeight: 800 }}>
-                ⏳ No answers yet...
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* Caption Card */}
       <RefStyleCaption
         title="May tanong ka. Pero minsan, walang sumasagot."
-        subtitle="Hours of waiting in Facebook groups and group chats with zero replies."
+        subtitle="Real student posts in Facebook groups asking for CIT location & scholarships with zero replies."
       />
     </div>
   );

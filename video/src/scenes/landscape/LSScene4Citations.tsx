@@ -13,8 +13,10 @@ export const LSScene4Citations: React.FC = () => {
     config: { damping: 14, mass: 0.9 },
   });
 
-  const citationZoom = interpolate(frame, [120, 260], [1, 1.2], { extrapolateRight: 'clamp' });
-  const panY = interpolate(frame, [120, 260], [0, -60], { extrapolateRight: 'clamp' });
+  // Smooth camera zoom into the chat response and citation
+  const zoom = interpolate(frame, [0, 200, 390], [1, 1.25, 1.35], { extrapolateRight: 'clamp' });
+  const panX = interpolate(frame, [0, 200, 390], [0, -120, -140], { extrapolateRight: 'clamp' });
+  const panY = interpolate(frame, [0, 200, 390], [0, 80, 90], { extrapolateRight: 'clamp' });
 
   return (
     <div
@@ -38,142 +40,63 @@ export const LSScene4Citations: React.FC = () => {
         }}
       />
 
-      {/* Centered Response Card Showcase */}
+      {/* Floating Desktop Window with Real Dark Mode App Screenshot */}
       <div
         style={{
-          width: 1280,
-          backgroundColor: '#0F172A',
-          border: `2px solid ${BRAND_COLORS.blue}`,
-          borderRadius: 28,
-          padding: 44,
-          boxShadow: '0 40px 100px rgba(0, 0, 0, 0.55)',
-          transform: `scale(${entrance * citationZoom}) translateY(${panY}px)`,
+          width: 1540,
+          height: 860,
+          backgroundColor: '#090E1A',
+          borderRadius: 24,
+          overflow: 'hidden',
+          boxShadow: '0 40px 100px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+          transform: `scale(${entrance})`,
           display: 'flex',
           flexDirection: 'column',
-          gap: 28,
+          position: 'relative',
         }}
       >
-        {/* User Question Row */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div
-            style={{
-              backgroundColor: BRAND_COLORS.blue,
-              color: '#FFFFFF',
-              borderRadius: '24px 24px 4px 24px',
-              padding: '20px 32px',
-              fontSize: 26,
-              fontWeight: 700,
-              boxShadow: `0 10px 30px ${BRAND_COLORS.blue}50`,
-            }}
-          >
-            Where is the Center for Information Technology (CIT) located?
-          </div>
+        {/* macOS Bar */}
+        <div
+          style={{
+            height: 48,
+            backgroundColor: '#111827',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 20px',
+            gap: 8,
+            zIndex: 10,
+          }}
+        >
+          <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#EC202B' }} />
+          <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#D1CA25' }} />
+          <div style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#22C55E' }} />
+          <span style={{ marginLeft: 20, color: '#94A3B8', fontSize: 14, fontFamily: 'monospace' }}>
+            🔒 https://taga-askai.vercel.app/
+          </span>
         </div>
 
-        {/* AI Answer Row */}
-        <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+        {/* Real Dark Mode Screenshot with Dynamic Camera Pan & Zoom */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
           <div
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 20,
-              backgroundColor: '#1E293B',
-              border: `2px solid ${BRAND_COLORS.blue}`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 10,
-              flexShrink: 0,
+              width: '100%',
+              height: '100%',
+              transform: `scale(${zoom}) translate(${panX}px, ${panY}px)`,
+              transformOrigin: 'center center',
             }}
           >
             <Img
-              src={staticFile('taga-bird.png')}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              src={staticFile('screenshots/dark_cit_answer.png')}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
             />
-          </div>
-
-          <div
-            style={{
-              flex: 1,
-              backgroundColor: '#1E293B',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '4px 24px 24px 24px',
-              padding: '28px 36px',
-            }}
-          >
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                backgroundColor: 'rgba(34, 197, 94, 0.15)',
-                border: '1.5px solid #22C55E',
-                color: '#4ADE80',
-                padding: '4px 14px',
-                borderRadius: 10,
-                fontSize: 15,
-                fontWeight: 700,
-                marginBottom: 16,
-              }}
-            >
-              <span>✓</span> Grounded &amp; Verified in Official Sources
-            </div>
-
-            <p style={{ margin: 0, color: '#FFFFFF', fontSize: 28, lineHeight: 1.45, fontWeight: 500 }}>
-              The <strong>Center for Information Technology (CIT)</strong> is located in the{' '}
-              <strong style={{ color: BRAND_COLORS.yellow }}>Admin Building</strong>,{' '}
-              <strong style={{ color: BRAND_COLORS.cyan }}>Second Floor</strong>,{' '}
-              <strong>South Wing</strong>.
-            </p>
-
-            {/* Official Citation Pill */}
-            <div
-              style={{
-                marginTop: 24,
-                paddingTop: 18,
-                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 16,
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: 'rgba(33, 173, 227, 0.2)',
-                  border: `2px solid ${BRAND_COLORS.cyan}`,
-                  borderRadius: 14,
-                  padding: '10px 22px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  boxShadow: frame > 120 ? `0 0 30px ${BRAND_COLORS.cyan}80` : 'none',
-                }}
-              >
-                <span style={{ fontSize: 22 }}>📄</span>
-                <span style={{ color: '#FFFFFF', fontSize: 20, fontWeight: 800 }}>
-                  Source03.pdf • Page 1
-                </span>
-                <span
-                  style={{
-                    backgroundColor: BRAND_COLORS.cyan,
-                    color: '#090E1A',
-                    fontSize: 13,
-                    fontWeight: 800,
-                    padding: '2px 8px',
-                    borderRadius: 6,
-                  }}
-                >
-                  VERIFIED
-                </span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       <RefStyleCaption
-        title="Grounded answers."
-        subtitle="Every answer backed by an exact, verifiable citation."
+        title="Admin Building, 2nd Floor, South Wing."
+        subtitle="Source03.pdf · Page 1. Verified institutional citation in under 30 words."
       />
     </div>
   );
