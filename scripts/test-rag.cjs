@@ -205,25 +205,90 @@ function extractDirectLocationAnswer(query, retrievedChunks) {
     }
   }
 
-  const officeKeywords = [
-    { key: 'registrar', name: 'Office of the University Registrar (OUR)', floor: 'Mezzanine Floor', wing: 'South Wing', building: 'Admin Building', page: 1 },
-    { key: 'cit', name: 'Center for Information Technology (CIT)', floor: 'Second Floor', wing: 'South Wing', building: 'Admin Building', page: 1 },
-    { key: 'cash office', name: 'Cash Office', floor: 'Ground Floor', wing: 'South Wing', building: 'Admin Building', page: 1 },
-    { key: 'chaplain', name: 'University Chaplain', floor: 'Basement', wing: 'North Wing', building: 'Admin Building', page: 1 },
-  ];
+  // Dynamic campus map parsing (zero hardcoding)
+  const entries = [];
+  const floorRegex = /(Basement|Ground Floor|Mezzanine(?: Level)?|First Floor|Second Floor|Third Floor|Fourth Floor|Fifth Floor|Sixth Floor(?: Mezzanine Level)?|Seventh Floor|Eighth Floor|Ninth Floor|Tenth Floor|Eleventh Floor|Twelfth Floor|Oval)/gi;
 
-  for (const item of officeKeywords) {
-    const regex = new RegExp(`\\b${item.key}\\b`, 'i');
-    if (regex.test(q)) {
-      const chunk = mapChunks.find(c => c.page === item.page) || mapChunks[0];
-      const wingText = item.wing ? `${item.wing}, ` : '';
-      const answer = `The ${item.name} is on the ${item.floor}, ${wingText}${item.building}.`;
-      return {
-        answer,
-        in_sources: true,
-        citations: [{ source: chunk.source, page: chunk.page, quote: item.name, claim: `Location of ${item.name}`, verified: true }]
-      };
+  for (const chunk of mapChunks) {
+    const text = chunk.content;
+    const bMatch = text.match(/CAMPUS MAP\.\s*([^.:]+)[.:]/i);
+    const rawBuilding = bMatch ? bMatch[1].trim() : "Admin Building";
+    const building = rawBuilding
+      .split(' ')
+      .map(w => w.length <= 4 && !/^[A-Z][a-z]/.test(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ')
+      .replace(/Hpsb/i, 'HPSB');
+
+    const parts = text.split(floorRegex);
+    for (let i = 1; i < parts.length; i += 2) {
+      let floorName = parts[i].trim();
+      if (floorName.toLowerCase() === 'mezzanine') floorName = 'Mezzanine Floor';
+      const body = parts[i + 1] || '';
+      const hasWings = /North Wing:|South Wing:/i.test(body);
+
+      if (hasWings) {
+        const wingParts = body.split(/(?:[A-Z]\.\s*)?(North Wing|South Wing):\s*/i);
+        for (let j = 1; j < wingParts.length; j += 2) {
+          const wingName = wingParts[j].trim();
+          const wingBody = wingParts[j + 1] || '';
+          const officeList = wingBody.split(/[;.]/).map(s => s.trim()).filter(s => s.length > 2 && !/^(?:A|B)\.?$/i.test(s));
+          for (const off of officeList) {
+            entries.push({ name: off, floor: floorName, wing: wingName, building, chunk });
+          }
+        }
+      } else {
+        const officeList = body.replace(/^[.:\s]+/, '').split(/[;.]/).map(s => s.trim()).filter(s => s.length > 2);
+        for (const off of officeList) {
+          entries.push({ name: off, floor: floorName, wing: '', building, chunk });
+        }
+      }
     }
+  }
+
+  const cleanQ = q
+    .replace(/[?!.,]/g, ' ')
+    .replace(/^(where is the|where is|saan ang|saan makikita ang|what is the location of|location of|how to find the)\s+/i, '')
+    .replace(/\s+(located in the admin building|located in the admin|located|in the admin building|in umak|office|building)\s*$/i, '')
+    .trim();
+
+  let best = null;
+  let bestScore = 0;
+
+  for (const entry of entries) {
+    const nameLower = entry.name.toLowerCase();
+    let score = 0;
+
+    if (nameLower.includes(cleanQ) || cleanQ.includes(nameLower)) {
+      score += 50;
+    }
+
+    const acronymMatch = entry.name.match(/\(([^)]+)\)/);
+    if (acronymMatch) {
+      const acr = acronymMatch[1].toLowerCase();
+      const qTokens = q.split(/[^a-z0-9]/).filter(Boolean);
+      if (qTokens.includes(acr) || cleanQ === acr) {
+        score += 60;
+      }
+    }
+
+    const qWords = cleanQ.split(/\s+/).filter(w => w.length > 2 && !['the', 'and', 'for', 'center', 'office'].includes(w));
+    const matchedWords = qWords.filter(w => nameLower.includes(w));
+    score += matchedWords.length * 15;
+
+    if (score > bestScore) {
+      bestScore = score;
+      best = entry;
+    }
+  }
+
+  if (best && bestScore >= 30) {
+    const wingText = best.wing ? `${best.wing}, ` : '';
+    const answer = `The ${best.name} is on the ${best.floor}, ${wingText}${best.building}.`;
+    return {
+      answer,
+      in_sources: true,
+      citations: [{ source: best.chunk.source, page: best.chunk.page, quote: best.name, claim: `Location of ${best.name}`, verified: true }]
+    };
   }
 
   return null;
@@ -389,3 +454,25 @@ console.log("Test 21 (Secure Password Hashing with scrypt and Constant-Time Veri
 // 22. Passwords and authentication secrets are never exposed in plaintext
 const isHashSecured = !hashed.includes("HeronStudent2026") && hashed.includes(":");
 console.log("Test 22 (Passwords and Secrets Never Exposed in Plaintext):", isHashSecured ? "PASS" : "FAIL");
+
+// 23. Exact User Question: "Where is the Center for Information Technology located in the Admin building?"
+const citFullQ = "Where is the Center for Information Technology located in the Admin building?";
+const chunksCITFull = search(citFullQ);
+const ansCITFull = extractDirectLocationAnswer(citFullQ, chunksCITFull);
+const isCITFullValid = ansCITFull &&
+  ansCITFull.answer.includes("Center for Information Technology (CIT)") &&
+  ansCITFull.answer.includes("Second Floor") &&
+  ansCITFull.answer.includes("South Wing") &&
+  ansCITFull.answer.includes("Admin Building") &&
+  ansCITFull.answer.split(/\s+/).length < 30 &&
+  !ansCITFull.answer.includes("Basement") &&
+  !ansCITFull.answer.includes("CAMPUS MAP.") &&
+  ansCITFull.citations[0].source === "Source03.pdf" &&
+  ansCITFull.citations[0].page === 1;
+console.log("Test 23 (CIT Full Query - Direct Concise Location <30 words):", isCITFullValid ? "PASS" : "FAIL");
+
+// 24. "What are the scholarship requirements?" returns relevant requirements
+const scholarChunks = search("What are the scholarship requirements?");
+const hasScholarMatch = scholarChunks.length > 0 && scholarChunks.some(c => c.source === "Source01.pdf");
+console.log("Test 24 (Scholarship Requirements Grounded in Source01):", hasScholarMatch ? "PASS" : "FAIL");
+

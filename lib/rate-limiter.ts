@@ -5,8 +5,8 @@ interface ClientRecord {
 
 const clientMap = new Map<string, ClientRecord>();
 
-const MAX_PER_MINUTE = 5;
-const MAX_PER_HOUR = 20;
+const MAX_PER_MINUTE = 15;
+const MAX_PER_HOUR = 150;
 
 export function checkRateLimit(clientId: string): { allowed: boolean; retryAfter?: number; error?: string } {
   const now = Date.now();

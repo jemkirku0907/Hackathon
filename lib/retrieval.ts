@@ -189,6 +189,9 @@ export function searchSources(query: string, maxResults: number = 4): SourceChun
       if (chunk.source === 'Source01.pdf') {
         score += 40;
       }
+      if (qLower.includes('requirement') && chunk.section.toLowerCase().includes('requirement')) {
+        score += 25;
+      }
     }
 
     // 3. Keyword matching & section weighting
