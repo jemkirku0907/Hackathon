@@ -25,10 +25,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Menu,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 import { ChatResponse, Citation } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
+import { LoginModal } from '@/components/LoginModal';
+import { PdfViewerModal } from '@/components/PdfViewerModal';
 
 interface Message {
   id: string;
@@ -100,7 +103,47 @@ export default function Home() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Authentication State
+  const [currentUser, setCurrentUser] = useState<{ email: string; studentId: string; fullName: string } | null>(null);
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+
+  // Interactive PDF Viewer State
+  const [activePdfViewer, setActivePdfViewer] = useState<{
+    source: string;
+    page: number;
+    quote?: string;
+  } | null>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Check auth session on load
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/session');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            setCurrentUser(data.user);
+            return;
+          }
+        }
+        setIsLoginOpen(true);
+      } catch {
+        setIsLoginOpen(true);
+      }
+    }
+    checkAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } finally {
+      setCurrentUser(null);
+      setIsLoginOpen(true);
+    }
+  };
 
   // Auto-close mobile menu on desktop resize
   useEffect(() => {
@@ -199,7 +242,10 @@ export default function Home() {
       const data: ChatResponse = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) {
+        if (response.status === 401) {
+          setErrorBanner("Session expired or unauthorized. Please sign in with your UMak student account.");
+          setIsLoginOpen(true);
+        } else if (response.status === 429) {
           setErrorBanner(data.answer || "Rate limit reached. Please wait a moment before sending another message.");
         } else {
           setErrorBanner(data.answer || "An error occurred while contacting the server.");
@@ -341,25 +387,53 @@ export default function Home() {
 
           <div>
             <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
-              Official PDF Sources
+              Official PDF Sources (Click to View)
             </p>
             <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePdfViewer({ source: 'Source01.pdf', page: 1 });
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
+              >
                 <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
                 <span className="truncate">Source01: Scholarships (14p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePdfViewer({ source: 'Source02.pdf', page: 1 });
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
+              >
                 <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
                 <span className="truncate">Source02: CCIS & Courses (2p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePdfViewer({ source: 'Source03.pdf', page: 1 });
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left"
+              >
                 <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
                 <span className="truncate">Source03: Campus Map (6p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActivePdfViewer({ source: 'Source04.pdf', page: 1 });
+                  setIsMobileMenuOpen(false);
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left"
+              >
                 <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
                 <span className="truncate">Source04: Offices (14p)</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -374,14 +448,34 @@ export default function Home() {
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-1">
             <div className="flex items-center gap-2 overflow-hidden">
               <div className="w-7 h-7 rounded-full bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#3F56CA] dark:to-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#3F56CA]/30 dark:border-[#D1CA25]/60 shrink-0">
-                UM
+                {currentUser?.fullName?.charAt(0) || 'UM'}
               </div>
               <div className="text-left truncate">
-                <p className="text-xs font-semibold text-slate-800 dark:text-white truncate">UMak Student</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">Verified User</p>
+                <p className="text-xs font-semibold text-slate-800 dark:text-white truncate">
+                  {currentUser ? currentUser.fullName : 'UMak Student'}
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                  {currentUser ? currentUser.studentId : 'Verified Student'}
+                </p>
               </div>
             </div>
-            <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition shrink-0" />
+            {currentUser ? (
+              <button
+                onClick={handleLogout}
+                title="Log out"
+                className="p-1 rounded-lg text-slate-400 hover:text-[#EC202B] hover:bg-slate-200/60 dark:hover:bg-slate-800 transition"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsLoginOpen(true)}
+                title="Log in"
+                className="text-xs text-[#3F56CA] dark:text-[#D1CA25] font-semibold hover:underline"
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </aside>
@@ -493,46 +587,54 @@ export default function Home() {
           <div>
             {isSidebarOpen && (
               <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5 animate-in fade-in">
-                Official PDF Sources
+                Official PDF Sources (Click to View)
               </p>
             )}
             <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
-              <div 
+              <button 
+                type="button"
+                onClick={() => setActivePdfViewer({ source: 'Source01.pdf', page: 1 })}
                 title="Source01: Scholarships (14p)"
-                className={`flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 ${
+                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
                   isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
                 }`}
               >
                 <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
                 {isSidebarOpen && <span className="truncate">Source01: Scholarships (14p)</span>}
-              </div>
-              <div 
+              </button>
+              <button 
+                type="button"
+                onClick={() => setActivePdfViewer({ source: 'Source02.pdf', page: 1 })}
                 title="Source02: CCIS & Courses (2p)"
-                className={`flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 ${
+                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
                   isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
                 }`}
               >
                 <FileText className="w-4 h-4 text-[#21ADE3] shrink-0" />
                 {isSidebarOpen && <span className="truncate">Source02: CCIS & Courses (2p)</span>}
-              </div>
-              <div 
+              </button>
+              <button 
+                type="button"
+                onClick={() => setActivePdfViewer({ source: 'Source03.pdf', page: 1 })}
                 title="Source03: Campus Map (6p)"
-                className={`flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 ${
+                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
                   isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
                 }`}
               >
                 <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
                 {isSidebarOpen && <span className="truncate">Source03: Campus Map (6p)</span>}
-              </div>
-              <div 
+              </button>
+              <button 
+                type="button"
+                onClick={() => setActivePdfViewer({ source: 'Source04.pdf', page: 1 })}
                 title="Source04: Offices (14p)"
-                className={`flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 ${
+                className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#21ADE3] transition cursor-pointer text-left ${
                   isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
                 }`}
               >
                 <Building2 className="w-4 h-4 text-[#21ADE3] shrink-0" />
                 {isSidebarOpen && <span className="truncate">Source04: Offices (14p)</span>}
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -552,17 +654,37 @@ export default function Home() {
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-1">
             <div className="flex items-center gap-2 overflow-hidden">
               <div className="w-7 h-7 rounded-full bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#3F56CA] dark:to-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#3F56CA]/30 dark:border-[#D1CA25]/60 shrink-0">
-                UM
+                {currentUser?.fullName?.charAt(0) || 'UM'}
               </div>
               {isSidebarOpen && (
                 <div className="text-left truncate">
-                  <p className="text-xs font-semibold text-slate-800 dark:text-white truncate">UMak Student</p>
-                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Verified User</p>
+                  <p className="text-xs font-semibold text-slate-800 dark:text-white truncate">
+                    {currentUser ? currentUser.fullName : 'UMak Student'}
+                  </p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                    {currentUser ? currentUser.studentId : 'Verified Student'}
+                  </p>
                 </div>
               )}
             </div>
             {isSidebarOpen && (
-              <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition shrink-0" />
+              currentUser ? (
+                <button
+                  onClick={handleLogout}
+                  title="Log out"
+                  className="p-1 rounded-lg text-slate-400 hover:text-[#EC202B] hover:bg-slate-200/60 dark:hover:bg-slate-800 transition"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsLoginOpen(true)}
+                  title="Log in"
+                  className="text-xs text-[#3F56CA] dark:text-[#D1CA25] font-semibold hover:underline"
+                >
+                  Login
+                </button>
+              )
             )}
           </div>
         </div>
@@ -863,8 +985,34 @@ export default function Home() {
         </footer>
       </section>
 
-      {/* Citation Quote Modal */}
-      <QuoteModal citation={activeCitation} onClose={() => setActiveCitation(null)} />
+      {/* Citation Quote Modal with Deep-Link to PDF Viewer */}
+      <QuoteModal 
+        citation={activeCitation} 
+        onClose={() => setActiveCitation(null)} 
+        onOpenPdf={(source, page, quote) => {
+          setActiveCitation(null);
+          setActivePdfViewer({ source, page, quote });
+        }}
+      />
+
+      {/* Official Interactive PDF Document Explorer */}
+      {activePdfViewer && (
+        <PdfViewerModal
+          source={activePdfViewer.source}
+          initialPage={activePdfViewer.page}
+          highlightQuote={activePdfViewer.quote}
+          onClose={() => setActivePdfViewer(null)}
+        />
+      )}
+
+      {/* UMak Student Institutional Login Gate */}
+      <LoginModal
+        isOpen={isLoginOpen && !currentUser}
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+          setIsLoginOpen(false);
+        }}
+      />
     </div>
   );
 }

@@ -7,9 +7,10 @@ import { Citation } from '@/lib/types';
 interface QuoteModalProps {
   citation: Citation | null;
   onClose: () => void;
+  onOpenPdf?: (source: string, page: number, quote?: string) => void;
 }
 
-export function QuoteModal({ citation, onClose }: QuoteModalProps) {
+export function QuoteModal({ citation, onClose, onOpenPdf }: QuoteModalProps) {
   if (!citation) return null;
 
   return (
@@ -72,10 +73,22 @@ export function QuoteModal({ citation, onClose }: QuoteModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="bg-slate-50 dark:bg-slate-900 px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+        <div className="bg-slate-50 dark:bg-slate-900 px-5 py-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => {
+              if (onOpenPdf) {
+                onOpenPdf(citation.source, citation.page, citation.quote);
+              }
+            }}
+            className="px-3.5 py-2 bg-white dark:bg-[#1C2541] hover:bg-slate-100 dark:hover:bg-[#253358] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/30 text-xs font-semibold rounded-xl shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Open PDF at Page {citation.page}</span>
+          </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-[#3F56CA] hover:bg-[#2B3C8E] text-white text-xs font-semibold rounded-xl shadow-xs transition"
+            className="px-4 py-2 bg-[#3F56CA] hover:bg-[#2B3C8E] text-white text-xs font-semibold rounded-xl shadow-xs transition cursor-pointer"
           >
             Close Inspector
           </button>
