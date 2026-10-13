@@ -1,12 +1,13 @@
 import React from 'react';
 import { Audio, Sequence, staticFile } from 'remotion';
-import { Scene1Hook } from './scenes/Scene1Hook';
-import { Scene2Intro } from './scenes/Scene2Intro';
-import { Scene3Attachments } from './scenes/Scene3Attachments';
-import { Scene4VerifiedSources } from './scenes/Scene4VerifiedSources';
-import { Scene5CampusMap } from './scenes/Scene5CampusMap';
-import { Scene6Features } from './scenes/Scene6Features';
-import { Scene7Closing } from './scenes/Scene7Closing';
+import { EnhScene1Intro } from './scenes/enhanced/EnhScene1Intro';
+import { EnhScene2Problem } from './scenes/enhanced/EnhScene2Problem';
+import { EnhScene3AppCIT } from './scenes/enhanced/EnhScene3AppCIT';
+import { EnhScene4aAttach } from './scenes/enhanced/EnhScene4aAttach';
+import { EnhScene4bMap } from './scenes/enhanced/EnhScene4bMap';
+import { EnhScene4cAcademic } from './scenes/enhanced/EnhScene4cAcademic';
+import { EnhScene5WhyMatters } from './scenes/enhanced/EnhScene5WhyMatters';
+import { EnhScene6Outro } from './scenes/enhanced/EnhScene6Outro';
 
 export const PromoVideo: React.FC = () => {
   return (
@@ -19,46 +20,52 @@ export const PromoVideo: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* SCENE 1: Opening Hook (0 - 8s / 240 frames) */}
-      <Sequence from={0} durationInFrames={240}>
-        <Scene1Hook />
-        <Audio src={staticFile('audio/scene1.mp3')} volume={1.0} />
+      {/* SCENE 1: Cinematic Logo Intro (0 - 4s / 120 frames) */}
+      <Sequence from={0} durationInFrames={120}>
+        <EnhScene1Intro />
+        <Audio src={staticFile('audio/enhanced/enh_scene1_intro.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 2: Introducing Chatbot (8 - 16s / 240 frames) */}
-      <Sequence from={240} durationInFrames={240}>
-        <Scene2Intro />
-        <Audio src={staticFile('audio/scene2.mp3')} volume={1.0} />
+      {/* SCENE 2: The Student Problem - Facebook Groups & 0 Comments (4 - 11s / 210 frames) */}
+      <Sequence from={120} durationInFrames={210}>
+        <EnhScene2Problem />
+        <Audio src={staticFile('audio/enhanced/enh_scene2_problem.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 3: Multimodal File & Image Upload (16 - 24s / 240 frames) */}
-      <Sequence from={480} durationInFrames={240}>
-        <Scene3Attachments />
-        <Audio src={staticFile('audio/scene3.mp3')} volume={1.0} />
+      {/* SCENE 3: Transition into Real App - CIT Query & Exact Citation (11 - 21s / 300 frames) */}
+      <Sequence from={330} durationInFrames={300}>
+        <EnhScene3AppCIT />
+        <Audio src={staticFile('audio/enhanced/enh_scene3_app_cit.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 4: Grounded Citations (24 - 33.3s / 280 frames) */}
-      <Sequence from={720} durationInFrames={280}>
-        <Scene4VerifiedSources />
-        <Audio src={staticFile('audio/scene4.mp3')} volume={1.0} />
+      {/* SCENE 4A: Feature Showcase - Multimodal Attachments (21 - 29s / 240 frames) */}
+      <Sequence from={630} durationInFrames={240}>
+        <EnhScene4aAttach />
+        <Audio src={staticFile('audio/enhanced/enh_scene4a_attach.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 5: Interactive Campus Map Pin Visualizer (33.3 - 42s / 260 frames) */}
-      <Sequence from={1000} durationInFrames={260}>
-        <Scene5CampusMap />
-        <Audio src={staticFile('audio/scene5.mp3')} volume={1.0} />
+      {/* SCENE 4B: Feature Showcase - Campus Map Visualizer (29 - 37s / 240 frames) */}
+      <Sequence from={870} durationInFrames={240}>
+        <EnhScene4bMap />
+        <Audio src={staticFile('audio/enhanced/enh_scene4b_map.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 6: More Campus Features (42 - 51.3s / 280 frames) */}
-      <Sequence from={1260} durationInFrames={280}>
-        <Scene6Features />
-        <Audio src={staticFile('audio/scene6.mp3')} volume={1.0} />
+      {/* SCENE 4C: Feature Showcase - Academic Policies & UMak Security (37 - 45s / 240 frames) */}
+      <Sequence from={1110} durationInFrames={240}>
+        <EnhScene4cAcademic />
+        <Audio src={staticFile('audio/enhanced/enh_scene4c_academic.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* SCENE 7: Branded Closing (51.3 - 60s / 260 frames) */}
-      <Sequence from={1540} durationInFrames={260}>
-        <Scene7Closing />
-        <Audio src={staticFile('audio/scene7.mp3')} volume={1.0} />
+      {/* SCENE 5: Why It Matters - Comparison & Every Tagak, Just Ask (45 - 51s / 180 frames) */}
+      <Sequence from={1350} durationInFrames={180}>
+        <EnhScene5WhyMatters />
+        <Audio src={staticFile('audio/enhanced/enh_scene5_matters.mp3')} volume={1.0} />
+      </Sequence>
+
+      {/* SCENE 6: Cinematic Outro & Tagline (51 - 58s / 210 frames) */}
+      <Sequence from={1530} durationInFrames={210}>
+        <EnhScene6Outro />
+        <Audio src={staticFile('audio/enhanced/enh_scene6_outro.mp3')} volume={1.0} />
       </Sequence>
     </div>
   );
