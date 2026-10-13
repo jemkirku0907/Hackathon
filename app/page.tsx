@@ -1030,7 +1030,7 @@ export default function Home() {
               {msg.sender === 'assistant' && (
                 <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                   <Image
-                    src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
+                    src={theme === 'dark' ? '/taga-bird-dark.png' : '/taga-bird-light.png'}
                     alt="TAGA-asK AI"
                     width={32}
                     height={32}
@@ -1160,7 +1160,7 @@ export default function Home() {
             <div className="flex gap-3.5 items-start">
               <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <Image
-                  src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
+                  src={theme === 'dark' ? '/taga-bird-dark.png' : '/taga-bird-light.png'}
                   alt="TAGA-asK AI"
                   width={32}
                   height={32}
