@@ -33,13 +33,15 @@ import {
   LogOut,
   Trash2,
   Paperclip,
-  Compass
+  Compass,
+  Sparkles
 } from 'lucide-react';
 import { ChatResponse, Citation, MapLocation, FileAttachment } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
 import { LoginModal } from '@/components/LoginModal';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
 import { InteractiveCampusMapModal } from '@/components/InteractiveCampusMapModal';
+import { CinematicLandingPage } from '@/components/CinematicLandingPage';
 
 interface Message {
   id: string;
@@ -177,6 +179,9 @@ export default function Home() {
     quote?: string;
   } | null>(null);
 
+  // Cinematic Landing Page State
+  const [showLandingPage, setShowLandingPage] = useState<boolean>(true);
+
   // Campus Map State
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [targetMapLocation, setTargetMapLocation] = useState<MapLocation | null>(null);
@@ -184,6 +189,27 @@ export default function Home() {
   // Multimodal File Attachment State
   const [attachment, setAttachment] = useState<FileAttachment | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Check landing page skip preference on mount
+  useEffect(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('chat') === '1') {
+        setShowLandingPage(false);
+        return;
+      }
+      if (urlParams.get('intro') === '1' || urlParams.get('landing') === '1') {
+        setShowLandingPage(true);
+        return;
+      }
+      const skipPref = localStorage.getItem('taga_ask_skip_intro');
+      if (skipPref === 'true') {
+        setShowLandingPage(false);
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
 
   // Accordion Expand/Collapse States for Sessions and PDFs
   const [isSessionsExpanded, setIsSessionsExpanded] = useState(true);
@@ -1065,6 +1091,16 @@ export default function Home() {
           <div className="flex items-center gap-2 md:gap-3">
             <button
               type="button"
+              onClick={() => setShowLandingPage(true)}
+              title="View Cinematic Intro & Overview"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#D1CA25]" />
+              <span className="hidden sm:inline">Intro &amp; Overview</span>
+            </button>
+
+            <button
+              type="button"
               onClick={() => {
                 setTargetMapLocation(null);
                 setIsMapOpen(true);
@@ -1534,6 +1570,11 @@ export default function Home() {
           setIsLoginOpen(false);
         }}
       />
+
+      {/* Cinematic Landing Page Overlay with Animated Logo Reveal */}
+      {showLandingPage && (
+        <CinematicLandingPage onEnterChat={() => setShowLandingPage(false)} />
+      )}
     </div>
   );
 }
