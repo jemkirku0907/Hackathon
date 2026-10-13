@@ -79,7 +79,7 @@ const SUGGESTED_PROMPTS = [
 export default function Home() {
   const [sessions, setSessions] = useState<ChatSession[]>(INITIAL_SESSIONS);
   const [activeSessionId, setActiveSessionId] = useState<string>('1');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [searchFilter, setSearchFilter] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [messages, setMessages] = useState<Message[]>([
@@ -110,7 +110,23 @@ export default function Home() {
       setTheme(initial);
       document.documentElement.classList.toggle('dark', prefersDark);
     }
+
+    // Set initial sidebar state on smaller screens
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
   }, []);
+
+  // Keyboard shortcut listener (Escape to close sidebar)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSidebarOpen]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
@@ -150,7 +166,9 @@ export default function Home() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
-    setIsSidebarOpen(false);
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false);
+    }
   };
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -223,159 +241,170 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full bg-[#F8FAFC] dark:bg-[#090E1A] text-slate-900 dark:text-slate-100 font-sans overflow-hidden transition-colors duration-200">
-      {/* Mobile Drawer Backdrop */}
+      {/* Mobile Backdrop */}
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-2xs transition-opacity"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-2xs transition-opacity"
           aria-hidden="true"
         />
       )}
 
       {/* 
-        1. SIDEBAR:
-        - Light Mode: White background (#FFFFFF), slate-200 border, dark navy text, Primary Blue (#3F56CA) active indicator.
-        - Dark Mode: Preserved Deep Midnight Navy (#0B132B / #060B18), subtle borders, yellow (#D1CA25) active accents.
+        1. ANIMATED SIDEBAR:
+        - Smooth transition: 280ms cubic-bezier(0.2, 0.8, 0.2, 1)
+        - Desktop: Push layout (0 width when collapsed, 288px when open)
+        - Mobile: Slide-in overlay from left
+        - Light Mode: White background (#FFFFFF)
+        - Dark Mode: Preserved Deep Navy (#0B132B / #060B18)
       */}
       <aside 
-        className={`fixed md:static inset-y-0 left-0 z-50 w-72 flex flex-col transition-all duration-200 ease-in-out
-          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] ${
-          isSidebarOpen ? 'translate-x-0 shadow-2xl md:shadow-none' : '-translate-x-full md:translate-x-0'
+        className={`fixed lg:static inset-y-0 left-0 z-50 h-screen flex flex-col transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]
+          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] overflow-hidden ${
+          isSidebarOpen 
+            ? 'w-72 translate-x-0 shadow-2xl lg:shadow-none' 
+            : 'w-0 -translate-x-full lg:translate-x-0 lg:border-r-0'
         }`}
       >
-        {/* Brand Header */}
-        <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#1C2541] dark:to-[#3F56CA] flex items-center justify-center font-black text-[#3F56CA] dark:text-[#D1CA25] text-lg shadow-xs border-2 border-[#3F56CA]/20 dark:border-[#D1CA25]/80">
-              TAK
+        <div className="w-72 flex flex-col h-full shrink-0">
+          {/* Brand Header */}
+          <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#1C2541] dark:to-[#3F56CA] flex items-center justify-center font-black text-[#3F56CA] dark:text-[#D1CA25] text-lg shadow-xs border-2 border-[#3F56CA]/20 dark:border-[#D1CA25]/80">
+                TAK
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAKA-ask AI</h2>
+                <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
+              </div>
             </div>
+            <button 
+              onClick={() => setIsSidebarOpen(false)}
+              aria-label="Close sidebar"
+              className="text-slate-500 dark:text-white/70 hover:text-slate-800 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Actions: New Chat & Search */}
+          <div className="p-3 space-y-2">
+            <button
+              onClick={handleNewChat}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition shadow-xs group font-semibold text-xs
+                bg-[#3F56CA] hover:bg-[#2B3C8E] text-white focus-visible:outline-[#3F56CA]"
+            >
+              <span className="flex items-center gap-2">
+                <Plus className="w-4 h-4 text-white dark:text-[#D1CA25] group-hover:rotate-90 transition-transform" />
+                <span>New Conversation</span>
+              </span>
+              <kbd className="text-[10px] bg-black/20 px-1.5 py-0.5 rounded text-white/90 border border-white/20 font-mono">⌘K</kbd>
+            </button>
+
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40" />
+              <input 
+                type="text" 
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Search conversations..." 
+                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg transition
+                  bg-slate-100 dark:bg-[#1C2541]/70 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-white/40 focus:outline-hidden focus:border-[#3F56CA] dark:focus:border-[#D1CA25]"
+              />
+            </div>
+          </div>
+
+          {/* Navigation / History list */}
+          <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
             <div>
-              <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAKA-ask AI</h2>
-              <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
+              <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
+                Verified Sessions
+              </p>
+              <div className="space-y-1">
+                {filteredSessions.map((s) => {
+                  const isActive = activeSessionId === s.id;
+                  return (
+                    <button
+                      key={s.id}
+                      onClick={() => {
+                        setActiveSessionId(s.id);
+                        if (window.innerWidth < 1024) {
+                          setIsSidebarOpen(false);
+                        }
+                      }}
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
+                        isActive
+                          ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
+                          : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                      <span className="truncate">{s.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-          <button 
-            onClick={() => setIsSidebarOpen(false)}
-            aria-label="Close sidebar"
-            className="md:hidden text-slate-500 dark:text-white/70 hover:text-slate-800 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Actions: New Chat & Search */}
-        <div className="p-3 space-y-2">
-          <button
-            onClick={handleNewChat}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition shadow-xs group font-semibold text-xs
-              bg-[#3F56CA] hover:bg-[#2B3C8E] text-white focus-visible:outline-[#3F56CA]"
-          >
-            <span className="flex items-center gap-2">
-              <Plus className="w-4 h-4 text-white dark:text-[#D1CA25] group-hover:rotate-90 transition-transform" />
-              <span>New Conversation</span>
-            </span>
-            <kbd className="text-[10px] bg-black/20 px-1.5 py-0.5 rounded text-white/90 border border-white/20 font-mono">⌘K</kbd>
-          </button>
-
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-white/40" />
-            <input 
-              type="text" 
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Search conversations..." 
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg transition
-                bg-slate-100 dark:bg-[#1C2541]/70 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-white/40 focus:outline-hidden focus:border-[#3F56CA] dark:focus:border-[#D1CA25]"
-            />
-          </div>
-        </div>
-
-        {/* Navigation / History list */}
-        <div className="flex-1 overflow-y-auto px-3 py-2 space-y-4">
-          <div>
-            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
-              Verified Sessions
-            </p>
-            <div className="space-y-1">
-              {filteredSessions.map((s) => {
-                const isActive = activeSessionId === s.id;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => {
-                      setActiveSessionId(s.id);
-                      setIsSidebarOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
-                      isActive
-                        ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
-                    }`}
-                  >
-                    <MessageSquare className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
-                    <span className="truncate">{s.title}</span>
-                  </button>
-                );
-              })}
+            <div>
+              <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
+                Official PDF Sources
+              </p>
+              <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                  <FileText className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  <span className="truncate">Source01: Scholarships (14p)</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                  <FileText className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
+                  <span className="truncate">Source02: CCIS & Courses (2p)</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                  <MapPin className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
+                  <span className="truncate">Source03: Campus Map (6p)</span>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
+                  <Building2 className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
+                  <span className="truncate">Source04: Offices (14p)</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div>
-            <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-400 mb-1.5">
-              Official PDF Sources
-            </p>
-            <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
-                <FileText className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                <span className="truncate">Source01: Scholarships (14p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
-                <FileText className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
-                <span className="truncate">Source02: CCIS & Courses (2p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
-                <MapPin className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#D1CA25] shrink-0" />
-                <span className="truncate">Source03: Campus Map (6p)</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5">
-                <Building2 className="w-3.5 h-3.5 text-[#21ADE3] shrink-0" />
-                <span className="truncate">Source04: Offices (14p)</span>
-              </div>
+          {/* Sidebar Footer */}
+          <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#070D1E] space-y-2">
+            <div className="flex items-center gap-2 px-2 py-1 text-slate-600 dark:text-slate-300 text-xs">
+              <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25]" />
+              <span className="text-[11px] font-medium">Zero Hallucination Grounding</span>
             </div>
-          </div>
-        </div>
 
-        {/* Sidebar Footer: Cleaned of duplicate theme toggle */}
-        <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#070D1E] space-y-2">
-          <div className="flex items-center gap-2 px-2 py-1 text-slate-600 dark:text-slate-300 text-xs">
-            <ShieldCheck className="w-4 h-4 text-[#3F56CA] dark:text-[#D1CA25]" />
-            <span className="text-[11px] font-medium">Zero Hallucination Grounding</span>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-2">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#3F56CA] dark:to-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#3F56CA]/30 dark:border-[#D1CA25]/60">
-                UM
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-white/10 px-2">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-[#EEF2FC] dark:bg-gradient-to-br dark:from-[#3F56CA] dark:to-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#3F56CA]/30 dark:border-[#D1CA25]/60">
+                  UM
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-white">UMak Student</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Verified User</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-xs font-semibold text-slate-800 dark:text-white">UMak Student</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">Verified User</p>
-              </div>
+              <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition" />
             </div>
-            <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition" />
           </div>
         </div>
       </aside>
 
       {/* 2. MAIN WORKSPACE */}
       <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#F8FAFC] dark:bg-[#090E1A] transition-colors duration-200">
-        {/* Top Header with EXACTLY ONE Sun/Moon Theme Toggle */}
+        {/* Top Header: Balanced, No Grounded Badge, Accessible Sidebar Toggle & Single Theme Toggle */}
         <header className="h-16 px-4 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
           <div className="flex items-center gap-3">
+            {/* Dedicated animated menu button */}
             <button 
-              onClick={() => setIsSidebarOpen(true)}
-              aria-label="Open sidebar menu"
-              className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-[#3F56CA]"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+              title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+              className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition focus-visible:outline-[#3F56CA]"
             >
               <Menu className="w-5 h-5" />
             </button>
@@ -391,12 +420,6 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Grounding Status Indicator */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Grounded Generation Active</span>
-            </div>
-
             {/* THE ONLY THEME TOGGLE IN THE ENTIRE UI */}
             <button
               onClick={toggleTheme}
