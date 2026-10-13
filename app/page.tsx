@@ -31,18 +31,22 @@ import {
   Menu,
   X,
   LogOut,
-  Trash2
+  Trash2,
+  Paperclip,
+  Compass
 } from 'lucide-react';
-import { ChatResponse, Citation } from '@/lib/types';
+import { ChatResponse, Citation, MapLocation, FileAttachment } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
 import { LoginModal } from '@/components/LoginModal';
 import { PdfViewerModal } from '@/components/PdfViewerModal';
+import { InteractiveCampusMapModal } from '@/components/InteractiveCampusMapModal';
 
 interface Message {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
   data?: ChatResponse;
+  attachment?: FileAttachment;
   timestamp: string;
 }
 
@@ -173,11 +177,51 @@ export default function Home() {
     quote?: string;
   } | null>(null);
 
+  // Campus Map State
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [targetMapLocation, setTargetMapLocation] = useState<MapLocation | null>(null);
+
+  // Multimodal File Attachment State
+  const [attachment, setAttachment] = useState<FileAttachment | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Accordion Expand/Collapse States for Sessions and PDFs
   const [isSessionsExpanded, setIsSessionsExpanded] = useState(true);
   const [isPdfsExpanded, setIsPdfsExpanded] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setErrorBanner("Selected file exceeds the 10MB limit.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAttachment({
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        size: file.size,
+        data: reader.result as string
+      });
+      setErrorBanner(null);
+    };
+    reader.onerror = () => {
+      setErrorBanner("Failed to read file.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAttachment = () => {
+    setAttachment(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   // Load saved sessions from localStorage on mount
   useEffect(() => {
@@ -331,7 +375,7 @@ export default function Home() {
 
   const handleSendMessage = async (textToSend?: string) => {
     const query = (textToSend || input).trim();
-    if (!query || isLoading) return;
+    if ((!query && !attachment) || isLoading) return;
 
     if (query.length > 500) {
       setErrorBanner("Message exceeds the 500 characters limit.");
@@ -340,11 +384,17 @@ export default function Home() {
 
     setErrorBanner(null);
     setInput('');
+    const currentAttachment = attachment;
+    setAttachment(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
 
     const userMessage: Message = {
       id: 'user-' + Date.now(),
       sender: 'user',
-      text: query,
+      text: query || (currentAttachment ? `Attached file: ${currentAttachment.name}` : ''),
+      attachment: currentAttachment || undefined,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -355,7 +405,10 @@ export default function Home() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query }),
+        body: JSON.stringify({ 
+          message: query || (currentAttachment ? `Analyze this attached file (${currentAttachment.name}) in the context of UMak.` : ''),
+          attachment: currentAttachment || undefined
+        }),
       });
 
       const data: ChatResponse = await response.json();
@@ -566,6 +619,18 @@ export default function Home() {
             </button>
             {isPdfsExpanded && (
               <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTargetMapLocation(null);
+                    setIsMapOpen(true);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-[#EEF2FC] dark:bg-[#1C2541] border border-[#3F56CA]/40 hover:border-[#3F56CA] text-[#3F56CA] dark:text-[#21ADE3] font-semibold transition cursor-pointer text-left"
+                >
+                  <Compass className="w-4 h-4 text-[#3F56CA] dark:text-[#21ADE3] shrink-0 animate-spin-slow" />
+                  <span className="truncate">Interactive Map Visualizer</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => {
@@ -821,6 +886,20 @@ export default function Home() {
               <div className="space-y-1 text-xs text-slate-600 dark:text-slate-300">
                 <button 
                   type="button"
+                  onClick={() => {
+                    setTargetMapLocation(null);
+                    setIsMapOpen(true);
+                  }}
+                  title="Interactive Campus Map Visualizer"
+                  className={`w-full flex items-center gap-2 rounded-lg bg-[#EEF2FC] dark:bg-[#1C2541] border border-[#3F56CA]/40 hover:border-[#3F56CA] text-[#3F56CA] dark:text-[#21ADE3] font-semibold transition cursor-pointer text-left ${
+                    isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                  }`}
+                >
+                  <Compass className="w-4 h-4 text-[#3F56CA] dark:text-[#21ADE3] shrink-0 animate-spin-slow" />
+                  {isSidebarOpen && <span className="truncate">Interactive Map Visualizer</span>}
+                </button>
+                <button 
+                  type="button"
                   onClick={() => setActivePdfViewer({ source: 'Source01.pdf', page: 1 })}
                   title="Source01: Scholarships (14p)"
                   className={`w-full flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-[#1C2541]/40 border border-slate-200/80 dark:border-white/5 hover:border-[#3F56CA] dark:hover:border-[#D1CA25] transition cursor-pointer text-left ${
@@ -983,7 +1062,20 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setTargetMapLocation(null);
+                setIsMapOpen(true);
+              }}
+              title="Open Interactive Campus Map Visualizer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EEF2FC] dark:bg-[#1C2541] hover:bg-[#d8e0f8] dark:hover:bg-[#253358] border border-[#3F56CA]/30 text-[#3F56CA] dark:text-[#21ADE3] text-xs font-semibold transition shadow-2xs cursor-pointer"
+            >
+              <Compass className="w-4 h-4 text-[#3F56CA] dark:text-[#21ADE3]" />
+              <span className="hidden sm:inline">Campus Map</span>
+            </button>
+
             {/* THE ONLY THEME TOGGLE IN THE ENTIRE UI */}
             <button
               onClick={toggleTheme}
@@ -1084,7 +1176,28 @@ export default function Home() {
 
                   {/* Message Text with Structured Markdown Formatting */}
                   {msg.sender === 'user' ? (
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                    <div className="space-y-2">
+                      {msg.attachment && (
+                        <div className="p-2 rounded-xl bg-black/20 dark:bg-black/40 border border-white/20 inline-flex flex-col gap-1.5 max-w-xs">
+                          {msg.attachment.type.startsWith('image/') ? (
+                            <img
+                              src={msg.attachment.data}
+                              alt={msg.attachment.name}
+                              className="max-h-48 rounded-lg object-contain bg-black/20"
+                            />
+                          ) : (
+                            <div className="flex items-center gap-2 p-1 text-white">
+                              <FileText className="w-4 h-4 text-[#D1CA25]" />
+                              <span className="text-xs truncate font-medium">{msg.attachment.name}</span>
+                            </div>
+                          )}
+                          <span className="text-[10px] text-white/80 px-1 font-mono">
+                            {(msg.attachment.size / 1024).toFixed(1)} KB
+                          </span>
+                        </div>
+                      )}
+                      <div className="whitespace-pre-wrap">{msg.text}</div>
+                    </div>
                   ) : (
                     <div className="text-[14.5px] leading-relaxed select-text space-y-2">
                       <ReactMarkdown
@@ -1107,6 +1220,34 @@ export default function Home() {
                       >
                         {msg.text}
                       </ReactMarkdown>
+                    </div>
+                  )}
+
+                  {/* Interactive Campus Map Pin Button if Location Found */}
+                  {msg.sender === 'assistant' && msg.data?.location && (
+                    <div className="mt-3 p-2.5 rounded-xl bg-blue-50/80 dark:bg-[#1C2541]/70 border border-[#3F56CA]/30 flex flex-wrap items-center justify-between gap-2.5 animate-in fade-in">
+                      <div className="flex items-center gap-2 text-xs min-w-0">
+                        <MapPin className="w-4 h-4 text-[#3F56CA] dark:text-[#21ADE3] shrink-0 animate-bounce" />
+                        <div className="truncate">
+                          <span className="font-semibold text-slate-800 dark:text-slate-100 block truncate">
+                            {msg.data.location.officeName}
+                          </span>
+                          <span className="text-slate-500 dark:text-slate-400 text-[11px] block truncate">
+                            {msg.data.location.building} · {msg.data.location.floor} {msg.data.location.wing ? `(${msg.data.location.wing})` : ''}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTargetMapLocation(msg.data?.location || null);
+                          setIsMapOpen(true);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3F56CA] hover:bg-[#2B3C8E] text-white text-xs font-semibold shadow-xs transition hover:scale-102 active:scale-98 shrink-0 cursor-pointer"
+                      >
+                        <Compass className="w-3.5 h-3.5" />
+                        <span>📍 View on Campus Map</span>
+                      </button>
                     </div>
                   )}
 
@@ -1204,6 +1345,37 @@ export default function Home() {
         <footer className="p-4 md:p-6 bg-white dark:bg-[#111827] border-t border-slate-200 dark:border-slate-800 transition-colors duration-200">
           <div className="max-w-4xl mx-auto space-y-2">
             <div className="border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-[#090E1A] shadow-2xs focus-within:border-[#3F56CA] focus-within:ring-2 focus-within:ring-[#3F56CA]/20 transition p-3">
+              {/* Attachment Preview Chip */}
+              {attachment && (
+                <div className="mb-2 p-2 rounded-xl bg-[#EEF2FC] dark:bg-[#1C2541] border border-[#3F56CA]/30 flex items-center justify-between gap-2 text-xs animate-in fade-in">
+                  <div className="flex items-center gap-2 min-w-0">
+                    {attachment.type.startsWith('image/') ? (
+                      <img
+                        src={attachment.data}
+                        alt="preview"
+                        className="w-9 h-9 rounded-lg object-cover border border-[#3F56CA]/40 shrink-0 bg-white"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-lg bg-[#3F56CA]/10 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4 text-[#3F56CA] dark:text-[#21ADE3]" />
+                      </div>
+                    )}
+                    <div className="truncate min-w-0">
+                      <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{attachment.name}</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">{(attachment.size / 1024).toFixed(1)} KB</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveAttachment}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#EC202B] hover:bg-slate-200/60 dark:hover:bg-slate-800 transition cursor-pointer"
+                    title="Remove attachment"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -1213,7 +1385,7 @@ export default function Home() {
                     handleSendMessage();
                   }
                 }}
-                placeholder="Ask about UMak scholarships, admission requirements, campus locations, or offices..."
+                placeholder={attachment ? "Ask a question about this attached file..." : "Ask about UMak scholarships, admission requirements, campus locations, or offices..."}
                 maxLength={500}
                 rows={2}
                 disabled={isLoading}
@@ -1222,7 +1394,35 @@ export default function Home() {
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-slate-400">
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileSelect}
+                    accept="image/png,image/jpeg,image/webp,image/gif,application/pdf"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    title="Attach image or document (PNG, JPG, PDF)"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-[#3F56CA] dark:text-slate-400 dark:hover:text-[#D1CA25] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-1 text-xs"
+                  >
+                    <Paperclip className="w-4 h-4" />
+                    <span className="hidden sm:inline text-[11px] font-medium">Attach</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTargetMapLocation(null);
+                      setIsMapOpen(true);
+                    }}
+                    title="Open Interactive Campus Map"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-[#3F56CA] dark:text-slate-400 dark:hover:text-[#21ADE3] hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer flex items-center gap-1 text-xs"
+                  >
+                    <Compass className="w-4 h-4" />
+                    <span className="hidden sm:inline text-[11px] font-medium">Campus Map</span>
+                  </button>
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 ml-1">
                     {input.length}/500 chars
                   </span>
                 </div>
@@ -1231,8 +1431,8 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => handleSendMessage()}
-                    disabled={!input.trim() || isLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#3F56CA] hover:bg-[#2B3C8E] text-white rounded-xl font-semibold text-xs shadow-xs disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed transition focus-visible:outline-[#D1CA25]"
+                    disabled={(!input.trim() && !attachment) || isLoading}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#3F56CA] hover:bg-[#2B3C8E] text-white rounded-xl font-semibold text-xs shadow-xs disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed transition focus-visible:outline-[#D1CA25] cursor-pointer"
                   >
                     <span>Send</span>
                     <Send className="w-3.5 h-3.5" />
@@ -1318,6 +1518,13 @@ export default function Home() {
           onClose={() => setActivePdfViewer(null)}
         />
       )}
+
+      {/* Interactive Campus Map Visualizer Modal */}
+      <InteractiveCampusMapModal
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        targetLocation={targetMapLocation}
+      />
 
       {/* UMak Student Institutional Login Gate */}
       <LoginModal

@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { Citation, ChatResponse, SourceChunk } from './types';
+import { Citation, ChatResponse, SourceChunk, FileAttachment, MapLocation } from './types';
 import { verifyCitation } from './validator';
 
 const SYSTEM_INSTRUCTION = `You are TAGA-asK AI, an AI knowledge assistant for University of Makati students.
@@ -119,6 +119,11 @@ export function extractDirectLocationAnswer(
               answer: answer.trim(),
               in_sources: true,
               conflict: false,
+              location: {
+                building,
+                floor: floor.name,
+                officeName: `Offices on the ${floor.name}`,
+              },
               citations: [
                 {
                   source: chunk.source,
@@ -147,6 +152,12 @@ export function extractDirectLocationAnswer(
       answer,
       in_sources: true,
       conflict: false,
+      location: {
+        building: match.building,
+        floor: match.floor,
+        wing: match.wing,
+        officeName: match.name,
+      },
       citations: [
         {
           source: match.chunk.source,
@@ -346,7 +357,8 @@ Based on Source02.pdf, academic guidelines for CCIS programs (including BS Compu
 
 export async function generateGroundedAnswer(
   query: string,
-  retrievedChunks: SourceChunk[]
+  retrievedChunks: SourceChunk[],
+  attachment?: FileAttachment
 ): Promise<ChatResponse> {
   if (retrievedChunks.length === 0) {
     return {
@@ -395,10 +407,24 @@ ${evidenceText}
 
 USER QUESTION:
 ${query}
+${attachment ? `\n[NOTE: User attached a file/image named "${attachment.name}". Analyze any relevant details from the attachment in conjunction with the official UMak evidence.]` : ''}
 
 Respond with JSON:`;
 
-    const result = await model.generateContent(prompt);
+    const contentParts: any[] = [prompt];
+    if (attachment && attachment.data) {
+      const base64Data = attachment.data.includes('base64,')
+        ? attachment.data.split('base64,')[1]
+        : attachment.data;
+      contentParts.push({
+        inlineData: {
+          data: base64Data,
+          mimeType: attachment.type || 'image/jpeg',
+        },
+      });
+    }
+
+    const result = await model.generateContent(contentParts);
     const rawText = result.response.text();
     let parsed: any;
     try {

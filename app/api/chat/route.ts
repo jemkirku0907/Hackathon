@@ -129,8 +129,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Validate optional attachment
+    let validAttachment = undefined;
+    if (body.attachment && typeof body.attachment === 'object') {
+      const { name, type, data, size } = body.attachment;
+      if (typeof data === 'string' && data.length < 10 * 1024 * 1024) {
+        validAttachment = {
+          name: String(name || 'attachment'),
+          type: String(type || 'image/jpeg'),
+          size: Number(size || 0),
+          data,
+        };
+      }
+    }
+
     // 5. Generate Grounded AI Answer & Verify Citations
-    const responseData = await generateGroundedAnswer(message, retrievedChunks);
+    const responseData = await generateGroundedAnswer(message, retrievedChunks, validAttachment);
 
     return NextResponse.json(responseData, { status: 200 });
   } catch (error: any) {

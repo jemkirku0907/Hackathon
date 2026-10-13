@@ -15,6 +15,20 @@ export interface Citation {
   verified?: boolean;
 }
 
+export interface MapLocation {
+  building: string;
+  floor: string;
+  wing?: string;
+  officeName: string;
+}
+
+export interface FileAttachment {
+  name: string;
+  type: string;
+  size: number;
+  data: string; // base64 data URL or pure base64
+}
+
 export interface ChatResponse {
   answer: string;
   in_sources: boolean;
@@ -23,9 +37,11 @@ export interface ChatResponse {
   citations: Citation[];
   verification_status: 'verified' | 'unverified' | 'not_found' | 'error';
   error?: string;
+  location?: MapLocation;
 }
 
 export interface ChatRequest {
   message: string;
   turnstileToken?: string;
+  attachment?: FileAttachment;
 }
