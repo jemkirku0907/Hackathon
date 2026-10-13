@@ -144,52 +144,148 @@
     "content": "4. Diploma in Application Development: A. UMak examination ratings: Below average to Excellent. B. GWA, subject grades, and senior high school track: 80% and above GWA. C. Requirements for transferees/shifters: N/A. D. Requirements for 2nd coursers: N/A. 5. Diploma in Computer Network Administration: A. UMak examination rating: Below average to Excellent. B. GWA, subject grades, and senior high school track: 80% and above GWA. C. Requirements for transferees/shifters: N/A. D. Requirements for 2nd coursers: N/A. OTHER COLLEGES AVAILABLE: 1. College of Continuing, Advanced and Professional Studies (CCAPS) 2. Institute of Arts and Design (IAD) 3. College of Business Administration (CBA) 4. Institute of Accountancy (IOA) 5. College of Computing and Information Science (CCIS) 6. College of Human Kinetics (CHK) 7. College of Governance and Public Policy (CGPP) 8. Institute of Nursing (ION) 9. Institute of Imaging Health Sciences (IIHS) 10. College of Innovative Teachers Education (CITE) 11. College of Science (COS) 12. College of Tourism and Hospitality Management (CTHM) 13. Institute for Disaster and Emergency Management (IDEM) 14. College of Engineering and Technology (CET) 15. School of Law 16. College of Innovative Teachers Education - Higher School ng UMak."
   },
   {
-    "id": "s3_p1_1",
+    "id": "s3_p1_basement",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 1,
-    "section": "Admin Building: Basement, Ground Floor, Mezzanine, Second Floor",
-    "content": "CAMPUS MAP. ADMIN BUILDING. Basement: A. North Wing: University Chaplain; Center for Institutional Mission and Identity (CIMI); University Facilities Management Office (UFMO); Supply and Property Management Office (SPMO); Occupational Health and Safety Office (OHSO). B. South Wing: Cafeteria (UMak Food Hub); General Service Office (GSO): Housekeeping, Elevator Operations, Engineering, Transportation Management, Common Conference. Ground Floor: A. North Wing: Center for Quality and Management Development (CQMD); Center for Institutional and Global Affairs (CIGA); Universities Facilities Management Office (UFMO); Medical and Dental Clinic (MDC). B. South Wing: UMak Auditorium (formerly Mini Theater); OCH Function Rooms A-C; Accounting Office; Cash Office. Mezzanine: A. North Wing: Center for Archives and Information Governance (CAIG) (Formerly CDPRM); Innovation and Technology Support Office (ITSO). B. South Wing: Office of the University Registrar (OUR). Second Floor: A. North Wing: Budget Management Office (BMO); Office of the Vice President for Finance (OVPF); Center for Planning and Development (CPD); Human Resources Management Office (HRMO): Recruitment and Placement, Records and Monitoring, Compensation and Benefits. B. South Wing: Library Learning Commons (LLC); Center for Information Technology (CIT); Center for Technology-based Learning Hub (CTBL)."
+    "section": "Admin Building: Basement",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Basement: A. North Wing: University Chaplain; Center for Institutional Mission and Identity (CIMI); University Facilities Management Office (UFMO); Supply and Property Management Office (SPMO); Occupational Health and Safety Office (OHSO). B. South Wing: Cafeteria (UMak Food Hub); General Service Office (GSO): Housekeeping, Elevator Operations, Engineering, Transportation Management, Common Conference."
   },
   {
-    "id": "s3_p2_1",
+    "id": "s3_p1_ground",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 1,
+    "section": "Admin Building: Ground Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Ground Floor: A. North Wing: Center for Quality and Management Development (CQMD); Center for Institutional and Global Affairs (CIGA); Universities Facilities Management Office (UFMO); Medical and Dental Clinic (MDC). B. South Wing: UMak Auditorium (formerly Mini Theater); OCH Function Rooms A-C; Accounting Office; Cash Office."
+  },
+  {
+    "id": "s3_p1_mezzanine",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 1,
+    "section": "Admin Building: Mezzanine Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Mezzanine: A. North Wing: Center for Archives and Information Governance (CAIG) (Formerly CDPRM); Innovation and Technology Support Office (ITSO). B. South Wing: Office of the University Registrar (OUR)."
+  },
+  {
+    "id": "s3_p1_second",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 1,
+    "section": "Admin Building: Second Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Second Floor: A. North Wing: Budget Management Office (BMO); Office of the Vice President for Finance (OVPF); Center for Planning and Development (CPD); Human Resources Management Office (HRMO): Recruitment and Placement, Records and Monitoring, Compensation and Benefits. B. South Wing: Library Learning Commons (LLC); Center for Information Technology (CIT); Center for Technology-based Learning Hub (CTBL)."
+  },
+  {
+    "id": "s3_p2_third",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 2,
-    "section": "Admin Building: Third Floor, Fourth Floor, Fifth Floor, Sixth Floor",
-    "content": "Third Floor: A. North Wing: Office of the President; Office of the Vice President for Academic Affairs. B. South Wing: College of Governance and Public Policy (CGPP); College of Computing and Information Sciences (CCIS); Institute of Accountancy and Finance (IAF) (Formerly IOA); College of Business Administration (CBA) (Formerly CBFS); Institute of Disaster and Emergency Management (IDEM); College of Human Kinetics (CHK). Fourth Floor: A. North Wing: Center for Linkages and Placement (CLP); Office of the University Secretary (OUSEC); Center for Alumni Affairs (CAA); Vice President for Administration (OVPA). B. South Wing: Institute of Imaging and Health Sciences (IIHS); Institute of Nursing (ION); Institute of Pharmacy (IOP); Institute of Arts and Design (IAD); College of Engineering and Technology (CET); College of Liberal Arts and Social Sciences (CLASS); College of Science (COS) (Formerly IOPsy); Vice President for Planning and Research (OVPPR); 4/F Faculty Area. Fifth Floor: A. North Wing: University Student Multimedia Organization (USMO); Grand Alumni Association of Makati Herons, Inc (GAA); University Student Council (USC); Center for Student Formation and Discipline (CSFD); Center for Student Organization and Activities (CSOA); Vice President for Student Services and Community Development (OVPSSCD). B. South Wing: Center for Technology Incubation and Enterprise Development (CTIED); Center for Integrated Communications (CIC); Common Conference; The Board Room; Lecture Rooms (A1 to A12) (A to D). Sixth Floor: A. North Wing: Media Center (RIMPORT Office); IAD Creatives and Communications Internship Office; Animation Lab 1 and 2; Editing Bay; Audio Recording Studio. B. South Wing: UMak Performing Arts Theater (UPAT) (Formerly Grand Theater); Dressing Rooms A and B."
+    "section": "Admin Building: Third Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Third Floor: A. North Wing: Office of the President; Office of the Vice President for Academic Affairs. B. South Wing: College of Governance and Public Policy (CGPP); College of Computing and Information Sciences (CCIS); Institute of Accountancy and Finance (IAF) (Formerly IOA); College of Business Administration (CBA) (Formerly CBFS); Institute of Disaster and Emergency Management (IDEM); College of Human Kinetics (CHK)."
   },
   {
-    "id": "s3_p3_1",
+    "id": "s3_p2_fourth",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 2,
+    "section": "Admin Building: Fourth Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Fourth Floor: A. North Wing: Center for Linkages and Placement (CLP); Office of the University Secretary (OUSEC); Center for Alumni Affairs (CAA); Vice President for Administration (OVPA). B. South Wing: Institute of Imaging and Health Sciences (IIHS); Institute of Nursing (ION); Institute of Pharmacy (IOP); Institute of Arts and Design (IAD); College of Engineering and Technology (CET); College of Liberal Arts and Social Sciences (CLASS); College of Science (COS) (Formerly IOPsy); Vice President for Planning and Research (OVPPR); 4/F Faculty Area."
+  },
+  {
+    "id": "s3_p2_fifth",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 2,
+    "section": "Admin Building: Fifth Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Fifth Floor: A. North Wing: University Student Multimedia Organization (USMO); Grand Alumni Association of Makati Herons, Inc (GAA); University Student Council (USC); Center for Student Formation and Discipline (CSFD); Center for Student Organization and Activities (CSOA); Vice President for Student Services and Community Development (OVPSSCD). B. South Wing: Center for Technology Incubation and Enterprise Development (CTIED); Center for Integrated Communications (CIC); Common Conference; The Board Room; Lecture Rooms (A1 to A12) (A to D)."
+  },
+  {
+    "id": "s3_p2_sixth",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 2,
+    "section": "Admin Building: Sixth Floor",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Sixth Floor: A. North Wing: Media Center (RIMPORT Office); IAD Creatives and Communications Internship Office; Animation Lab 1 and 2; Editing Bay; Audio Recording Studio. B. South Wing: UMak Performing Arts Theater (UPAT) (Formerly Grand Theater); Dressing Rooms A and B."
+  },
+  {
+    "id": "s3_p3_mezzanine",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 3,
-    "section": "Sixth Floor Mezzanine, Academic Building 1, Academic Building 2",
-    "content": "Sixth Floor Mezzanine Level: A. North Wing: Center for Culture and Arts (CCA). B. South Wing: Performing Arts Theater Balcony. ACADEMIC BUILDING 1: First Floor: University Facilities Management Office (UFMO). Second Floor: 240th NROTC Unit. Third Floor: Institute for Technical Education and Skills Training; Skills Laboratories. Fourth Floor: Heron’s Hostel: Suite Rooms, Dormitories, Laundry Area, Cafe. ACADEMIC BUILDING 2: First Floor: Computer Laboratory (101-103) (105) (109-110) (112); Psychology Laboratory (104); Center for Admissions and Scholarships (CAS) and UMak Scholars Society (106-108); Instructional Media Room (IMR) (111). Second Floor: Lecture Room (201-206); Guidance Office (205-207) (209) (211); Accounting Laboratory (208); Steno Laboratory (210); Business Simulation Laboratory (212). Third Floor: Lecture Room (301-302) (304) (306) (308-312); College of Innovative Teachers Education Office (CITE) (303) (305); Higher School ng UMak Registrar (307). Fourth Floor: Higher School ng UMak Laboratory (401) (403) (405); NROTC Office (402); Lecture Room (404) (406) (408) (409); Audio Visual Room (AVR); Institute for Social Development and Nation Building (ISDNB) (411)."
+    "section": "Admin Building: Sixth Floor Mezzanine Level",
+    "content": "CAMPUS MAP. ADMIN BUILDING. Sixth Floor Mezzanine Level: A. North Wing: Center for Culture and Arts (CCA). B. South Wing: Performing Arts Theater Balcony."
   },
   {
-    "id": "s3_p4_1",
+    "id": "s3_p3_acad1",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 3,
+    "section": "Academic Building 1",
+    "content": "CAMPUS MAP. ACADEMIC BUILDING 1: First Floor: University Facilities Management Office (UFMO). Second Floor: 240th NROTC Unit. Third Floor: Institute for Technical Education and Skills Training; Skills Laboratories. Fourth Floor: Heron’s Hostel: Suite Rooms, Dormitories, Laundry Area, Cafe."
+  },
+  {
+    "id": "s3_p3_acad2",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 3,
+    "section": "Academic Building 2",
+    "content": "CAMPUS MAP. ACADEMIC BUILDING 2: First Floor: Computer Laboratory (101-103) (105) (109-110) (112); Psychology Laboratory (104); Center for Admissions and Scholarships (CAS) and UMak Scholars Society (106-108); Instructional Media Room (IMR) (111). Second Floor: Lecture Room (201-206); Guidance Office (205-207) (209) (211); Accounting Laboratory (208); Steno Laboratory (210); Business Simulation Laboratory (212). Third Floor: Lecture Room (301-302) (304) (306) (308-312); College of Innovative Teachers Education Office (CITE) (303) (305); Higher School ng UMak Registrar (307). Fourth Floor: Higher School ng UMak Laboratory (401) (403) (405); NROTC Office (402); Lecture Room (404) (406) (408) (409); Audio Visual Room (AVR); Institute for Social Development and Nation Building (ISDNB) (411)."
+  },
+  {
+    "id": "s3_p4_acad3",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 4,
-    "section": "Academic Building 3, Academic Bridgeway, UMak Stadium",
-    "content": "ACADEMIC BUILDING 3: First Floor: Computer Laboratory (101-104); UMak Coop Office (108); Tagak Cafe (111); Kitchen Laboratories (109-112); Multi-Purpose Room (105-107). Second Floor: Lecture Room (201-206) (208) (210) (212); College of Business and Financial Sciences (CBFS) Simulation Room (207); College of Tourism and Hospitality Management (CTHM) Faculty Office (209); College of Tourism and Hospitality Management Dean’s Office (211). Third Floor: Lecture Room (301-312). Fourth Floor: Lecture Room (401-416). ACADEMIC BRIDGEWAY: First Floor: Open Area. Second Floor: Lecture room (201-202). Third Floor: Lecture Room (301-302). Fourth Floor: Lecture Room (401-402). UNIVERSITY OF MAKATI STADIUM: Oval: Guard House and Housekeeping."
+    "section": "Academic Building 3",
+    "content": "CAMPUS MAP. ACADEMIC BUILDING 3: First Floor: Computer Laboratory (101-104); UMak Coop Office (108); Tagak Cafe (111); Kitchen Laboratories (109-112); Multi-Purpose Room (105-107). Second Floor: Lecture Room (201-206) (208) (210) (212); College of Business and Financial Sciences (CBFS) Simulation Room (207); College of Tourism and Hospitality Management (CTHM) Faculty Office (209); College of Tourism and Hospitality Management Dean’s Office (211). Third Floor: Lecture Room (301-312). Fourth Floor: Lecture Room (401-416)."
   },
   {
-    "id": "s3_p5_1",
+    "id": "s3_p4_bridgeway",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 4,
+    "section": "Academic Bridgeway",
+    "content": "CAMPUS MAP. ACADEMIC BRIDGEWAY: First Floor: Open Area. Second Floor: Lecture room (201-202). Third Floor: Lecture Room (301-302). Fourth Floor: Lecture Room (401-402)."
+  },
+  {
+    "id": "s3_p4_stadium",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 4,
+    "section": "University of Makati Stadium",
+    "content": "CAMPUS MAP. UNIVERSITY OF MAKATI STADIUM: Oval: Guard House and Housekeeping."
+  },
+  {
+    "id": "s3_p5_hpsb_lower",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 5,
-    "section": "Health and Physical Science Building (HPSB): Ground to 10th Floor",
-    "content": "HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Ground Floor: Main Lobby; Parking Area. First level to Third level Parking: Parking Area. Fourth Floor: Building Management System Office (401-402); Parking Area. Fifth Floor: School of Law Dean’s Office; School of Law Library Learning Commons; Moot Court (504-505); Lecture Rooms (506) (508-512); Multimedia Room (507). Sixth Floor: Lecture Rooms (601-605) (607-614); Computer Laboratory (606); Skills Laboratory (615) (617); Student Center. Seventh Floor: Multimedia Room (701); Lecture Room (702-707); Simulated Hospital; Laboratories (708-709); Skills Laboratories (710) (712). Eighth Floor: Lecture Rooms (801-805) (807-814); Computer Laboratory (806); Student Center; Skills Laboratory (815) (817). Ninth Floor: Central Laboratory; Pharmacy Laboratory; Science Research Laboratory; Multimedia Room (901); Laboratories (902) (906-909); Simulated Hospital / Health Institutes Office; Center for Research Ethics (CRE) (formerly UMREC); Center for Research Management (formerly CUR); Center for Extension and Development (CED) (formerly CCED). Tenth Floor: Lecture Room (1001-1005) (1007-1011) (103-1017); Computer Laboratory (1006); Student Center; Multimedia Room (1012)."
+    "section": "Health and Physical Science Building (HPSB): Ground to 8th Floor",
+    "content": "CAMPUS MAP. HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Ground Floor: Main Lobby; Parking Area. First level to Third level Parking: Parking Area. Fourth Floor: Building Management System Office (401-402); Parking Area. Fifth Floor: School of Law Dean’s Office; School of Law Library Learning Commons; Moot Court (504-505); Lecture Rooms (506) (508-512); Multimedia Room (507). Sixth Floor: Lecture Rooms (601-605) (607-614); Computer Laboratory (606); Skills Laboratory (615) (617); Student Center. Seventh Floor: Multimedia Room (701); Lecture Room (702-707); Simulated Hospital; Laboratories (708-709); Skills Laboratories (710) (712). Eighth Floor: Lecture Rooms (801-805) (807-814); Computer Laboratory (806); Student Center; Skills Laboratory (815) (817)."
   },
   {
-    "id": "s3_p6_1",
+    "id": "s3_p5_hpsb_upper",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 5,
+    "section": "Health and Physical Science Building (HPSB): 9th to 10th Floor",
+    "content": "CAMPUS MAP. HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Ninth Floor: Central Laboratory; Pharmacy Laboratory; Science Research Laboratory; Multimedia Room (901); Laboratories (902) (906-909); Simulated Hospital / Health Institutes Office; Center for Research Ethics (CRE) (formerly UMREC); Center for Research Management (formerly CUR); Center for Extension and Development (CED) (formerly CCED). Tenth Floor: Lecture Room (1001-1005) (1007-1011) (103-1017); Computer Laboratory (1006); Student Center; Multimedia Room (1012)."
+  },
+  {
+    "id": "s3_p6_hpsb_11",
     "source": "Source03.pdf",
     "documentTitle": "Campus Map",
     "page": 6,
-    "section": "Health and Physical Science Building (HPSB): 11th and 12th Floor",
-    "content": "Eleventh Floor: Fitness Gym; Aero Dance Studio; Dance Studio; Cafeteria; Clinic; Sauna; 1101 Multimedia Room. Twelfth Floor: Basketball Court; Volleyball Court; PE Department; Shower Room; Locker Room."
+    "section": "Health and Physical Science Building (HPSB): 11th Floor",
+    "content": "CAMPUS MAP. HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Eleventh Floor: Fitness Gym; Aero Dance Studio; Dance Studio; Cafeteria; Clinic; Sauna; 1101 Multimedia Room."
+  },
+  {
+    "id": "s3_p6_hpsb_12",
+    "source": "Source03.pdf",
+    "documentTitle": "Campus Map",
+    "page": 6,
+    "section": "Health and Physical Science Building (HPSB): 12th Floor",
+    "content": "CAMPUS MAP. HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Twelfth Floor: Basketball Court; Volleyball Court; PE Department; Shower Room; Locker Room."
   },
   {
     "id": "s4_p1_1",
