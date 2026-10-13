@@ -225,28 +225,32 @@ export default function Home() {
       
       {/* 
         1. COLLAPSIBLE ICON-STRIP / FULL SIDEBAR:
-        - When Open: w-72 (full text, search, session titles)
-        - When Closed: w-18 (compact icon rail exactly like user screenshot)
-        - Hover Arrow button toggles smoothly between states
+        - Smooth spring-like ease: transition-[width] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
+        - Inner fixed width wrapper (w-72) prevents text from squishing or reflowing mid-transition
+        - When Open: w-72 (288px)
+        - When Closed: w-18 (72px)
       */}
       <aside 
-        className={`group relative h-screen flex flex-col transition-all duration-300 ease-[cubic-bezier(0.2,0.8,0.2,1)]
-          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] shrink-0
-          ${isSidebarOpen ? 'w-72' : 'w-18'}`}
+        className={`group relative h-screen flex flex-col transition-[width] duration-350 ease-[cubic-bezier(0.4,0,0.2,1)]
+          bg-white dark:bg-[#0B132B] text-slate-800 dark:text-white border-r border-slate-200 dark:border-[#1C2541] shrink-0 overflow-visible
+          ${isSidebarOpen ? 'w-72' : 'w-[72px]'}`}
       >
-        {/* Hover Toggle Button on Sidebar Border - Appears ONLY when user hovers the sidebar */}
+        {/* Hover Toggle Button on Sidebar Border - Positioned smoothly on the border line */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
           title={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
-          className="absolute -right-3.5 top-5 z-30 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA]"
+          className="absolute -right-3.5 top-6 z-30 w-7 h-7 rounded-full bg-white dark:bg-[#1C2541] border border-slate-200 dark:border-slate-700 shadow-md flex items-center justify-center text-slate-600 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#D1CA25] transition-all duration-300 opacity-0 group-hover:opacity-100 hover:scale-110 focus-visible:opacity-100 focus-visible:outline-[#3F56CA]"
         >
           {isSidebarOpen ? (
-            <ChevronLeft className="w-4 h-4 transition-transform" />
+            <ChevronLeft className="w-4 h-4 transition-transform duration-200" />
           ) : (
-            <ChevronRight className="w-4 h-4 transition-transform" />
+            <ChevronRight className="w-4 h-4 transition-transform duration-200" />
           )}
         </button>
+
+        {/* Inner Container with fixed w-72 so text never gets squeezed or clips mid-animation */}
+        <div className="w-72 flex flex-col h-full overflow-hidden">
 
         {/* Brand Header */}
         <div className="p-4 border-b border-slate-200 dark:border-white/10 flex items-center justify-between min-h-[64px]">
@@ -411,6 +415,7 @@ export default function Home() {
               <Settings className="w-4 h-4 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition shrink-0" />
             )}
           </div>
+        </div>
         </div>
       </aside>
 
