@@ -1,0 +1,323 @@
+const fs = require('fs');
+const path = require('path');
+
+const sourcesData = [
+  // ================= SOURCE 01: SCHOLARSHIPS (14 Pages) =================
+  {
+    id: "s1_p1_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 1,
+    section: "Basic Requirements and Application Process",
+    content: "SCHOLARSHIPS. Different types of tuition/token fee exemption, together with their descriptions and specific requirements (in addition to the basic requirements) are listed below. Basic Requirements: 1. Accomplished tuition / token fee exemption application form (this is send to your Umak email after applying through your OLEA account) 2. Recent 2x2 ID picture 3. No: Officially Dropped (OD), Unofficially Dropped (UD), or Incomplete (INC) remarks 4. Tuition / token fee for the semester being applied for is not paid yet."
+  },
+  {
+    id: "s1_p1_2",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 1,
+    section: "Application Process Steps and Processing Time",
+    content: "Application Process: Step 1: Log into your OLEA account. Step 2: After saving your class schedule, click the “Apply for tuitio /token fee exemption” button. Step 2.1: Choose the type of tuition / token fee exemption you are qualified to apply for, take note of the requirements, then click the “submit” button. Step 3: Login to your UMak account then check your inbox/spam folder for the email that contains your pre-filled tuition/token fee exemption application form link and the link where to submit your requirements online. Step 4: Click the link for submission of your requirements sent to your UMak email and fill-out and submit the Google form (note: all application requirements must be submitted online through the link provided in your email. Step 5: Wait for the confirmation. The application process takes one (1) to two (2) working days for those who have met the requirements. Check your UMak email regularly as updates regarding the application are sent to your UMak email. If there is a need for a follow-up for your application, please exercise courteous communication. Step 6: Proceed with your enrollment. For Undergraduate Students: Once your application is approved or disapproved, login to your OLEA account and access the scan-to-pay (“click here” button) to proceed with your enrollment. For Graduate Students: Wait for your Certificate of Recognition (COR) to be sent to your UMak email. For concerns regarding your COR, coordinate with the Information Technology Center (ICT). To cancel application: Login to your OLEA account, click “click this link” under the tuition / token fee exemption application status message and follow the process of cancelling your application."
+  },
+  {
+    id: "s1_p2_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 2,
+    section: "Incoming Freshman Grants & Makati City Ordinances",
+    content: "FOR INCOMING FRESHMAN. Full Entrance Token Exemption Grant: Awarded to both Makati and Non-Makati residents who have graduated with a Highest Honor Award (GWA within 98 to 100) in senior high school. (This is applicable only to incoming freshmen). Requirements in addition to basic requirements: 1. Incoming freshman 2. 1st and 2nd semester grade 12 senior high school card 3. Certificate of having a “highest honor” award in senior high school (GWA within 98-100). Partial Entrance Token Exemption Grant: Awarded to both Makati and Non-Makati residents who have graduated with a High Honor Award (GWA within 95 – 97) in senior high school. (This is applicable only to incoming freshmen). Requirements in addition to basic requirements: 1. Incoming freshman 2. 1st and 2nd semester grade 12 senior high school card 3. Certificate of having a “high honor” award in senior high school. Makati Barangay Chairman / Kagawad and Legitimate Dependents or Sangguniang Kabataan Chairman / Kagawad Scholarships: The granting of this tuition/token fee exemption is pursuant to Art. 203 (1) of the Implementing Rules and Regulations of the Local Government Code of 1991. Full tuition/token fee exemptions for graduate and undergraduate programs are granted. Requirements: 1. 1st and 2nd semester grade 12 card (for freshmen) or Report of Grades 2. Endorsement from the Department of Interior and Local Government Makati (DILG Makati); Continuing applicants need to submit this only once every academic year. Makati City Ordinance No. 2017-062 (for Makati Residents Ages 70 or above): This special study grant is pursuant to Makati City Ordinance No. 2017-063 and is open to the residents of Makati ages 70 or above, who are endorsed by the Senior Citizens’ Affair Office (OSCA) – City Government of Makati for the said grant. Full tuition/token fee exemptions for undergraduate and graduate programs are granted. Requirements: 1. At least seventy (70) years of age at the time of application 2. 1st and 2nd semester grade 12 senior high school card (for freshmen) or Report of Grades of the previous semester 3. Senior Citizen’s ID 4. Endorsement from the Office of the Senior Citizens’ Affair (OSCA) (for new applicants only)."
+  },
+  {
+    id: "s1_p3_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 3,
+    section: "PWD, Sister City, and UMak Employees Dependents",
+    content: "Persons with Disability R.A. 9442: This special study grant is pursuant to Presidential Decree 577 and is open to students who are dependents of military personnel who died or who were incapacitated in the line of duty. Full token fee exemptions for undergraduate programs are granted. Requirements: 1. 1st and 2nd semester grade 12 senior high school card (for freshmen) or Report of Grades from the previous semester 2. ID or certificate from the AFP that the applicant is a beneficiary. Sister City Scholar: This is a special grant for non-residents of Makati who wish to study and take up any UMak college program/degree under the Sisterhood program of the City Government of Makati. Full token fee exemptions for undergraduate programs are granted. Requirements: 1. 1st and 2nd semester grade 12 senior high school card (for freshmen) or Report of Grades from the previous semester 2. GWA of at least 2.00, with no grades lower than 3.00 in all academic courses 3. No failed, officially or unofficially dropped, and incomplete ratings 4. Endorsement from the International Relations Department (IRD) – Office of the Mayor. UMak Faculty and Non-Teaching Employees and their Dependents: The University awards this tuition/token fee exemption to improve the quality of teaching and services in UMak. Regular employees and casual employees with at least one (1) year of service may apply. Students in the undergraduate programs who are dependents of regular employees with at least one (1) year of service may apply. Full tuition/token fee exemptions for undergraduate and graduate programs are granted. Requirements in addition to basic requirements (dependents): 1. 1st and 2nd semester grade 12 senior high school card (for freshmen) or Report of Grades from the previous semester 2. Endorsement from the HRMO."
+  },
+  {
+    id: "s1_p4_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 4,
+    section: "Undergraduate Cultural & Performing Grants",
+    content: "FOR UNDERGRADUATES / COLLEGE STUDENTS. Band Members: Band Member Token Fee Exemption Grant is awarded to students who are members of the UMak Band as endorsed by the Center of Culture and the Arts (CCA). Full token fee exemption is granted. Requirements: 1. 1st and 2nd Semester Grade 12 Senior High School Card (for Freshmen) or Report of Grades of the previous semester 2. No Failed, Officially and Unofficially Dropped, and Incomplete ratings 3. Endorsement (list to be submitted by the Center for Culture & Arts (CCA)) 4. Has rendered significant contribution to the University/City of Makati. Chorale: Chorale Token Fee Exemption Grant is awarded to students who are members of the UMak Chorale as endorsed by the Center of Culture and the Arts (CCA). Full token fee exemption is granted. Requirements: 1. Report of Grades / Grade 12 card 2. No Failed, Dropped, Incomplete ratings 3. Endorsement by CCA 4. Has rendered significant contribution. Corps of Sponsor: Corps of Sponsors Token Fee Exemption Grant is awarded to students who are members of the UMak NROTC Corps of Sponsors as endorsed by the Center for NSTP. Full token fee exemption is granted. Dance Troupe: Dance Troupe Token Fee Exemption Grant is awarded to students who are members of the UMak Dance Troupe as endorsed by the Center of Culture and the Arts (CCA). Full token fee exemption is granted."
+  },
+  {
+    id: "s1_p5_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 5,
+    section: "Dean's Lister Full and Partial Grants",
+    content: "Dean’s Lister (Full): Dean’s Lister Full Token Fee Exemption Grant is awarded to both Makati and non-Makati residents who have obtained a GWA within 1.00 to 1.25, with no grades lower than 2.00 in all academic courses except in P.E. and NSTP, during the previous semester. The same applies if the last semester attended is the Summer Semester but the GWA obtained during that semester may have to be averaged with the GWA obtained during the Second Semester. This type of token fee exemption requires at least one (1) semester in UMak College’s undergraduate level. Requirements: 1. Must have enrolled under a College program in the University of Makati during the previous Semester 2. Report of Grades of the previous semester (please include the 2nd Semester grade if Summer Semester is the latest Semester attended) 3. GWA must be within 1.00 to 1.25, with no grades lower than 2.50 in P.E. and N.S.T.P. and no grades lower than 2.00 in all the other academic courses 4. Must have carried a full load as prescribed by his/her College during the previous Semester. Dean’s Lister (Partial): Dean’s Lister Partial Token Fee Exemption Grant is awarded to both Makati and non-Makati residents who have obtained a GWA within 1.26 to 1.75, with no grades lower than 2.00 in all academic courses except in P.E. and NSTP, during the previous semester. Requirements: GWA within 1.26 to 1.75, no grades lower than 2.50 in P.E. and N.S.T.P. and no grades lower than 2.00 in all other academic courses, full load prescribed."
+  },
+  {
+    id: "s1_p6_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 6,
+    section: "Displaced Needy Students from Marawi & Repetitions",
+    content: "Displaced Needy Students from Marawi: This special study grant is awarded to students displaced by the armed conflict in Marawi City. Full token fee exemptions for undergraduate programs are granted. Requirements: 1. Report of Grades of the previous semester (for continuing applicants) 2. Endorsement from the International Relations Department (IRD) – Office of the Mayor (for new applicants). Full Entrance Token Fee Exemption Grant: Full Entrance Token Fee Exemption Grant is awarded to both Makati and non-Makati residents who have graduated with a Highest Honor award (GWA within 98 to 100) in Senior High School. THIS IS APPLICABLE FOR INCOMING FRESHMEN ONLY. Partial Entrance Token Fee Exemption Grant: Full Entrance Token Fee Exemption Grant is awarded to both Makati and non-Makati residents who have graduated with a Highest Honor award (GWA within 98 to 100) in Senior High School. THIS IS APPLICABLE FOR INCOMING FRESHMEN ONLY. Requirements: GWA within 95-97."
+  },
+  {
+    id: "s1_p7_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 7,
+    section: "NROTC Cadet Officer and PEP Squad",
+    content: "NROTC Cadet Office: NROTC Cadet Officer Token Fee Exemption Grant is awarded to students who are officers of the UMak NROTC as endorsed by the Center for NSTP. Full token fee exemption is granted. Requirements: 1. 1st and 2nd Semester Grade 12 Senior High School Card (for Freshmen) or Report of Grades of the previous semester 2. No Failed, Officially and Unofficially Dropped, and Incomplete ratings 3. Endorsement (list to be submitted by the Center for National Service Training Program (CNSTP)) 4. Has rendered significant contribution to the University/City of Makati. PEP SQUAD: PEP Squad Token Fee Exemption Grant is awarded to students who are members of the UMak PEP Squad as endorsed by the Athletic Development Center (ADC). Full token fee exemption is granted."
+  },
+  {
+    id: "s1_p8_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 8,
+    section: "Persons with Disability R.A. 9442, Presidential Decree 577, Theater Artist",
+    content: "Persons with Disability R.A. 9442: The granting of this tuition/token fee exemption is pursuant to Sec. 32 (h) of the Implementing Rules and Regulations of the Republic Act No. 9442. Applicants must be residents of Makati and endorsed by the UMAK Center for Inclusive Education (CIE). Full token fee exemptions for undergraduate programs are granted. Requirements: 1. Report of Grades 2. P.W.D. ID 3. Endorsement (list to be submitted by the Center for Inclusive Education (CIE)). Presidential Decree No. 577: This special study grant is pursuant to Presidential Decree 577 and is open to students who are dependents of military personnel who died or were incapacitated in the line of duty. Full token fee exemptions for undergraduate programs are granted. Requirements: ID or certificate from the AFP that the applicant is a beneficiary. Theater Artist: This is a special grant for non-residents of Makati who wish to study and take up any UMak college program/degree under the Sisterhood Program of the City Government of Makati. Full token fee exemptions for undergraduate programs are granted. Requirements: GWA of at least 2.00, with no grades lower than 3.0 in all the academic courses, Endorsement from IRD – Office of the Mayor."
+  },
+  {
+    id: "s1_p9_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 9,
+    section: "USC Officers and Varsity Players",
+    content: "USC Officer (Full) (Executive Board Committee): USC Officer Full Token Fee Exemption Grant is awarded to students who are Executive Board Committee members of the University Student Council as endorsed by the Office of the Vice President for Student Services and Community Development. Requirements: Report of grades, no failed/dropped/INC, endorsement from OVPSSCD, significant contribution. USC Officer (Partial) (Executive Board Committee): USC Officer Partial Token Fee Exemption Grant is awarded to students who are Non-Executive Board Committee members of the University Student Council as endorsed by the Office of the Vice President for Student Services and Community Development. Varsity Player: Varsity Player Token Fee Exemption Grant is awarded to students who are members of the UMak varsity team as endorsed by the Athletic Development Center (ADC). Full token fee exemption is granted."
+  },
+  {
+    id: "s1_p10_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 10,
+    section: "Graduate Programs: Cooperating Teachers & Senior Citizens",
+    content: "FOR GRADUATES. 1. Cooperating Teachers Graduate Program: This is awarded to cooperating teachers and principals from participating schools for their significant contribution to the professional and personal growth of UMak student teachers, as stipulated in the Memorandum of Agreement signed between UMak-COE and Department of Education-Makati. Full tuition fee exemptions for graduate programs are granted. Requirements: Report of Grades of previous semester, Certificate of being a Cooperating Teacher. 2. Makati Barangay Chairman / Kagawad and Legitimate Dependents or Sangguniang Kabataan Chairman / Kagawad Scholarships: Full tuition/token fee exemptions for graduate and undergraduate programs are granted. 3. Makati City Ordinance No. 2017-062 (for Makati Residents Ages 70 or above): Full tuition/token fee exemptions for undergraduate and graduate programs are granted."
+  },
+  {
+    id: "s1_p11_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 11,
+    section: "Graduate Programs: Makati Teachers, Employees, and CCAPS Tier 1",
+    content: "4. Makati City Ordinance No. 2012-061 Rev. 3 (for Makati Public School Teachers and City Government of Makati Employees): This special study grant is pursuant to Makati City Ordinance No. 2012-061 Rev. 3 and is awarded to the City Government of Makati Employees and Makati Public School Teachers who have rendered at least three years of continuous service. Full tuition/token fee exemptions for undergraduate and graduate programs are granted. Requirements: Updated Service Record/Certificate of Employment with date of issuance and number of years in service (three (3) years in service required); Endorsement from City Personnel Officer / School Principal. 5. UMak Faculty and Non-Teaching Employees and their Dependents. 6. CCAPS Special Programs (Full): Unified Scholarship for UMak Employees Tier 1 (CCAPS Special Programs – Full) is awarded to permanent employees of UMak as determined by the UMak Human Resource Management Office. Full tuition/token fee exemption is granted. Requirements: Report of Grades, Very Satisfactory (VS) rating for two immediately preceding semesters, Endorsement from the HRMO."
+  },
+  {
+    id: "s1_p12_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 12,
+    section: "CCAPS Special Programs Tiers (75%, 50%, 25%, 15%)",
+    content: "7. CCAPS Special Programs (75%): Unified Scholarship for UMak Employees Tier 2 (CCAPS Special Programs – 75%) is awarded to bonafide fulltime-casual employees of UMak who rendered five (5) years or more of service as determined by the UMak Human Resource Management Office. Partial (75%) tuition/token fee exemption is granted. Requirements: Rendered five (5) years or more of service, VS rating, Endorsement from HRMO. 8. CCAPS Special Programs (50%): Tier 3 (50%) awarded to bonafide fulltime-casual employees who rendered three (3) years to less than five (5) years of service. 9. CCAPS Special Programs (25%): Tier 4 (25%) awarded to bonafide fulltime-casual employees who rendered two (2) years to less than three (3) years of service. 10. CCAPS Special Programs (15%): Listed in source text with Tier 4 requirements (2 to less than 3 years of service)."
+  },
+  {
+    id: "s1_p13_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 13,
+    section: "Frequently Asked Questions (FAQ)",
+    content: "FREQUENTLY ASKED QUESTIONS. 1. Who is automatically a scholar at UMak? All incoming undergraduate students are automatically granted an Academic Scholarship (100% tuition-free). No application is required. 2. What type of scholarships are available? Academic Scholarship – Automatic for all undergraduates. Achievement Scholarship – For outstanding students in arts, sports, leadership, or community service. Special Scholarship – For groups covered by laws, ordinances, or partnerships (e.g., Makati employees, PWDs, SK officials, dependents, senior citizens). Sponsored Scholarships – From government, private, and NGO partners (e.g., CHED, Rotary, Real Life Foundation). 3. What are the benefits? Full Scholarship – 100% tuition/token fee exemption. Partial Scholarship – 50% tuition/token fee exemption. Additional Benefits (depending on the sponsor): stipends, allowances, training opportunities. 4. How do I apply? Log in to OLEA (Online Enrollment and Assessment), Click “Apply for Tuition/Token Fee Exemption”, Select scholarship type and upload requirements, Wait for confirmation and proceed with enrollment. For sponsored scholarships, coordinate with the Center for Admission and Scholarship (CAS) or apply directly to the sponsor. 5. What are the requirements? Be officially enrolled at UMak, Carry full academic load (unless exempted), No failing grades or unofficially dropped subjects, Good disciplinary standing, Additional documents may be required depending on scholarship type. 6. Can my scholarship be revoked? Yes, a scholarship may be revoked if the student: i. Fails to meet grade requirement ii. Submit false documents or misrepresentation iii. Violates disciplinary rules iv. Withdraws or drops all subjects without proper notice."
+  },
+  {
+    id: "s1_p14_1",
+    source: "Source01.pdf",
+    documentTitle: "Scholarships",
+    page: 14,
+    section: "Contact for More Information",
+    content: "7. Where can I get more information? – contact the Center for Admission and Scholarships."
+  },
+
+  // ================= SOURCE 02: COLLEGE REQUIREMENTS (2 Pages) =================
+  {
+    id: "s2_p1_1",
+    source: "Source02.pdf",
+    documentTitle: "College Requirements",
+    page: 1,
+    section: "CCIS Offerings & BS Computer Science Requirements",
+    content: "COLLEGE REQUIREMENTS. College of Computing and Information Sciences (CCIS). Program offerings: 1. Bachelor of Science in Computer Science (Application Development Elective Track) 2. Bachelor of Science in Information Technology (Information and Network Security Elective Track) 3. Bachelor of Science in Information Systems 4. Diploma in Application Development 5. Diploma in Computer Network Administration. Program Requirements: 1. Bachelor of Science in Computer Science: A. UMak examination ratings: Low average to Excellent. B. GWA, subject grades, and senior high school track: 85% and above GWA; No grades lower than 85% in Mathematics; No grades lower than 83% in English; Preferably STEM or ICT track. C. Requirements for transferees/shifters: 2.00 (85% to 87%) GWA; No failing, officially or unofficially dropped, or incomplete grade in IT or Computing courses (subject for approval, max of 3). D. Requirements for 2nd coursers: TOR evaluation/validation; 2.00 (85% to 87%) or higher GWA."
+  },
+  {
+    id: "s2_p1_2",
+    source: "Source02.pdf",
+    documentTitle: "College Requirements",
+    page: 1,
+    section: "BS Information Technology and BS Information Systems Requirements",
+    content: "2. Bachelor of Science in Information Technology: A. UMak examination ratings: Low average to Excellent. B. GWA, subject grades, and senior high school track: 85% and above GWA; No grades lower than 85% in Mathematics; No grades lower than 83% in English; Preferably STEM or ICT track. C. Requirements for transferees/shifters: 2.00 (85% to 87%) GWA; No failing, officially or unofficially dropped, or incomplete grade in IT or Computing courses (subject for approval, max of 3). D. Requirements for 2nd coursers: TOR evaluation/validation; 2.00 (85% to 87%) or higher GWA. 3. Bachelor of Science in Information Systems: A. UMak examination ratings: Low average to Excellent. B. GWA, subject grades, and senior high school track: 85% and above GWA; No grades lower than 85% in Mathematics; No grades lower than 83% in English. C. Requirements for transferees/shifters: 2.00 (85% to 87%) GWA; No failing, officially or unofficially dropped, or incomplete grades in IT or Computing courses (subject for approval, max of 3). D. Requirements for 2nd coursers: TOR evaluation/validation; 2.00 (85% to 87%) GWA."
+  },
+  {
+    id: "s2_p2_1",
+    source: "Source02.pdf",
+    documentTitle: "College Requirements",
+    page: 2,
+    section: "Diploma Programs and List of Other Colleges Available",
+    content: "4. Diploma in Application Development: A. UMak examination ratings: Below average to Excellent. B. GWA, subject grades, and senior high school track: 80% and above GWA. C. Requirements for transferees/shifters: N/A. D. Requirements for 2nd coursers: N/A. 5. Diploma in Computer Network Administration: A. UMak examination rating: Below average to Excellent. B. GWA, subject grades, and senior high school track: 80% and above GWA. C. Requirements for transferees/shifters: N/A. D. Requirements for 2nd coursers: N/A. OTHER COLLEGES AVAILABLE: 1. College of Continuing, Advanced and Professional Studies (CCAPS) 2. Institute of Arts and Design (IAD) 3. College of Business Administration (CBA) 4. Institute of Accountancy (IOA) 5. College of Computing and Information Science (CCIS) 6. College of Human Kinetics (CHK) 7. College of Governance and Public Policy (CGPP) 8. Institute of Nursing (ION) 9. Institute of Imaging Health Sciences (IIHS) 10. College of Innovative Teachers Education (CITE) 11. College of Science (COS) 12. College of Tourism and Hospitality Management (CTHM) 13. Institute for Disaster and Emergency Management (IDEM) 14. College of Engineering and Technology (CET) 15. School of Law 16. College of Innovative Teachers Education - Higher School ng UMak."
+  },
+
+  // ================= SOURCE 03: CAMPUS MAP (6 Pages) =================
+  {
+    id: "s3_p1_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 1,
+    section: "Admin Building: Basement, Ground Floor, Mezzanine, Second Floor",
+    content: "CAMPUS MAP. ADMIN BUILDING. Basement: A. North Wing: University Chaplain; Center for Institutional Mission and Identity (CIMI); University Facilities Management Office (UFMO); Supply and Property Management Office (SPMO); Occupational Health and Safety Office (OHSO). B. South Wing: Cafeteria (UMak Food Hub); General Service Office (GSO): Housekeeping, Elevator Operations, Engineering, Transportation Management, Common Conference. Ground Floor: A. North Wing: Center for Quality and Management Development (CQMD); Center for Institutional and Global Affairs (CIGA); Universities Facilities Management Office (UFMO); Medical and Dental Clinic (MDC). B. South Wing: UMak Auditorium (formerly Mini Theater); OCH Function Rooms A-C; Accounting Office; Cash Office. Mezzanine: A. North Wing: Center for Archives and Information Governance (CAIG) (Formerly CDPRM); Innovation and Technology Support Office (ITSO). B. South Wing: Office of the University Registrar (OUR). Second Floor: A. North Wing: Budget Management Office (BMO); Office of the Vice President for Finance (OVPF); Center for Planning and Development (CPD); Human Resources Management Office (HRMO): Recruitment and Placement, Records and Monitoring, Compensation and Benefits. B. South Wing: Library Learning Commons (LLC); Center for Information Technology (CIT); Center for Technology-based Learning Hub (CTBL)."
+  },
+  {
+    id: "s3_p2_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 2,
+    section: "Admin Building: Third Floor, Fourth Floor, Fifth Floor, Sixth Floor",
+    content: "Third Floor: A. North Wing: Office of the President; Office of the Vice President for Academic Affairs. B. South Wing: College of Governance and Public Policy (CGPP); College of Computing and Information Sciences (CCIS); Institute of Accountancy and Finance (IAF) (Formerly IOA); College of Business Administration (CBA) (Formerly CBFS); Institute of Disaster and Emergency Management (IDEM); College of Human Kinetics (CHK). Fourth Floor: A. North Wing: Center for Linkages and Placement (CLP); Office of the University Secretary (OUSEC); Center for Alumni Affairs (CAA); Vice President for Administration (OVPA). B. South Wing: Institute of Imaging and Health Sciences (IIHS); Institute of Nursing (ION); Institute of Pharmacy (IOP); Institute of Arts and Design (IAD); College of Engineering and Technology (CET); College of Liberal Arts and Social Sciences (CLASS); College of Science (COS) (Formerly IOPsy); Vice President for Planning and Research (OVPPR); 4/F Faculty Area. Fifth Floor: A. North Wing: University Student Multimedia Organization (USMO); Grand Alumni Association of Makati Herons, Inc (GAA); University Student Council (USC); Center for Student Formation and Discipline (CSFD); Center for Student Organization and Activities (CSOA); Vice President for Student Services and Community Development (OVPSSCD). B. South Wing: Center for Technology Incubation and Enterprise Development (CTIED); Center for Integrated Communications (CIC); Common Conference; The Board Room; Lecture Rooms (A1 to A12) (A to D). Sixth Floor: A. North Wing: Media Center (RIMPORT Office); IAD Creatives and Communications Internship Office; Animation Lab 1 and 2; Editing Bay; Audio Recording Studio. B. South Wing: UMak Performing Arts Theater (UPAT) (Formerly Grand Theater); Dressing Rooms A and B."
+  },
+  {
+    id: "s3_p3_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 3,
+    section: "Sixth Floor Mezzanine, Academic Building 1, Academic Building 2",
+    content: "Sixth Floor Mezzanine Level: A. North Wing: Center for Culture and Arts (CCA). B. South Wing: Performing Arts Theater Balcony. ACADEMIC BUILDING 1: First Floor: University Facilities Management Office (UFMO). Second Floor: 240th NROTC Unit. Third Floor: Institute for Technical Education and Skills Training; Skills Laboratories. Fourth Floor: Heron’s Hostel: Suite Rooms, Dormitories, Laundry Area, Cafe. ACADEMIC BUILDING 2: First Floor: Computer Laboratory (101-103) (105) (109-110) (112); Psychology Laboratory (104); Center for Admissions and Scholarships (CAS) and UMak Scholars Society (106-108); Instructional Media Room (IMR) (111). Second Floor: Lecture Room (201-206); Guidance Office (205-207) (209) (211); Accounting Laboratory (208); Steno Laboratory (210); Business Simulation Laboratory (212). Third Floor: Lecture Room (301-302) (304) (306) (308-312); College of Innovative Teachers Education Office (CITE) (303) (305); Higher School ng UMak Registrar (307). Fourth Floor: Higher School ng UMak Laboratory (401) (403) (405); NROTC Office (402); Lecture Room (404) (406) (408) (409); Audio Visual Room (AVR); Institute for Social Development and Nation Building (ISDNB) (411)."
+  },
+  {
+    id: "s3_p4_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 4,
+    section: "Academic Building 3, Academic Bridgeway, UMak Stadium",
+    content: "ACADEMIC BUILDING 3: First Floor: Computer Laboratory (101-104); UMak Coop Office (108); Tagak Cafe (111); Kitchen Laboratories (109-112); Multi-Purpose Room (105-107). Second Floor: Lecture Room (201-206) (208) (210) (212); College of Business and Financial Sciences (CBFS) Simulation Room (207); College of Tourism and Hospitality Management (CTHM) Faculty Office (209); College of Tourism and Hospitality Management Dean’s Office (211). Third Floor: Lecture Room (301-312). Fourth Floor: Lecture Room (401-416). ACADEMIC BRIDGEWAY: First Floor: Open Area. Second Floor: Lecture room (201-202). Third Floor: Lecture Room (301-302). Fourth Floor: Lecture Room (401-402). UNIVERSITY OF MAKATI STADIUM: Oval: Guard House and Housekeeping."
+  },
+  {
+    id: "s3_p5_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 5,
+    section: "Health and Physical Science Building (HPSB): Ground to 10th Floor",
+    content: "HEALTH AND PHYSICAL SCIENCE BUILDING (HPSB): Ground Floor: Main Lobby; Parking Area. First level to Third level Parking: Parking Area. Fourth Floor: Building Management System Office (401-402); Parking Area. Fifth Floor: School of Law Dean’s Office; School of Law Library Learning Commons; Moot Court (504-505); Lecture Rooms (506) (508-512); Multimedia Room (507). Sixth Floor: Lecture Rooms (601-605) (607-614); Computer Laboratory (606); Skills Laboratory (615) (617); Student Center. Seventh Floor: Multimedia Room (701); Lecture Room (702-707); Simulated Hospital; Laboratories (708-709); Skills Laboratories (710) (712). Eighth Floor: Lecture Rooms (801-805) (807-814); Computer Laboratory (806); Student Center; Skills Laboratory (815) (817). Ninth Floor: Central Laboratory; Pharmacy Laboratory; Science Research Laboratory; Multimedia Room (901); Laboratories (902) (906-909); Simulated Hospital / Health Institutes Office; Center for Research Ethics (CRE) (formerly UMREC); Center for Research Management (formerly CUR); Center for Extension and Development (CED) (formerly CCED). Tenth Floor: Lecture Room (1001-1005) (1007-1011) (103-1017); Computer Laboratory (1006); Student Center; Multimedia Room (1012)."
+  },
+  {
+    id: "s3_p6_1",
+    source: "Source03.pdf",
+    documentTitle: "Campus Map",
+    page: 6,
+    section: "Health and Physical Science Building (HPSB): 11th and 12th Floor",
+    content: "Eleventh Floor: Fitness Gym; Aero Dance Studio; Dance Studio; Cafeteria; Clinic; Sauna; 1101 Multimedia Room. Twelfth Floor: Basketball Court; Volleyball Court; PE Department; Shower Room; Locker Room."
+  },
+
+  // ================= SOURCE 04: OFFICES (14 Pages) =================
+  {
+    id: "s4_p1_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 1,
+    section: "Office of the University President, Registrar, CIT",
+    content: "UMAK OFFICES. Office of the University President: University President: Professor ELYXZUR C. RAMOS, PhD, CESE. The President is also called “Prof. X”. Prof. X is a standing committee member on Higher Education of the Philippines Second Congressional Commission on Education (EDCOM 2), and a Commander of the Armed Forces of the Philippines under the Philippine Navy (Reserve). Offices and Centers under the Office of the University President: Legal Office; Center for Admissions and Scholarships (CAS); Office of the University Registrar (OUR); Center for Information Technology (CIT); University Publications Office (UPO); Center for Gender and Development (CGD). Office of the University Registrar: OUR provides services that are in support of student registration, retention up to graduation, maintenance and transmission of student academic records, issue certifications, uphold academic policies of the institution, and ensure compliance to policies, standards and guidelines by CHED among others. Services: Registration of students, Change of Matriculation, Student’s Evaluation for Retention and Graduation, Application for School Records, Certification, Authentication, and Verification, Withdrawal of Credentials and Enrollment, Leave of Absence (LOA), Request for School Credentials. University Registrar: Professor Danilo C. Sabado, DT. Staff: Nancy Mangahas - Assistant University Registrar; Joy Apuyan - Section Head, Academic Services; Eli Dolette - Section Head, Academic Records Management; Kaye Demata - Section Head, Administrative Services and Academic IT Systems. University Publication Office: Newly established office. Director: Asst. Prof. Florante Delos Santos, MA. Center for Information Technology: Director: Mr. Jonathan B. Canapi. Services: GMail Account Troubleshooting; Troubleshooting: DICT-UMak Tablet, Advisory for Windows issues; UMak WiFi."
+  },
+  {
+    id: "s4_p2_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 2,
+    section: "Vice President for Academic Affairs & Vice President for Administration",
+    content: "Office of the Vice President for Academic Affairs: Vice President: Professor Ederson DT. Tapia, DPA. The Office of the Vice President for Academic Affairs has administrative responsibility for all academic programs of the university. The Office has general supervision over all academic units and as such exercises authority over all deans, and directors of academic and quasi-academic centers. These responsibilities include assessment, accreditation, and review of academic programs. Offices, Centers, and Colleges under VPAA: College of Continuing Advanced and Professional Studies, College of Business and Financial Science, Institute of Accountancy, College of Computing and Information Sciences, College of Governance and Public Policy, Institute of Pharmacy, Institute of Nursing, Institute of Imaging Health Sciences, College For Human Kinetics, College of Innovative Teacher Education, School of Law, Institute for Social Development and Nation Building, Center for Technical Education and Skills Training, Center for Technology-Based Learning Hub Center, College of Liberal Arts and Sciences, Institute of Psychology, Institute of Arts and Design, Higher School ng UMak, Center for Internationalization and Global Affairs. Office of the Vice President for Administration: Vice President: Atty. Jewel D. Bulos, MBA. Offices under OVPA: General Services Offices, University Facilities Management Office, Supply and Property Management Office, Human Resource Management Office, Medical and Dental Clinic, Occupational Health and Safety Office."
+  },
+  {
+    id: "s4_p3_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 3,
+    section: "Human Resource Management Office (HRMO)",
+    content: "Human Resource Management Office: Office Head: Ms. Marilou D. Nuevo, MA. The Human Resource Management Office (HRMO) is the University of Makati’s primary arm in managing employee-related resources. The Office is further divided into four (4) sections: A. The Recruitment and Placement Section: Facilitates posting of job vacancies; Establishes comprehensive recruitment and selection of applicants; Maintains a database of qualified candidates for future reference (short – listing); Acts as Secretariat to the Personnel Selection Board; Facilitates processing of appointments; Provides for personnel placement to all offices of the University. B. The Records and Monitoring Section: Manages personnel information and documentation (201 File); Monitors personnel work attendance; Monitors leave credits; Computes the number of actual teaching hours of faculty every 15th and 30th of the month for their honorarium payroll; Issues Service Records, Certificate of Employment, etc. C. The Compensation and Benefits Section: Keeps track of all UMak payrolls; Provides assistance as regards all concerns pertaining to PHILHEALTH, PAG – IBIG, GSIS, etc.; Conducts visitation/assistance to employees for processing of employee benefits; Processes salaries, wages, tax deduction, etc.; Prepares and facilitates the processing of payroll. D. The Training and Development Section: Provide training programs to employees; Processing of Special Order; Spearhead University-wide activities such as Foundation Day, Sportsfest, Civil Service Month; Coordinate with the Civil Service Commission."
+  },
+  {
+    id: "s4_p4_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 4,
+    section: "General Service Office (GSO) & Medical and Dental Office",
+    content: "General Service Office: Office Head: Mr. Eleazar G. Santiago, MIR. The General Services Office (GSO) is a small team of administrators, engineers, building maintenance experts and drivers. The GSO team maintains facilities and equipment of five (5) buildings, a world class track oval and football field, with more than 200 rooms, and other areas all within the three (3) hectare campus. To facilitate movement of people and goods, the University has a fleet of nine (9) executive vehicles and larger transport vehicles like coasters and bus. Vehicle and driver monitoring, vehicle dispatch and maintenance is the responsibility of the GSO. Medical and Dental Office: Department Head: Alan Angelo N. Raymundo, MD. The Medical and Dental Clinic intends to provide basic health care for students and/or refer them to the specialist/primary health center if necessary. It provides first aid and triage for illnesses and injuries, direct services to students with special needs, and health counseling and education to students, staff, and parents. Services: Medical and Dental Service (Provide Free Medical and Dental Consultation & Services to Employees and Students); Health Awareness (Provide programs to promote health and prevent illness); First Aid (Provide First Aid For Medical Emergencies); Prescriptions (Prescription and Issuance of Medicines); Implement Policies (Formulate & implement policies & procedures for physical & mental health)."
+  },
+  {
+    id: "s4_p5_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 5,
+    section: "OHSO and University Facilities Management Office (UFMO)",
+    content: "Occupational Health and Safety Office: Office Head: Mr. Orlando P. Benedicto. The Occupational Health and Safety Office (OHSO) deals with all aspects of health and safety in the University and has a strong focus on the primary prevention of hazards. Services: Emergency Preparedness and Disaster Management Program (Emergency Drills for Earthquake, Fire and Bomb Threat, DRRM Seminars, Skills Training); Health Safety (Maintain Safe/Healthy Workplace, Food Safety Monitoring); Facility Safety (Hazard Identification, waste disposal); Security (In-charge of Private Security Contract). University Facilities Management Office: Office Head: Engr. Roque C. Adarna III. The office was originally part of the Supply and Property Management Office (SPMO) designated as the Property Reservation Unit (PRU). In 2010, the UMak Oval which has a full-size football field, running track, grandstand and bleachers with a 3,800 seating capacity was opened. On July 15, 2021, the Transportation Service Unit was transferred to the General Services Office while the specialized laboratories were integrated and changed the name to University Facilities Management Office. Functions: Handle reservation for use of facilities; Monitor usage and maintenance; Formulate strategies to enhance revenue from use of facilities; Monitor billing and payments; Provide for employee wellness through Fitness Gym; Handle operations of UMak Hostel."
+  },
+  {
+    id: "s4_p6_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 6,
+    section: "UFMO Key Performance Indicators & SPMO",
+    content: "Key Performance Indicators of UFMO: Prompt and Accurate Reservation of Facilities for Insiders; Prompt and Accurate Reservation of Facilities for Outsiders; Prompt and Effective Accommodation to Hostel Facilities; Prompt and Effective Accommodation to the University Fitness Gym; Standard laboratories which are available to use by students and stakeholders. Supply and Property Management Office: Office Head: Ms. Jennifer A. Odiña. This office is in charge of Procuring, Receiving, Distributing, Warehousing and keeping of records of Inventory and Disposal of University Supplies, Materials, Property, Plant and Equipment. Subdivided into three (3) sections namely the Procurement Section, Supply and Reproduction Section, and Property and Disposal Management Section."
+  },
+  {
+    id: "s4_p7_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 7,
+    section: "Vice President for Finance, Accounting Office, Budget Management Office",
+    content: "Office of the Vice President for Finance: Vice President: Engr. Luke Ivan B. Moro, DBac. Offices under OVPF: Accounting Office, Budget Management Office, Cash Office. Accounting Office: Office Head: Diana Rose R. Simangan, CPA. Accounting Office is in charge of analyzing, recording, classifying, summarizing and communicating all transactions involving the receipt and disposition of government funds and property. Functions: Prepares financial reports (Token Fee Disposition, Collection Report, Subsidiary Ledger of Student’s Accounts Receivable, Summary of Outstanding Balances, Statement of Account, Billing Statement for Use of Facilities, Cash Advances for Student Organizations); Records in Cash Receipt and Disbursement Book. Budget Management Office: The Budget Management Office is responsible for the appropriation of funds to various offices of the University. Functions: Budget Preparation, Budget Execution, Budget Accountability and Internal Audit."
+  },
+  {
+    id: "s4_p8_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 8,
+    section: "Cash Office & VP for Planning and Research",
+    content: "Cash Office: Office Head: Ms. Angelita C. Benedicto. The Cash Office is in charge of collecting, accounting, disbursing and safekeeping of government funds and is subdivided into two units the Collecting Unit and Disbursing Unit. Office of the Vice President for Planning and Research: Vice President: Maria Fay Nenette Cariaga, RPh, PhDEM. Offices under OVPPR: Center for Quality Management and Development (Director: Assoc. Prof. Henry G. Magat); Center for Planning and Development (Director: Asst. Prof. John David L. Ayson, MAIED); Library Learning Commons; Center for Research Management; Center Research Ethics; Center Extension and Development (Director: Vincent C. Barcelona, MA Philo); Center for Technology Incubation and Enterprise Development."
+  },
+  {
+    id: "s4_p9_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 9,
+    section: "Research Ethics, Incubation, Library, and VP for Student Services",
+    content: "Center for Research Ethics: Director: Margaret May A. Ga, RN, EdD. Independent decisions regarding review, approval, and implementation of research protocols. Center for Technology Incubation and Enterprise Development: Director: Associate Professor MATEO D. MACALAGUING JR., LPT,EdD, PD-SML. Library Learning Commons: Director: Mr. Melmar G. Fresnido. Office of the Vice President for Student Services and Community Development: Vice President: Mr. Virgilio B. Tabbu, Ma. Offices under OVPSSCD: CAD, CCA, CECD, CGCS, CSFD, CSOA. Center for Athletic Development: Director: Mr. Dominador Lera, Jr., MPES."
+  },
+  {
+    id: "s4_p10_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 10,
+    section: "CCA, Guidance and Counseling, Student Formation & Discipline",
+    content: "Center for Culture and the Arts: Director: Professor Wovi W. Villanueva. Ensembles: Collective Arts of Students and Thespians (CAST), Cultura Performing Arts Guild, UMak Jammers, UMak Chorale, UMak Dance Extreme (UDX), UMak SigLahi, UMak Tunog Kawayan, UMak Technical Production and Creatives. Center for Guidance and Counseling Services: Director: Ms. Gichelle Hanna C. Roxas, RGC, RPm. Center for Student Formation and Discipline: Director: Dr. Felix B. Cordero. In charge of enforcement of student discipline policies and student code of conduct."
+  },
+  {
+    id: "s4_p11_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 11,
+    section: "CSOA, University Secretary, Center for Alumni Affairs",
+    content: "Center for Student Organizations and Activities: Director: Ms. KATRISHA FAYE G. PINGOL. Responsible for all Student Affairs, accredits student organizations. Office of the University Secretary: Director: Ms. Juvy Bibonia Hermosura, DPA. Provides secretarial work to Board of Regents, University Council, and Management Committee. Center for Alumni Affairs: Director: Mr. Kenneth V. Panes. In partnership with Grand Alumni Association of Makati City, Herons, Inc. (UMakGAA)."
+  },
+  {
+    id: "s4_p12_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 12,
+    section: "Center for Archives and Information Governance",
+    content: "Center for Archives and Information Governance: Director: Assistant Professor PIO S. JAGURIN, MBA, J.D. Functions: Document Digitization, Retrieval of Documents, Archiving of Documents, Provision of Data Privacy, Protection, and Records Management Services, Awareness and Compliance Monitoring, Provision of Policy Guidelines, Handling Inquiries."
+  },
+  {
+    id: "s4_p13_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 13,
+    section: "Integrated Communications & Center for Linkages and Placement",
+    content: "Center for Integrated Communications: Director: Mr. Steve R. Villacorta. Center for Linkages and Placement: Director: Ms. Cynthia Margaretta Rabago José. CLP (formerly CILP) paves the way for partnerships all over the globe. Functions: Linkages and Partnerships (Facebook Page https://www.facebook.com/UMakCILP); Student Internships/On-The-Job Training (Internship/OJT Orientation, Job and Training Referrals, Deployment, Monitoring, Clearance); Career Planning and Development (Career and Employment Planning Conference, Job Skills Training)."
+  },
+  {
+    id: "s4_p14_1",
+    source: "Source04.pdf",
+    documentTitle: "Offices",
+    page: 14,
+    section: "Placement and Employment Assistance",
+    content: "Placement and Employment Assistance: The center helps employment or internship seeking students by linking them with reputable employer or intern seeking industry partners and other related employment agencies. Projects and activities include the yearly Mega Job Fair, Government Internship Program, Special Program for Employment of Students, and In-Campus Training. The center also regularly puts out Job and Internship Vacancy Posts on the CILP office bulletin board or Facebook Page."
+  }
+];
+
+fs.writeFileSync(
+  path.join(__dirname, '..', 'data', 'sources.json'),
+  JSON.stringify(sourcesData, null, 2),
+  'utf-8'
+);
+console.log(`Successfully generated data/sources.json with ${sourcesData.length} indexed chunks.`);
