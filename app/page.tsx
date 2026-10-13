@@ -21,7 +21,8 @@ import {
   Menu, 
   X,
   HelpCircle,
-  ExternalLink
+  Sun,
+  Moon
 } from 'lucide-react';
 import { ChatResponse, Citation } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
@@ -80,6 +81,7 @@ export default function Home() {
   const [activeSessionId, setActiveSessionId] = useState<string>('1');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -95,6 +97,27 @@ export default function Home() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Initialize theme from localStorage or system preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('umak_theme') as 'light' | 'dark' | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initial = prefersDark ? 'dark' : 'light';
+      setTheme(initial);
+      document.documentElement.classList.toggle('dark', prefersDark);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('umak_theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -199,26 +222,26 @@ export default function Home() {
   );
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 text-slate-800 font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-slate-50 dark:bg-[#090E1A] text-slate-900 dark:text-slate-100 font-sans overflow-hidden transition-colors duration-200">
       {/* Mobile Drawer Backdrop */}
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-2xs transition-opacity"
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-2xs transition-opacity"
           aria-hidden="true"
         />
       )}
 
-      {/* 1. SIDEBAR: Sleek Midnight Navy (#0B132B / #0F172A) & Gold Yellow (#D1CA25) */}
+      {/* 1. SIDEBAR: Sleek Midnight Navy (#0B132B / #060B18) & Gold Yellow (#D1CA25) */}
       <aside 
-        className={`fixed md:static inset-y-0 left-0 z-50 w-72 flex flex-col bg-[#0B132B] text-white border-r border-[#1C2541] transition-transform duration-200 ease-in-out ${
+        className={`fixed md:static inset-y-0 left-0 z-50 w-72 flex flex-col bg-[#0B132B] dark:bg-[#060B18] text-white border-r border-[#1C2541] dark:border-slate-800 transition-transform duration-200 ease-in-out ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {/* Brand Header */}
         <div className="p-4 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1C2541] to-[#283991] flex items-center justify-center font-black text-[#D1CA25] text-lg shadow-md border-2 border-[#D1CA25]/80">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1C2541] to-[#3F56CA] flex items-center justify-center font-black text-[#D1CA25] text-lg shadow-md border-2 border-[#D1CA25]/80">
               TAK
             </div>
             <div>
@@ -239,7 +262,7 @@ export default function Home() {
         <div className="p-3 space-y-2">
           <button
             onClick={handleNewChat}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1C2541] hover:bg-[#283991] text-white font-semibold text-xs shadow-xs transition border border-white/10 group focus-visible:outline-[#D1CA25]"
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#1C2541] hover:bg-[#3F56CA] text-white font-semibold text-xs shadow-xs transition border border-white/10 group focus-visible:outline-[#D1CA25]"
           >
             <span className="flex items-center gap-2">
               <Plus className="w-4 h-4 text-[#D1CA25] group-hover:rotate-90 transition-transform" />
@@ -312,15 +335,35 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-3 border-t border-white/10 bg-[#070D1E] space-y-2">
+        {/* Sidebar Footer with Theme Toggle */}
+        <div className="p-3 border-t border-white/10 bg-[#070D1E] dark:bg-[#040710] space-y-2">
+          {/* Theme Switcher Button */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Toggle Theme"
+            className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-[#1C2541]/50 hover:bg-[#1C2541] text-xs text-slate-300 hover:text-white transition border border-white/10"
+          >
+            <span className="flex items-center gap-2">
+              {theme === 'dark' ? (
+                <Moon className="w-3.5 h-3.5 text-[#21ADE3]" />
+              ) : (
+                <Sun className="w-3.5 h-3.5 text-[#D1CA25]" />
+              )}
+              <span>Theme: {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+            </span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/40 text-slate-400">
+              {theme === 'dark' ? 'Dark' : 'Light'}
+            </span>
+          </button>
+
           <div className="flex items-center gap-2 px-2 py-1 text-slate-300 text-xs">
             <ShieldCheck className="w-4 h-4 text-[#D1CA25]" />
             <span className="text-[11px] font-medium">Zero Hallucination Grounding</span>
           </div>
+
           <div className="flex items-center justify-between pt-2 border-t border-white/10 px-2">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#283991] to-[#1C2541] text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#D1CA25]/60">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#3F56CA] to-[#1C2541] text-[#D1CA25] font-bold flex items-center justify-center text-xs border border-[#D1CA25]/60">
                 UM
               </div>
               <div className="text-left">
@@ -334,30 +377,39 @@ export default function Home() {
       </aside>
 
       {/* 2. MAIN WORKSPACE */}
-      <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#f8fafc]">
+      <section className="flex-1 flex flex-col h-screen min-w-0 bg-[#f8fafc] dark:bg-[#090E1A] transition-colors duration-200">
         {/* Top Header */}
-        <header className="h-16 px-4 md:px-8 bg-white border-b border-slate-200 flex items-center justify-between shadow-2xs">
+        <header className="h-16 px-4 md:px-8 bg-white dark:bg-[#111827] border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-2xs transition-colors duration-200">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setIsSidebarOpen(true)}
               aria-label="Open sidebar menu"
-              className="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 focus-visible:outline-[#283991]"
+              className="md:hidden p-2 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus-visible:outline-[#3F56CA]"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-bold text-slate-900 text-base md:text-lg">UMak Knowledge Base</h1>
-                <span className="bg-[#E9ECF8] text-[#283991] border border-[#283991]/20 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                <h1 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">UMak Knowledge Base</h1>
+                <span className="bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#21ADE3] border border-[#3F56CA]/20 text-[10px] font-bold px-2 py-0.5 rounded-full">
                   Verified RAG
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500">Exclusively referencing Source01 to Source04</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Exclusively referencing Source01 to Source04</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-xl border border-slate-200 text-xs font-medium text-slate-700">
+          <div className="flex items-center gap-3">
+            {/* Quick Theme Toggle for Mobile/Header */}
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-[#D1CA25]" /> : <Moon className="w-4 h-4 text-[#3F56CA]" />}
+            </button>
+
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Grounded Generation Active</span>
             </div>
@@ -370,7 +422,7 @@ export default function Home() {
           {errorBanner && (
             <div 
               role="alert"
-              className="bg-[#FDE8E9] border border-[#EC202B]/30 text-[#EC202B] px-4 py-3 rounded-xl flex items-center gap-3 text-xs shadow-2xs animate-in fade-in"
+              className="bg-[#FDE8E9] dark:bg-red-950/40 border border-[#EC202B]/40 text-[#EC202B] px-4 py-3 rounded-xl flex items-center gap-3 text-xs shadow-2xs animate-in fade-in"
             >
               <AlertOctagon className="w-4 h-4 text-[#EC202B] shrink-0" />
               <p className="flex-1 font-semibold">{errorBanner}</p>
@@ -390,18 +442,18 @@ export default function Home() {
               key={msg.id} 
               className={`flex gap-3.5 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              {/* Bot Avatar with Official Blue & Yellow */}
+              {/* Bot Avatar with Revised Primary Blue #3F56CA & Yellow #D1CA25 */}
               {msg.sender === 'assistant' && (
-                <div className="w-9 h-9 rounded-xl bg-[#283991] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]">
-                  U
+                <div className="w-9 h-9 rounded-xl bg-[#3F56CA] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]/80">
+                  TAK
                 </div>
               )}
 
               {/* Message Content */}
               <div className="max-w-[85%] md:max-w-[75%] space-y-1.5">
                 {/* Meta info */}
-                <div className={`flex items-center gap-2 text-[11px] ${msg.sender === 'user' ? 'justify-end text-slate-400' : 'text-slate-500'}`}>
-                  <span className="font-semibold text-slate-700">
+                <div className={`flex items-center gap-2 text-[11px] ${msg.sender === 'user' ? 'justify-end text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {msg.sender === 'user' ? 'You' : 'TAGA-asK AI'}
                   </span>
                   <span>•</span>
@@ -412,28 +464,28 @@ export default function Home() {
                 <div
                   className={`p-4 rounded-2xl text-[15px] leading-relaxed shadow-2xs ${
                     msg.sender === 'user'
-                      ? 'bg-[#283991] text-white rounded-tr-none'
-                      : 'bg-white text-slate-900 border border-slate-200/90 rounded-tl-none shadow-xs'
+                      ? 'bg-[#3F56CA] text-white rounded-tr-none'
+                      : 'bg-white dark:bg-[#111827] text-slate-900 dark:text-slate-100 border border-slate-200/90 dark:border-slate-800 rounded-tl-none shadow-xs'
                   }`}
                 >
                   {/* Assistant Status Badges */}
                   {msg.sender === 'assistant' && msg.data && (
                     <div className="mb-3 flex flex-wrap items-center gap-2">
                       {msg.data.conflict && (
-                        <span className="inline-flex items-center gap-1.5 bg-[#FFFDE0] text-[#7A7400] border border-[#D1CA25] px-2.5 py-1 rounded-lg text-xs font-semibold">
+                        <span className="inline-flex items-center gap-1.5 bg-[#FFFDE0] dark:bg-yellow-950/40 text-[#7A7400] dark:text-[#D1CA25] border border-[#D1CA25] px-2.5 py-1 rounded-lg text-xs font-semibold">
                           <AlertTriangle className="w-3.5 h-3.5 text-[#D1CA25]" />
                           Source Conflict Flagged
                         </span>
                       )}
 
                       {!msg.data.in_sources ? (
-                        <span className="inline-flex items-center gap-1.5 bg-[#FDE8E9] text-[#EC202B] border border-[#EC202B]/30 px-2.5 py-1 rounded-lg text-xs font-semibold">
+                        <span className="inline-flex items-center gap-1.5 bg-[#FDE8E9] dark:bg-red-950/40 text-[#EC202B] border border-[#EC202B]/40 px-2.5 py-1 rounded-lg text-xs font-semibold">
                           <AlertOctagon className="w-3.5 h-3.5 text-[#EC202B]" />
                           Information Not Found in Sources
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-300 px-2.5 py-1 rounded-lg text-xs font-semibold">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span className="inline-flex items-center gap-1.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 px-2.5 py-1 rounded-lg text-xs font-semibold">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                           Strictly Grounded & Verified
                         </span>
                       )}
@@ -443,10 +495,10 @@ export default function Home() {
                   {/* Message Text */}
                   <div className="whitespace-pre-wrap">{msg.text}</div>
 
-                  {/* Citations Box with Accent Cyan (#21ADE3) & Yellow icons */}
+                  {/* Citations Box with Accent Cyan (#21ADE3) */}
                   {msg.data?.citations && msg.data.citations.length > 0 && (
-                    <div className="mt-4 pt-3 border-t border-slate-100">
-                      <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">
                         Official Citations (Click to inspect exact quote):
                       </span>
                       <div className="flex flex-wrap gap-2">
@@ -454,7 +506,7 @@ export default function Home() {
                           <button
                             key={i}
                             onClick={() => setActiveCitation(c)}
-                            className="inline-flex items-center gap-1.5 bg-[#E9ECF8] hover:bg-[#d8def2] border border-[#283991]/30 text-[#283991] text-xs px-3 py-1.5 rounded-lg font-semibold transition group shadow-2xs focus-visible:outline-[#21ADE3]"
+                            className="inline-flex items-center gap-1.5 bg-[#EEF2FC] dark:bg-[#1C2541] hover:bg-[#d8e0f8] dark:hover:bg-[#253358] border border-[#3F56CA]/30 text-[#3F56CA] dark:text-[#21ADE3] text-xs px-3 py-1.5 rounded-lg font-semibold transition group shadow-2xs focus-visible:outline-[#21ADE3]"
                           >
                             <BookOpen className="w-3.5 h-3.5 text-[#21ADE3] group-hover:scale-110 transition" />
                             <span>{c.source} · Page {c.page}</span>
@@ -470,7 +522,7 @@ export default function Home() {
                   <div className="flex items-center gap-2 pt-0.5 text-slate-400">
                     <button 
                       onClick={() => handleCopy(msg.text, msg.id)}
-                      className="p-1.5 hover:text-slate-700 hover:bg-slate-200/60 rounded-md transition flex items-center gap-1 text-[11px]"
+                      className="p-1.5 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 rounded-md transition flex items-center gap-1 text-[11px]"
                     >
                       <Copy className="w-3.5 h-3.5" />
                       {copiedId === msg.id ? <span className="text-emerald-600 font-semibold">Copied!</span> : <span>Copy</span>}
@@ -481,7 +533,7 @@ export default function Home() {
 
               {/* User Avatar */}
               {msg.sender === 'user' && (
-                <div className="w-9 h-9 rounded-xl bg-slate-200 text-slate-700 font-bold flex items-center justify-center text-sm shadow-2xs shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold flex items-center justify-center text-sm shadow-2xs shrink-0">
                   You
                 </div>
               )}
@@ -491,12 +543,12 @@ export default function Home() {
           {/* Loading Indicator */}
           {isLoading && (
             <div className="flex gap-3.5 items-start">
-              <div className="w-9 h-9 rounded-xl bg-[#283991] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]">
-                U
+              <div className="w-9 h-9 rounded-xl bg-[#3F56CA] text-[#D1CA25] font-black flex items-center justify-center text-sm shadow-xs shrink-0 border border-[#D1CA25]/80">
+                TAK
               </div>
-              <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 shadow-2xs flex items-center gap-3">
-                <Loader2 className="w-5 h-5 text-[#283991] animate-spin" />
-                <span className="text-xs font-medium text-slate-600">
+              <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl rounded-tl-none p-4 shadow-2xs flex items-center gap-3">
+                <Loader2 className="w-5 h-5 text-[#3F56CA] animate-spin" />
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                   Retrieving official PDF passages and verifying citations...
                 </span>
               </div>
@@ -509,7 +561,7 @@ export default function Home() {
         {/* Suggested Prompt Chips */}
         {messages.length <= 2 && (
           <div className="max-w-4xl w-full mx-auto px-4 md:px-8 mb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
+            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">
               Suggested Questions (Grounded in PDFs):
             </span>
             <div className="flex flex-wrap gap-2">
@@ -517,9 +569,9 @@ export default function Home() {
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(p.query)}
-                  className="inline-flex items-center gap-2 bg-white hover:bg-[#E9ECF8] border border-slate-200 text-slate-700 hover:text-[#283991] text-xs px-3 py-2 rounded-xl transition shadow-2xs font-medium focus-visible:outline-[#21ADE3]"
+                  className="inline-flex items-center gap-2 bg-white dark:bg-[#111827] hover:bg-[#EEF2FC] dark:hover:bg-[#1C2541] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#21ADE3] text-xs px-3 py-2 rounded-xl transition shadow-2xs font-medium focus-visible:outline-[#21ADE3]"
                 >
-                  <p.icon className="w-3.5 h-3.5 text-[#283991]" />
+                  <p.icon className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#21ADE3]" />
                   <span>{p.label}</span>
                 </button>
               ))}
@@ -528,9 +580,9 @@ export default function Home() {
         )}
 
         {/* Composer Section */}
-        <footer className="p-4 md:p-6 bg-white border-t border-slate-200">
+        <footer className="p-4 md:p-6 bg-white dark:bg-[#111827] border-t border-slate-200 dark:border-slate-800 transition-colors duration-200">
           <div className="max-w-4xl mx-auto space-y-2">
-            <div className="border border-slate-300 rounded-2xl bg-white shadow-2xs focus-within:border-[#283991] focus-within:ring-2 focus-within:ring-[#283991]/20 transition p-3">
+            <div className="border border-slate-300 dark:border-slate-700 rounded-2xl bg-white dark:bg-[#090E1A] shadow-2xs focus-within:border-[#3F56CA] focus-within:ring-2 focus-within:ring-[#3F56CA]/20 transition p-3">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -544,12 +596,12 @@ export default function Home() {
                 maxLength={500}
                 rows={2}
                 disabled={isLoading}
-                className="w-full bg-transparent resize-none border-0 focus:outline-hidden text-sm text-slate-800 placeholder-slate-400"
+                className="w-full bg-transparent resize-none border-0 focus:outline-hidden text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400"
               />
 
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2 text-slate-400">
-                  <span className="text-[11px] font-mono text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
                     {input.length}/500 chars
                   </span>
                 </div>
@@ -559,7 +611,7 @@ export default function Home() {
                     type="button"
                     onClick={() => handleSendMessage()}
                     disabled={!input.trim() || isLoading}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#283991] hover:bg-[#1C2866] text-white rounded-xl font-semibold text-xs shadow-xs disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition focus-visible:outline-[#D1CA25]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#3F56CA] hover:bg-[#2B3C8E] text-white rounded-xl font-semibold text-xs shadow-xs disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed transition focus-visible:outline-[#D1CA25]"
                   >
                     <span>Send</span>
                     <Send className="w-3.5 h-3.5" />
@@ -568,7 +620,7 @@ export default function Home() {
               </div>
             </div>
 
-            <p className="text-center text-[11px] text-slate-500">
+            <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">
               TAGA-asK AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
             </p>
           </div>
