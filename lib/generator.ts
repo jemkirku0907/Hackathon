@@ -400,8 +400,18 @@ Respond with JSON:`;
 
     const result = await model.generateContent(prompt);
     const rawText = result.response.text();
-    const cleanJson = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-    const parsed = JSON.parse(cleanJson);
+    let parsed: any;
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+      parsed = JSON.parse(jsonStr);
+    } catch {
+      return formatFallbackAnswer(query, retrievedChunks);
+    }
+
+    if (!parsed || typeof parsed.answer !== 'string') {
+      return formatFallbackAnswer(query, retrievedChunks);
+    }
 
     // Verify citations server-side
     let verifiedCitations: Citation[] = [];
