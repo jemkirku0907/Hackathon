@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     if (!session) {
       return NextResponse.json(
         {
-          answer: 'Access denied. You must be logged in with a valid @umak.edu.ph student account to use TAGA-ask AI.',
+          answer: 'Access denied. You must be logged in with a valid @umak.edu.ph student account to use TAGA-asK AI.',
           in_sources: false,
           conflict: false,
           citations: [],
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
     if (retrievedChunks.length === 0) {
       return NextResponse.json(
         {
-          answer: "I couldn't find information about that topic in the four official UMak documents available to TAGA-ask AI (Source01: Scholarships, Source02: College Requirements, Source03: Campus Map, Source04: Offices).",
+          answer: "I couldn't verify that information using the available official UMak sources (Source01.pdf–Source04.pdf).",
           in_sources: false,
           conflict: false,
           citations: [],

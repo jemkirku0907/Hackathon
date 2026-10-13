@@ -71,7 +71,7 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
             <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1.5 shadow-md">
               <Image 
                 src="/taga-ask-logo-light.png" 
-                alt="TAGA-ask AI" 
+                alt="TAGA-asK AI" 
                 width={40} 
                 height={40} 
                 className="object-contain" 

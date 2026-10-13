@@ -100,16 +100,38 @@ export function classifyIntent(query: string): QueryIntent {
 
 /**
  * Discovers if the query is strictly within supported domain scope.
+ * Prevents non-UMak external questions (e.g. US President, external countries/entities)
+ * from triggering false matches based on coincidental keyword overlap.
  */
 export function isQueryInScope(query: string): boolean {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
 
-  // Explicit out-of-scope queries (e.g. general knowledge, external entities)
+  // 1. Explicit non-UMak external leaders & countries (e.g. US President, POTUS, etc.)
+  const externalLeadershipPatterns = [
+    'united states', 'u.s.', 'usa', 'us president', 'potus', 'white house',
+    'philippines', 'bongbong', 'marcos', 'duterte', 'biden', 'trump', 'obama',
+    'france', 'macron', 'russia', 'putin', 'china', 'xi jinping', 'uk', 'prime minister'
+  ];
+  if (externalLeadershipPatterns.some(pat => q.includes(pat))) {
+    return false;
+  }
+
+  // 2. Generic non-academic / world trivia keywords
   const outOfScopeKeywords = [
-    'weather in tokyo', 'president of france', 'recipe', 'write a poem',
-    'python code', 'bitcoin', 'nba finals', 'college of medicine in 2030'
+    'weather in', 'forecast', 'recipe', 'write a poem', 'write an essay',
+    'python code', 'javascript code', 'write code', 'bitcoin', 'crypto',
+    'nba finals', 'world cup', 'capital of', 'tallest mountain',
+    'college of medicine in 2030', 'tuition fee for the college of medicine'
   ];
   if (outOfScopeKeywords.some(kw => q.includes(kw))) {
+    return false;
+  }
+
+  // 3. Other universities
+  const otherInstitutions = [
+    'ateneo', 'de la salle', 'dlsu', 'ust', 'university of the philippines', 'up diliman', 'harvard', 'mit', 'stanford'
+  ];
+  if (otherInstitutions.some(inst => q.includes(inst))) {
     return false;
   }
 

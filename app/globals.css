@@ -64,3 +64,23 @@ body {
   outline: 2px solid var(--color-brand-blue);
   outline-offset: 2px;
 }
+
+/* Prevent inner outline / double-border artifacts in custom textarea and text inputs */
+textarea,
+input[type="text"] {
+  outline: none !important;
+}
+
+textarea:focus-visible,
+input[type="text"]:focus-visible {
+  outline: none !important;
+}
+
+/* Horizontal scrollbar utility for mobile carousel chips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

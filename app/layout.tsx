@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'TAGA-ask AI - UMak Knowledge Hub',
+  title: 'TAGA-asK AI - UMak Knowledge Hub',
   description: 'Verified AI knowledge assistant for University of Makati students grounded strictly in official university documents.',
   icons: {
     icon: [

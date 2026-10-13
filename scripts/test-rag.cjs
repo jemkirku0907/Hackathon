@@ -86,10 +86,20 @@ function classifyIntent(query) {
 }
 
 function isQueryInScope(query) {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
+  const externalLeadershipPatterns = [
+    'united states', 'u.s.', 'usa', 'us president', 'potus', 'white house',
+    'philippines', 'bongbong', 'marcos', 'duterte', 'biden', 'trump', 'obama',
+    'france', 'macron', 'russia', 'putin', 'china', 'xi jinping', 'uk', 'prime minister'
+  ];
+  if (externalLeadershipPatterns.some(pat => q.includes(pat))) {
+    return false;
+  }
   const outOfScopeKeywords = [
-    'weather in tokyo', 'president of france', 'recipe', 'write a poem',
-    'python code', 'bitcoin', 'nba finals', 'college of medicine in 2030'
+    'weather in', 'forecast', 'recipe', 'write a poem', 'write an essay',
+    'python code', 'javascript code', 'write code', 'bitcoin', 'crypto',
+    'nba finals', 'world cup', 'capital of', 'tallest mountain',
+    'college of medicine in 2030', 'tuition fee for the college of medicine'
   ];
   if (outOfScopeKeywords.some(kw => q.includes(kw))) {
     return false;
@@ -147,7 +157,7 @@ function search(query, maxResults = 4) {
     .map(x => x.chunk);
 }
 
-console.log("=== TAGA-ask AI — Comprehensive RAG Regression Test Suite ===");
+console.log("=== TAGA-asK AI — Comprehensive RAG Regression Test Suite ===");
 
 // 1. Direct factual questions with an exact answer in one source
 const test1 = search("Who is automatically a scholar at UMak?");
@@ -204,3 +214,12 @@ console.log("Test 11 (Dean's Lister - Source01):", test11.length > 0 && test11[0
 // 12. Health and Physical Science Building (HPSB) location
 const test12 = search("Where is the Fitness Gym in HPSB?");
 console.log("Test 12 (HPSB 11th Floor - Source03):", test12.length > 0 && test12[0].source === "Source03.pdf" && test12[0].page === 6 ? "PASS" : "FAIL");
+
+// 13. US President - Non-UMak Entity Abstention (Critical Fix)
+const test13 = search("Who is the president of the United States?");
+console.log("Test 13 (US President Out-of-Scope Abstention):", test13.length === 0 ? "PASS" : "FAIL");
+
+// 14. Non-UMak Country / POTUS query
+const test14 = search("Who is the US president?");
+console.log("Test 14 (POTUS Keyword Disambiguation Abstention):", test14.length === 0 ? "PASS" : "FAIL");
+

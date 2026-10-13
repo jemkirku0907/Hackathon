@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { 
   Send, 
   BookOpen, 
@@ -28,7 +30,8 @@ import {
   ChevronUp,
   Menu,
   X,
-  LogOut
+  LogOut,
+  Trash2
 } from 'lucide-react';
 import { ChatResponse, Citation } from '@/lib/types';
 import { QuoteModal } from '@/components/QuoteModal';
@@ -47,13 +50,73 @@ interface ChatSession {
   id: string;
   title: string;
   date: string;
+  messages: Message[];
 }
 
+const DEFAULT_WELCOME: Message = {
+  id: 'welcome',
+  sender: 'assistant',
+  text: "Mabuhay Herons! Welcome to TAGA-asK AI, your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
+  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+};
+
 const INITIAL_SESSIONS: ChatSession[] = [
-  { id: '1', title: 'Scholarships & Exemption Guidelines', date: 'Today' },
-  { id: '2', title: 'CCIS Computer Science GWA Rules', date: 'Today' },
-  { id: '3', title: 'Admin Building & Campus Directory', date: 'Yesterday' },
-  { id: '4', title: 'University President & Registrar Details', date: 'Past week' },
+  {
+    id: '1',
+    title: 'Scholarships & Exemption Guidelines',
+    date: 'Today',
+    messages: [
+      DEFAULT_WELCOME,
+      {
+        id: 'init-1',
+        sender: 'assistant',
+        text: "### Scholarships & Token Fee Exemption Guidelines\n\nUnder University of Makati guidelines, students who meet specific academic merits are granted token fee exemption.\n\n- **Dean's Listers:** Full token fee exemption for GWA of 1.00 to 1.75.\n- **Athletes & Cultural Performers:** Granted verified scholarship privileges upon endorsement.\n\nRefer to Source01.pdf for detailed application instructions.",
+        timestamp: '10:00 AM'
+      }
+    ]
+  },
+  {
+    id: '2',
+    title: 'CCIS Computer Science GWA Rules',
+    date: 'Today',
+    messages: [
+      DEFAULT_WELCOME,
+      {
+        id: 'init-2',
+        sender: 'assistant',
+        text: "### CCIS Retention & Admission Requirements\n\nFor BS Computer Science students, the retention policy requires maintaining a GWA of at least 85% with no failing grade in major computing subjects (Source02.pdf, Page 1).",
+        timestamp: '11:15 AM'
+      }
+    ]
+  },
+  {
+    id: '3',
+    title: 'Admin Building & Campus Directory',
+    date: 'Yesterday',
+    messages: [
+      DEFAULT_WELCOME,
+      {
+        id: 'init-3',
+        sender: 'assistant',
+        text: "### Admin Building Campus Directory\n\nThe Center for Information Technology (CIT) is located in the Admin Building, Level 1.\n\nSee Source03.pdf, Page 1 for the complete building directory.",
+        timestamp: 'Yesterday'
+      }
+    ]
+  },
+  {
+    id: '4',
+    title: 'University President & Registrar Details',
+    date: 'Past week',
+    messages: [
+      DEFAULT_WELCOME,
+      {
+        id: 'init-4',
+        sender: 'assistant',
+        text: "### University President Information\n\nThe University President is **Prof. Elyxzur C. Ramos**, affectionately known as **Prof. X** (Source04.pdf, Page 1).",
+        timestamp: 'Past week'
+      }
+    ]
+  },
 ];
 
 const SUGGESTED_PROMPTS = [
@@ -87,17 +150,11 @@ const SUGGESTED_PROMPTS = [
 export default function Home() {
   const [sessions, setSessions] = useState<ChatSession[]>(INITIAL_SESSIONS);
   const [activeSessionId, setActiveSessionId] = useState<string>('1');
+  const [sessionToDelete, setSessionToDelete] = useState<ChatSession | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [searchFilter, setSearchFilter] = useState('');
   const [theme, setTheme] = useState<'light' | 'dark'>('dark');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 'welcome',
-      sender: 'assistant',
-      text: "Mabuhay Herons! Welcome to TAGA-ask AI, your verified AI knowledge assistant grounded strictly in University of Makati's official documents:\n\n• Source01: Scholarships & Token Fee Exemption (14 pages)\n• Source02: College Requirements (CCIS & Colleges, 2 pages)\n• Source03: Campus Map & Building Directory (6 pages)\n• Source04: Administrative & Academic Offices (14 pages)\n\nAsk any question regarding admissions, scholarships, campus locations, or university offices.",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>(INITIAL_SESSIONS[0].messages);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeCitation, setActiveCitation] = useState<Citation | null>(null);
@@ -121,6 +178,32 @@ export default function Home() {
   const [isPdfsExpanded, setIsPdfsExpanded] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Load saved sessions from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('taga_ask_sessions');
+      if (stored) {
+        const parsed: ChatSession[] = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSessions(parsed);
+          setActiveSessionId(parsed[0].id);
+          setMessages(parsed[0].messages || [DEFAULT_WELCOME]);
+        }
+      }
+    } catch {
+      // fallback to INITIAL_SESSIONS
+    }
+  }, []);
+
+  const persistSessions = (newSessions: ChatSession[]) => {
+    setSessions(newSessions);
+    try {
+      localStorage.setItem('taga_ask_sessions', JSON.stringify(newSessions));
+    } catch {
+      // ignore
+    }
+  };
 
   // Check auth session on load
   useEffect(() => {
@@ -197,23 +280,53 @@ export default function Home() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  const handleSelectSession = (sessionId: string) => {
+    setActiveSessionId(sessionId);
+    const target = sessions.find(s => s.id === sessionId);
+    if (target && target.messages) {
+      setMessages(target.messages);
+    } else {
+      setMessages([DEFAULT_WELCOME]);
+    }
+  };
+
   const handleNewChat = () => {
     const newId = String(Date.now());
+    const newWelcome: Message = {
+      id: 'welcome-' + newId,
+      sender: 'assistant',
+      text: "Mabuhay Herons! New conversation initiated with TAGA-asK AI. Ask anything regarding UMak scholarships, admission requirements, campus locations, or offices!",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
     const newSession: ChatSession = {
       id: newId,
       title: 'New Conversation',
-      date: 'Today'
+      date: 'Today',
+      messages: [newWelcome]
     };
-    setSessions(prev => [newSession, ...prev]);
+    const updated = [newSession, ...sessions];
+    persistSessions(updated);
     setActiveSessionId(newId);
-    setMessages([
+    setMessages([newWelcome]);
+  };
+
+  const handleConfirmDeleteSession = () => {
+    if (!sessionToDelete) return;
+    const remaining = sessions.filter(s => s.id !== sessionToDelete.id);
+    const safeRemaining = remaining.length > 0 ? remaining : [
       {
-        id: 'welcome-' + newId,
-        sender: 'assistant',
-        text: "New conversation initiated. Ask anything about UMak scholarships, admission requirements, campus locations, or offices!",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        id: String(Date.now()),
+        title: 'New Conversation',
+        date: 'Today',
+        messages: [DEFAULT_WELCOME]
       }
-    ]);
+    ];
+    persistSessions(safeRemaining);
+    if (activeSessionId === sessionToDelete.id) {
+      setActiveSessionId(safeRemaining[0].id);
+      setMessages(safeRemaining[0].messages);
+    }
+    setSessionToDelete(null);
   };
 
   const handleSendMessage = async (textToSend?: string) => {
@@ -267,6 +380,26 @@ export default function Home() {
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+
+      // Persist to session history and update title if first message
+      setSessions(prevSessions => {
+        const updated = prevSessions.map(s => {
+          if (s.id === activeSessionId) {
+            const newMsgs = [...(s.messages || []), userMessage, assistantMessage];
+            const newTitle = s.title === 'New Conversation'
+              ? (query.length > 35 ? query.slice(0, 32) + '...' : query)
+              : s.title;
+            return { ...s, title: newTitle, messages: newMsgs };
+          }
+          return s;
+        });
+        try {
+          localStorage.setItem('taga_ask_sessions', JSON.stringify(updated));
+        } catch {
+          // ignore
+        }
+        return updated;
+      });
     } catch (err: any) {
       setErrorBanner("Network error. Please verify your connection.");
       setMessages(prev => [
@@ -311,7 +444,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
               <Image 
                 src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'} 
-                alt="TAGA-ask AI Heron" 
+                alt="TAGA-asK AI Heron" 
                 width={36} 
                 height={36} 
                 className="w-full h-full object-contain"
@@ -319,7 +452,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-ask AI</h2>
+              <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-asK AI</h2>
               <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
             </div>
           </div>
@@ -380,22 +513,38 @@ export default function Home() {
                 {filteredSessions.map((s) => {
                   const isActive = activeSessionId === s.id;
                   return (
-                    <button
+                    <div
                       key={s.id}
-                      onClick={() => {
-                        setActiveSessionId(s.id);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      title={s.title}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition text-left truncate ${
+                      className={`group w-full flex items-center justify-between rounded-lg transition ${
                         isActive
                           ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
                           : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
-                      <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
-                      <span className="truncate">{s.title}</span>
-                    </button>
+                      <button
+                        onClick={() => {
+                          handleSelectSession(s.id);
+                          setIsMobileMenuOpen(false);
+                        }}
+                        title={s.title}
+                        className="flex-1 min-w-0 flex items-center gap-2.5 px-3 py-2 text-xs text-left truncate cursor-pointer"
+                      >
+                        <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                        <span className="truncate">{s.title}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSessionToDelete(s);
+                        }}
+                        title="Delete conversation"
+                        aria-label={`Delete conversation ${s.title}`}
+                        className="p-1.5 mr-1 rounded-md text-slate-400 hover:text-[#EC202B] hover:bg-slate-200/60 dark:hover:bg-slate-800 transition shrink-0 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -533,7 +682,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs border border-slate-200 dark:border-[#1C2541] shrink-0 overflow-hidden">
               <Image 
                 src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'} 
-                alt="TAGA-ask AI Heron" 
+                alt="TAGA-asK AI Heron" 
                 width={36} 
                 height={36} 
                 className="w-full h-full object-contain"
@@ -542,7 +691,7 @@ export default function Home() {
             </div>
             {isSidebarOpen && (
               <div className="overflow-hidden whitespace-nowrap animate-in fade-in duration-200">
-                <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-ask AI</h2>
+                <h2 className="font-bold text-slate-900 dark:text-white text-[16px] tracking-tight leading-tight">TAGA-asK AI</h2>
                 <span className="text-[10px] text-[#3F56CA] dark:text-[#D1CA25] font-bold tracking-wider uppercase">UMak Knowledge Hub</span>
               </div>
             )}
@@ -612,21 +761,41 @@ export default function Home() {
                 {filteredSessions.map((s) => {
                   const isActive = activeSessionId === s.id;
                   return (
-                    <button
+                    <div
                       key={s.id}
-                      onClick={() => setActiveSessionId(s.id)}
-                      title={s.title}
-                      className={`w-full flex items-center gap-2.5 rounded-lg text-xs transition text-left truncate ${
-                        isSidebarOpen ? 'px-3 py-2' : 'justify-center p-2.5'
+                      className={`group w-full flex items-center justify-between rounded-lg transition ${
+                        isSidebarOpen ? 'px-2 py-1' : 'justify-center p-2'
                       } ${
                         isActive
                           ? 'bg-[#EEF2FC] dark:bg-[#1C2541] text-[#3F56CA] dark:text-[#D1CA25] font-semibold border-l-4 border-[#3F56CA] dark:border-[#D1CA25] shadow-xs'
                           : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1C2541]/50 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
-                      <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
-                      {isSidebarOpen && <span className="truncate">{s.title}</span>}
-                    </button>
+                      <button
+                        onClick={() => handleSelectSession(s.id)}
+                        title={s.title}
+                        className={`flex-1 min-w-0 flex items-center gap-2.5 text-xs text-left truncate cursor-pointer ${
+                          isSidebarOpen ? 'py-1' : 'justify-center'
+                        }`}
+                      >
+                        <MessageSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#3F56CA] dark:text-[#D1CA25]' : 'text-slate-400 dark:text-slate-400'}`} />
+                        {isSidebarOpen && <span className="truncate">{s.title}</span>}
+                      </button>
+                      {isSidebarOpen && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSessionToDelete(s);
+                          }}
+                          title="Delete conversation"
+                          aria-label={`Delete conversation ${s.title}`}
+                          className="opacity-0 group-hover:opacity-100 hover:bg-slate-200/60 dark:hover:bg-white/10 p-1 rounded-md text-slate-400 hover:text-[#EC202B] transition shrink-0 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -862,7 +1031,7 @@ export default function Home() {
                 <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                   <Image
                     src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
-                    alt="TAGA-ask AI"
+                    alt="TAGA-asK AI"
                     width={32}
                     height={32}
                     className="w-full h-full object-contain"
@@ -875,7 +1044,7 @@ export default function Home() {
                 {/* Meta info */}
                 <div className={`flex items-center gap-2 text-[11px] ${msg.sender === 'user' ? 'justify-end text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
                   <span className="font-semibold text-slate-700 dark:text-slate-300">
-                    {msg.sender === 'user' ? 'You' : 'TAGA-ask AI'}
+                    {msg.sender === 'user' ? 'You' : 'TAGA-asK AI'}
                   </span>
                   <span>•</span>
                   <span>{msg.timestamp}</span>
@@ -913,8 +1082,33 @@ export default function Home() {
                     </div>
                   )}
 
-                  {/* Message Text */}
-                  <div className="whitespace-pre-wrap">{msg.text}</div>
+                  {/* Message Text with Structured Markdown Formatting */}
+                  {msg.sender === 'user' ? (
+                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                  ) : (
+                    <div className="text-[14.5px] leading-relaxed select-text space-y-2">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          h1: ({ ...props }) => <h1 className="text-lg font-bold text-slate-900 dark:text-white mt-3 mb-2" {...props} />,
+                          h2: ({ ...props }) => <h2 className="text-base font-bold text-slate-900 dark:text-white mt-3 mb-1.5 pb-1 border-b border-slate-200 dark:border-slate-800" {...props} />,
+                          h3: ({ ...props }) => <h3 className="text-sm font-bold text-[#3F56CA] dark:text-[#21ADE3] mt-2.5 mb-1" {...props} />,
+                          p: ({ ...props }) => <p className="mb-2 last:mb-0 leading-relaxed text-slate-800 dark:text-slate-200" {...props} />,
+                          ul: ({ ...props }) => <ul className="list-disc list-outside ml-4 space-y-1 my-2 text-slate-800 dark:text-slate-200" {...props} />,
+                          ol: ({ ...props }) => <ol className="list-decimal list-outside ml-4 space-y-1 my-2 text-slate-800 dark:text-slate-200" {...props} />,
+                          li: ({ ...props }) => <li className="leading-relaxed pl-1" {...props} />,
+                          strong: ({ ...props }) => <strong className="font-semibold text-slate-900 dark:text-white" {...props} />,
+                          code: ({ ...props }) => <code className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[#3F56CA] dark:text-[#21ADE3] font-mono text-xs" {...props} />,
+                          blockquote: ({ ...props }) => <blockquote className="border-l-3 border-[#3F56CA] dark:border-[#21ADE3] pl-3 py-1 my-2 italic text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/40 rounded-r" {...props} />,
+                          table: ({ ...props }) => <div className="overflow-x-auto my-3"><table className="min-w-full text-xs border border-slate-200 dark:border-slate-800 rounded-lg" {...props} /></div>,
+                          th: ({ ...props }) => <th className="px-3 py-2 bg-slate-100 dark:bg-slate-800 font-bold text-left text-slate-900 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700" {...props} />,
+                          td: ({ ...props }) => <td className="px-3 py-2 border-b border-slate-100 dark:border-slate-800/80 text-slate-700 dark:text-slate-300" {...props} />
+                        }}
+                      >
+                        {msg.text}
+                      </ReactMarkdown>
+                    </div>
+                  )}
 
                   {/* Citations Box with Accent Cyan (#21ADE3) */}
                   {msg.data?.citations && msg.data.citations.length > 0 && (
@@ -967,7 +1161,7 @@ export default function Home() {
               <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#1C2541] flex items-center justify-center p-1 shadow-xs shrink-0 border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <Image
                   src={theme === 'dark' ? '/taga-ask-logo-dark.jpg' : '/taga-ask-logo-light.png'}
-                  alt="TAGA-ask AI"
+                  alt="TAGA-asK AI"
                   width={32}
                   height={32}
                   className="w-full h-full object-contain"
@@ -991,12 +1185,12 @@ export default function Home() {
             <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-2">
               Suggested Questions (Grounded in PDFs):
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex overflow-x-auto no-scrollbar gap-2 pb-1.5 md:flex-wrap">
               {SUGGESTED_PROMPTS.map((p, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(p.query)}
-                  className="inline-flex items-center gap-2 bg-white dark:bg-[#111827] hover:bg-[#EEF2FC] dark:hover:bg-[#1C2541] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#21ADE3] text-xs px-3 py-2 rounded-xl transition shadow-2xs font-medium focus-visible:outline-[#21ADE3]"
+                  className="shrink-0 whitespace-nowrap inline-flex items-center gap-2 bg-white dark:bg-[#111827] hover:bg-[#EEF2FC] dark:hover:bg-[#1C2541] border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:text-[#3F56CA] dark:hover:text-[#21ADE3] text-xs px-3 py-2 rounded-xl transition shadow-2xs font-medium focus-visible:outline-[#21ADE3]"
                 >
                   <p.icon className="w-3.5 h-3.5 text-[#3F56CA] dark:text-[#21ADE3]" />
                   <span>{p.label}</span>
@@ -1023,7 +1217,7 @@ export default function Home() {
                 maxLength={500}
                 rows={2}
                 disabled={isLoading}
-                className="w-full bg-transparent resize-none border-0 focus:outline-hidden text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400"
+                className="w-full bg-transparent resize-none border-none outline-none focus:outline-none focus-visible:outline-none ring-0 focus:ring-0 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400"
               />
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
@@ -1048,7 +1242,7 @@ export default function Home() {
             </div>
 
             <p className="text-center text-[11px] text-slate-500 dark:text-slate-400">
-              TAGA-ask AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
+              TAGA-asK AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
             </p>
 
             <div className="flex items-center justify-center gap-2 pt-1 text-[11px] text-slate-500 dark:text-slate-400">
@@ -1066,6 +1260,44 @@ export default function Home() {
           </div>
         </footer>
       </section>
+
+      {/* Delete Conversation Confirmation Modal */}
+      {sessionToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-950/50 flex items-center justify-center shrink-0 text-[#EC202B]">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="font-bold text-slate-900 dark:text-white text-sm">Delete Conversation?</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                  &ldquo;{sessionToDelete.title}&rdquo;
+                </p>
+              </div>
+            </div>
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Are you sure you want to delete this conversation? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setSessionToDelete(null)}
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteSession}
+                className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#EC202B] hover:bg-[#cf1b24] text-white transition shadow-xs"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Citation Quote Modal with Deep-Link to PDF Viewer */}
       <QuoteModal 
