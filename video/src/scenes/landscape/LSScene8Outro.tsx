@@ -83,15 +83,29 @@ export const LSScene8Outro: React.FC = () => {
           TAGA-asK AI
         </h1>
 
+        {/* Official Quote */}
+        <div
+          style={{
+            fontSize: 32,
+            fontWeight: 900,
+            letterSpacing: '2px',
+            color: '#090E1A',
+            textTransform: 'uppercase',
+            margin: '16px 0 0',
+          }}
+        >
+          &ldquo;Every Tagak, just ask.&rdquo;
+        </div>
+
         {/* Tagline */}
         <p
           style={{
-            fontSize: 26,
-            fontWeight: 800,
-            letterSpacing: '3px',
-            color: '#1E293B',
+            fontSize: 22,
+            fontWeight: 700,
+            letterSpacing: '2px',
+            color: '#334155',
             textTransform: 'uppercase',
-            margin: '12px 0 0',
+            margin: '8px 0 0',
           }}
         >
           Your UMak AI Companion.
