@@ -2,6 +2,7 @@ import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BackgroundGlow } from '../../components/BackgroundGlow';
 import { SubtitleOverlay } from '../../components/SubtitleOverlay';
+import { FloatingParticles } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const EnhScene4bMap: React.FC = () => {
@@ -32,6 +33,7 @@ export const EnhScene4bMap: React.FC = () => {
       }}
     >
       <BackgroundGlow primaryColor={BRAND_COLORS.blue} secondaryColor={BRAND_COLORS.red} />
+      <FloatingParticles count={22} color={BRAND_COLORS.red} seed={7} />
 
       {/* Top Feature Tag */}
       <div

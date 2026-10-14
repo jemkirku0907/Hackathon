@@ -1560,6 +1560,7 @@ export default function Home() {
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}
         targetLocation={targetMapLocation}
+        theme={theme}
       />
 
       {/* UMak Student Institutional Login Gate */}

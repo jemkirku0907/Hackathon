@@ -1,6 +1,7 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { RefStyleCaption } from '../../components/RefStyleCaption';
+import { FloatingParticles } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const LSScene2Problem: React.FC = () => {
@@ -41,6 +42,7 @@ export const LSScene2Problem: React.FC = () => {
           background: 'radial-gradient(circle at 50% 40%, #1E293B 0%, #090E1A 90%)',
         }}
       />
+      <FloatingParticles count={25} color="#F87171" seed={12} />
 
       {/* Floating Desktop Window */}
       <div

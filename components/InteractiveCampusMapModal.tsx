@@ -185,15 +185,36 @@ interface InteractiveCampusMapModalProps {
   isOpen: boolean;
   onClose: () => void;
   targetLocation?: MapLocation | null;
+  theme?: 'light' | 'dark';
 }
 
 export function InteractiveCampusMapModal({
   isOpen,
   onClose,
-  targetLocation
+  targetLocation,
+  theme
 }: InteractiveCampusMapModalProps) {
   const [selectedBuildingId, setSelectedBuildingId] = useState<string>('admin');
   const [selectedFloorIndex, setSelectedFloorIndex] = useState<number>(0);
+  const [isDark, setIsDark] = useState<boolean>(true);
+
+  // Dynamic theme detection (respects prop or html.dark class)
+  useEffect(() => {
+    if (theme) {
+      setIsDark(theme === 'dark');
+      return;
+    }
+    const updateTheme = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    return () => observer.disconnect();
+  }, [theme, isOpen]);
 
   // Sync target location when opened
   useEffect(() => {
@@ -291,20 +312,49 @@ export function InteractiveCampusMapModal({
         {/* Main Content Area: Split into Visual Map & Directory Panel */}
         <div className="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
           {/* Visual Campus Map (Left / Top) */}
-          <div className="flex-1 bg-slate-900 relative p-4 flex flex-col items-center justify-center overflow-hidden select-none border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/10">
+          <div className="flex-1 bg-slate-100 dark:bg-slate-900 relative p-4 flex flex-col items-center justify-center overflow-hidden select-none border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/10 transition-colors">
             {/* Campus SVG Graphic */}
             <svg 
               viewBox="0 0 1000 700" 
-              className="w-full h-full max-h-[460px] object-contain drop-shadow-2xl"
+              className="w-full h-full max-h-[460px] object-contain drop-shadow-md dark:drop-shadow-2xl transition-all"
             >
               {/* Ground & Campus Pathways */}
-              <rect x="20" y="20" width="960" height="660" rx="24" fill="#0E182D" stroke="#1E293B" strokeWidth="3" />
+              <rect 
+                x="20" y="20" width="960" height="660" rx="24" 
+                fill={isDark ? "#0E182D" : "#FFFFFF"} 
+                stroke={isDark ? "#1E293B" : "#E2E8F0"} 
+                strokeWidth="3" 
+              />
               
               {/* Campus Roads & Open Plaza */}
-              <path d="M 60 550 L 940 550" stroke="#1E293B" strokeWidth="40" strokeLinecap="round" />
-              <path d="M 500 100 L 500 550" stroke="#1E293B" strokeWidth="30" strokeLinecap="round" />
-              <circle cx="500" cy="350" r="85" fill="#13233F" stroke="#3F56CA" strokeWidth="2" strokeDasharray="6 4" />
-              <text x="500" y="355" fill="#64748B" fontSize="14" fontWeight="600" textAnchor="middle">CAMPUS PLAZA</text>
+              <path 
+                d="M 60 550 L 940 550" 
+                stroke={isDark ? "#1E293B" : "#E2E8F0"} 
+                strokeWidth="40" 
+                strokeLinecap="round" 
+              />
+              <path 
+                d="M 500 100 L 500 550" 
+                stroke={isDark ? "#1E293B" : "#E2E8F0"} 
+                strokeWidth="30" 
+                strokeLinecap="round" 
+              />
+              <circle 
+                cx="500" cy="350" r="85" 
+                fill={isDark ? "#13233F" : "#EEF2FC"} 
+                stroke={isDark ? "#3F56CA" : "#3F56CA"} 
+                strokeWidth="2" 
+                strokeDasharray="6 4" 
+              />
+              <text 
+                x="500" y="355" 
+                fill={isDark ? "#64748B" : "#475569"} 
+                fontSize="14" 
+                fontWeight="600" 
+                textAnchor="middle"
+              >
+                CAMPUS PLAZA
+              </text>
 
               {/* Building Blocks */}
               {/* 1. Admin Building */}
@@ -314,13 +364,40 @@ export function InteractiveCampusMapModal({
               >
                 <rect 
                   x="280" y="180" width="220" height="180" rx="16" 
-                  fill={selectedBuildingId === 'admin' ? '#3F56CA' : '#1E2B4C'}
-                  stroke={selectedBuildingId === 'admin' ? '#D1CA25' : '#3B82F6'}
+                  fill={
+                    selectedBuildingId === 'admin' 
+                      ? '#3F56CA' 
+                      : (isDark ? '#1E2B4C' : '#EEF2FC')
+                  }
+                  stroke={
+                    selectedBuildingId === 'admin' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#3B82F6' : '#93C5FD')
+                  }
                   strokeWidth={selectedBuildingId === 'admin' ? '4' : '2'}
-                  filter="drop-shadow(0 8px 16px rgba(0,0,0,0.5))"
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(63,86,202,0.15))"}
                 />
-                <text x="390" y="260" fill="white" fontSize="18" fontWeight="bold" textAnchor="middle">ADMIN BUILDING</text>
-                <text x="390" y="285" fill={selectedBuildingId === 'admin' ? '#FEE2E2' : '#94A3B8'} fontSize="12" textAnchor="middle">Registrar, CIT, Exec</text>
+                <text 
+                  x="390" y="260" 
+                  fill={selectedBuildingId === 'admin' ? 'white' : (isDark ? 'white' : '#1E3A8A')} 
+                  fontSize="18" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  ADMIN BUILDING
+                </text>
+                <text 
+                  x="390" y="285" 
+                  fill={
+                    selectedBuildingId === 'admin' 
+                      ? '#FEE2E2' 
+                      : (isDark ? '#94A3B8' : '#3B82F6')
+                  } 
+                  fontSize="12" 
+                  textAnchor="middle"
+                >
+                  Registrar, CIT, Exec
+                </text>
               </g>
 
               {/* 2. HPSB */}
@@ -330,13 +407,40 @@ export function InteractiveCampusMapModal({
               >
                 <rect 
                   x="640" y="120" width="220" height="260" rx="16" 
-                  fill={selectedBuildingId === 'hpsb' ? '#21ADE3' : '#162C46'}
-                  stroke={selectedBuildingId === 'hpsb' ? '#D1CA25' : '#0EA5E9'}
+                  fill={
+                    selectedBuildingId === 'hpsb' 
+                      ? '#21ADE3' 
+                      : (isDark ? '#162C46' : '#E0F2FE')
+                  }
+                  stroke={
+                    selectedBuildingId === 'hpsb' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#0EA5E9' : '#7DD3FC')
+                  }
                   strokeWidth={selectedBuildingId === 'hpsb' ? '4' : '2'}
-                  filter="drop-shadow(0 8px 16px rgba(0,0,0,0.5))"
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(33,173,227,0.15))"}
                 />
-                <text x="750" y="240" fill="white" fontSize="18" fontWeight="bold" textAnchor="middle">HPSB TOWER</text>
-                <text x="750" y="265" fill={selectedBuildingId === 'hpsb' ? '#F0FDFA' : '#94A3B8'} fontSize="12" textAnchor="middle">12 Floors • Law, Gym, Health</text>
+                <text 
+                  x="750" y="240" 
+                  fill={selectedBuildingId === 'hpsb' ? 'white' : (isDark ? 'white' : '#0369A1')} 
+                  fontSize="18" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  HPSB TOWER
+                </text>
+                <text 
+                  x="750" y="265" 
+                  fill={
+                    selectedBuildingId === 'hpsb' 
+                      ? '#F0FDFA' 
+                      : (isDark ? '#94A3B8' : '#0284C7')
+                  } 
+                  fontSize="12" 
+                  textAnchor="middle"
+                >
+                  12 Floors • Law, Gym, Health
+                </text>
               </g>
 
               {/* 3. Academic Building 1 */}
@@ -346,12 +450,36 @@ export function InteractiveCampusMapModal({
               >
                 <rect 
                   x="120" y="440" width="180" height="140" rx="14" 
-                  fill={selectedBuildingId === 'acad1' ? '#D1CA25' : '#2D2D1B'}
-                  stroke={selectedBuildingId === 'acad1' ? '#FFFFFF' : '#854D0E'}
+                  fill={
+                    selectedBuildingId === 'acad1' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#2D2D1B' : '#FEF9C3')
+                  }
+                  stroke={
+                    selectedBuildingId === 'acad1' 
+                      ? (isDark ? '#FFFFFF' : '#1E293B') 
+                      : (isDark ? '#854D0E' : '#FDE047')
+                  }
                   strokeWidth={selectedBuildingId === 'acad1' ? '4' : '2'}
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(209,202,37,0.15))"}
                 />
-                <text x="210" y="505" fill={selectedBuildingId === 'acad1' ? '#1E293B' : 'white'} fontSize="15" fontWeight="bold" textAnchor="middle">ACADEMIC 1</text>
-                <text x="210" y="525" fill={selectedBuildingId === 'acad1' ? '#334155' : '#A3A3A3'} fontSize="11" textAnchor="middle">Hostel & NROTC</text>
+                <text 
+                  x="210" y="505" 
+                  fill={selectedBuildingId === 'acad1' ? '#1E293B' : (isDark ? 'white' : '#854D0E')} 
+                  fontSize="15" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  ACADEMIC 1
+                </text>
+                <text 
+                  x="210" y="525" 
+                  fill={selectedBuildingId === 'acad1' ? '#334155' : (isDark ? '#A3A3A3' : '#A16207')} 
+                  fontSize="11" 
+                  textAnchor="middle"
+                >
+                  Hostel & NROTC
+                </text>
               </g>
 
               {/* 4. Academic Building 2 */}
@@ -361,12 +489,36 @@ export function InteractiveCampusMapModal({
               >
                 <rect 
                   x="340" y="440" width="180" height="140" rx="14" 
-                  fill={selectedBuildingId === 'acad2' ? '#3F56CA' : '#1C2541'}
-                  stroke={selectedBuildingId === 'acad2' ? '#D1CA25' : '#475569'}
+                  fill={
+                    selectedBuildingId === 'acad2' 
+                      ? '#3F56CA' 
+                      : (isDark ? '#1C2541' : '#EEF2FC')
+                  }
+                  stroke={
+                    selectedBuildingId === 'acad2' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#475569' : '#BFDBFE')
+                  }
                   strokeWidth={selectedBuildingId === 'acad2' ? '4' : '2'}
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(63,86,202,0.15))"}
                 />
-                <text x="430" y="505" fill="white" fontSize="15" fontWeight="bold" textAnchor="middle">ACADEMIC 2</text>
-                <text x="430" y="525" fill="#94A3B8" fontSize="11" textAnchor="middle">CAS Scholarships & Labs</text>
+                <text 
+                  x="430" y="505" 
+                  fill={selectedBuildingId === 'acad2' ? 'white' : (isDark ? 'white' : '#1E3A8A')} 
+                  fontSize="15" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  ACADEMIC 2
+                </text>
+                <text 
+                  x="430" y="525" 
+                  fill={selectedBuildingId === 'acad2' ? '#FEE2E2' : (isDark ? '#94A3B8' : '#3B82F6')} 
+                  fontSize="11" 
+                  textAnchor="middle"
+                >
+                  CAS Scholarships & Labs
+                </text>
               </g>
 
               {/* 5. Academic Building 3 */}
@@ -376,12 +528,36 @@ export function InteractiveCampusMapModal({
               >
                 <rect 
                   x="560" y="440" width="180" height="140" rx="14" 
-                  fill={selectedBuildingId === 'acad3' ? '#21ADE3' : '#162C46'}
-                  stroke={selectedBuildingId === 'acad3' ? '#D1CA25' : '#475569'}
+                  fill={
+                    selectedBuildingId === 'acad3' 
+                      ? '#21ADE3' 
+                      : (isDark ? '#162C46' : '#E0F2FE')
+                  }
+                  stroke={
+                    selectedBuildingId === 'acad3' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#475569' : '#BAE6FD')
+                  }
                   strokeWidth={selectedBuildingId === 'acad3' ? '4' : '2'}
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(33,173,227,0.15))"}
                 />
-                <text x="650" y="505" fill="white" fontSize="15" fontWeight="bold" textAnchor="middle">ACADEMIC 3</text>
-                <text x="650" y="525" fill="#94A3B8" fontSize="11" textAnchor="middle">CBFS, CTHM, Tagak Cafe</text>
+                <text 
+                  x="650" y="505" 
+                  fill={selectedBuildingId === 'acad3' ? 'white' : (isDark ? 'white' : '#0369A1')} 
+                  fontSize="15" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  ACADEMIC 3
+                </text>
+                <text 
+                  x="650" y="525" 
+                  fill={selectedBuildingId === 'acad3' ? '#F0FDFA' : (isDark ? '#94A3B8' : '#0284C7')} 
+                  fontSize="11" 
+                  textAnchor="middle"
+                >
+                  CBFS, CTHM, Tagak Cafe
+                </text>
               </g>
 
               {/* 6. UMak Stadium */}
@@ -391,12 +567,36 @@ export function InteractiveCampusMapModal({
               >
                 <ellipse 
                   cx="850" cy="510" rx="90" ry="70" 
-                  fill={selectedBuildingId === 'stadium' ? '#EC202B' : '#331B22'}
-                  stroke={selectedBuildingId === 'stadium' ? '#D1CA25' : '#7F1D1D'}
+                  fill={
+                    selectedBuildingId === 'stadium' 
+                      ? '#EC202B' 
+                      : (isDark ? '#331B22' : '#FFE4E6')
+                  }
+                  stroke={
+                    selectedBuildingId === 'stadium' 
+                      ? '#D1CA25' 
+                      : (isDark ? '#7F1D1D' : '#FECDD3')
+                  }
                   strokeWidth={selectedBuildingId === 'stadium' ? '4' : '2'}
+                  filter={isDark ? "drop-shadow(0 8px 16px rgba(0,0,0,0.5))" : "drop-shadow(0 4px 8px rgba(236,32,43,0.15))"}
                 />
-                <text x="850" y="510" fill="white" fontSize="14" fontWeight="bold" textAnchor="middle">UMAK STADIUM</text>
-                <text x="850" y="530" fill="#E2E8F0" fontSize="10" textAnchor="middle">Oval & Track</text>
+                <text 
+                  x="850" y="510" 
+                  fill={selectedBuildingId === 'stadium' ? 'white' : (isDark ? 'white' : '#9F1239')} 
+                  fontSize="14" 
+                  fontWeight="bold" 
+                  textAnchor="middle"
+                >
+                  UMAK STADIUM
+                </text>
+                <text 
+                  x="850" y="530" 
+                  fill={selectedBuildingId === 'stadium' ? '#FEE2E2' : (isDark ? '#E2E8F0' : '#E11D48')} 
+                  fontSize="10" 
+                  textAnchor="middle"
+                >
+                  Oval & Track
+                </text>
               </g>
 
               {/* Active Pulsing Pin on Selected Building */}
@@ -420,7 +620,7 @@ export function InteractiveCampusMapModal({
             </svg>
 
             {/* Quick Map Legend */}
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] text-slate-400 bg-slate-900/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-white/10">
+            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 bg-white/90 dark:bg-slate-900/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 shadow-xs">
               <span className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#EC202B] inline-block animate-pulse"></span>
                 Active Pin Selection
