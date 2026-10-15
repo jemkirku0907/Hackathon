@@ -1,7 +1,6 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
@@ -23,7 +22,7 @@ export const Scene1IntroV3: React.FC = () => {
   const tagaScale = interpolate(tagaSpring, [0, 1], [1.8, 1]);
   const tagaOpacity = interpolate(tagaSpring, [0, 1], [0, 1]);
 
-  // BEAT 2: Heron Mascot Pop & Radial Bloom (frames 24 - 42)
+  // BEAT 2: Heron Mascot Pop & Radial Bloom (frames 22 - 42)
   const heronSpring = spring({
     frame: frame - 22,
     fps,
@@ -31,7 +30,7 @@ export const Scene1IntroV3: React.FC = () => {
   });
   const heronScale = interpolate(heronSpring, [0, 1], [0.3, 1]);
   const heronOpacity = interpolate(heronSpring, [0, 1], [0, 1]);
-  const heronBloom = interpolate(frame, [22, 40], [0, 0.75], { extrapolateRight: 'clamp' });
+  const heronBloom = interpolate(frame, [22, 40], [0, 0.85], { extrapolateRight: 'clamp' });
 
   // BEAT 3: "asK" Mask-up from below (frames 29 - 46)
   const askSpring = spring({
@@ -92,8 +91,6 @@ export const Scene1IntroV3: React.FC = () => {
         cameraMove="pushIn"
         durationInFrames={128}
       >
-        <HudOverlay label="01 // INTRO" sublabel="BRAND LOCKUP" globalFrameOffset={0} />
-
         {/* UMak Official Seal Pill (Beat 5) */}
         <div
           style={{

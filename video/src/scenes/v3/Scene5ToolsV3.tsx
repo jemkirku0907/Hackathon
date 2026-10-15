@@ -2,7 +2,6 @@ import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { BentoCard } from '../../components/v3/BentoCard';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
@@ -11,7 +10,7 @@ export const Scene5ToolsV3: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Part 1: Attachments (frames 0 -> 110)
+  // Part 1: Attachments (frames 0 -> 105)
   const attachSpring = spring({ frame: frame - 6, fps, config: SPRINGS.snappy });
 
   // Part 2: Real Campus Map Visualizer (frames 105 -> 239)
@@ -45,17 +44,11 @@ export const Scene5ToolsV3: React.FC = () => {
         cameraMove="pushIn"
         durationInFrames={239}
       >
-        <HudOverlay
-          label="05 // MULTIMODAL & CAMPUS MAP"
-          sublabel="ATTACHMENTS + REAL UMAK CAMPUS MAP UI"
-          globalFrameOffset={956}
-        />
-
         {/* Section Headline */}
         <div
           style={{
             position: 'absolute',
-            top: 85,
+            top: 80,
             left: 0,
             right: 0,
             display: 'flex',
@@ -64,47 +57,15 @@ export const Scene5ToolsV3: React.FC = () => {
             zIndex: 35,
           }}
         >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'rgba(33, 173, 227, 0.16)',
-              border: `1px solid ${BRAND_COLORS.cyan}80`,
-              borderRadius: 999,
-              padding: '6px 22px',
-              marginBottom: 8,
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: isMapPhase ? BRAND_COLORS.yellow : BRAND_COLORS.cyan,
-                boxShadow: `0 0 10px ${isMapPhase ? BRAND_COLORS.yellow : BRAND_COLORS.cyan}`,
-              }}
-            />
-            <span
-              style={{
-                color: isMapPhase ? BRAND_COLORS.yellow : BRAND_COLORS.cyan,
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-              }}
-            >
-              {isMapPhase ? 'Interactive Campus Map' : 'Multimodal File Attachment'}
-            </span>
-          </div>
           <h2
             style={{
-              fontSize: 44,
+              fontSize: 48,
               fontWeight: 900,
               color: '#FFFFFF',
-              letterSpacing: '-0.5px',
+              letterSpacing: '-1px',
               margin: 0,
               textShadow: '0 4px 25px rgba(0,0,0,0.9)',
+              textAlign: 'center',
             }}
           >
             {isMapPhase
@@ -132,8 +93,6 @@ export const Scene5ToolsV3: React.FC = () => {
             <BentoCard
               width={780}
               height={440}
-              badge="Multimodal Document Parser"
-              badgeColor={BRAND_COLORS.cyan}
               glowColor="rgba(33, 173, 227, 0.35)"
               style={{ padding: 32 }}
             >
@@ -141,7 +100,7 @@ export const Scene5ToolsV3: React.FC = () => {
                 Attach an Image or a PDF and Ask About It
               </div>
               <div style={{ color: '#94A3B8', fontSize: 16, marginBottom: 24 }}>
-                Instant multimodal extraction for schedules, grade evaluations, and official memos
+                Instant extraction for schedules, grade evaluations, and official university memos
               </div>
 
               {/* Upload Dropzone UI matching the real app attach button */}
@@ -181,7 +140,7 @@ export const Scene5ToolsV3: React.FC = () => {
                 </div>
               </div>
 
-              {/* Extracted Insights Pill List */}
+              {/* Extracted Insights List */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div
                   style={{
@@ -296,7 +255,7 @@ export const Scene5ToolsV3: React.FC = () => {
                 }}
               />
 
-              {/* Floating Verified Pin Annotation */}
+              {/* Verified Pin Annotation */}
               <div
                 style={{
                   position: 'absolute',
@@ -323,7 +282,7 @@ export const Scene5ToolsV3: React.FC = () => {
                   }}
                 />
                 <span style={{ color: '#FFFFFF', fontSize: 13, fontWeight: 800 }}>
-                  📍 Verified Match: Admin Bldg · 2nd Floor (South Wing)
+                  📍 Admin Bldg · 2nd Floor (South Wing)
                 </span>
               </div>
             </div>

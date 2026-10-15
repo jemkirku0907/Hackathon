@@ -1,7 +1,6 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
 
@@ -20,7 +19,7 @@ export const Scene7OutroV3: React.FC = () => {
   // 3. CTA URL Pill entrance
   const ctaSpring = spring({ frame: frame - 55, fps, config: SPRINGS.bouncy });
 
-  // 4. Cursor movement and click on CTA pill (frames 120 -> 180)
+  // 4. Cursor movement and click on CTA pill (frames 110 -> 180)
   const cursorX = interpolate(frame, [110, 145], [1400, 960], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -57,12 +56,6 @@ export const Scene7OutroV3: React.FC = () => {
       cameraMove="subtleTilt"
       durationInFrames={255}
     >
-      <HudOverlay
-        label="07 // OUTRO"
-        sublabel="STUDENT-FIRST AI COMPANION"
-        globalFrameOffset={1455}
-      />
-
       {/* Main Closing Brand Center Stage */}
       <div
         style={{
@@ -90,35 +83,25 @@ export const Scene7OutroV3: React.FC = () => {
           }}
         />
 
-        {/* Lockup Row: Wordmark + Yellow Heron */}
+        {/* Official Full Transparent Logo */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 28,
             marginBottom: 24,
+            filter:
+              'drop-shadow(0 0 2px #FFFFFF) drop-shadow(0 0 8px #21ADE3) drop-shadow(0 0 30px rgba(33, 173, 227, 0.8)) drop-shadow(0 15px 35px rgba(0,0,0,0.95))',
           }}
         >
-          {/* Official Full Transparent Logo */}
-          <div
+          <Img
+            src={staticFile('official-logo-transparent.png')}
             style={{
-              filter:
-                'drop-shadow(0 0 2px #FFFFFF) drop-shadow(0 0 8px #21ADE3) drop-shadow(0 0 30px rgba(33, 173, 227, 0.8)) drop-shadow(0 15px 35px rgba(0,0,0,0.95))',
+              height: 240,
+              width: 'auto',
+              display: 'block',
             }}
-          >
-            <Img
-              src={staticFile('official-logo-transparent.png')}
-              style={{
-                height: 240,
-                width: 'auto',
-                display: 'block',
-              }}
-            />
-          </div>
+          />
         </div>
 
-        {/* High-Contrast Italic Serif Tagline (inspired by reference frame 32) */}
+        {/* High-Contrast Italic Serif Tagline */}
         <div
           style={{
             transform: `translateY(${interpolate(taglineSpring, [0, 1], [30, 0])}px)`,
@@ -129,29 +112,28 @@ export const Scene7OutroV3: React.FC = () => {
         >
           <div
             style={{
-              fontSize: 38,
+              fontSize: 42,
               fontStyle: 'italic',
               fontWeight: 400,
               fontFamily: "'Playfair Display', Georgia, serif",
-              color: '#F1F5F9',
+              color: '#FFFFFF',
               letterSpacing: '0.5px',
               textShadow: '0 4px 20px rgba(0,0,0,0.9)',
             }}
           >
-            Taga-sagot sa mga tanong ng bawat Tagak.
+            Less waiting. Easier access to information.
           </div>
           <div
             style={{
-              fontSize: 16,
+              fontSize: 22,
               fontWeight: 700,
-              color: BRAND_COLORS.cyan,
-              letterSpacing: '3px',
-              textTransform: 'uppercase',
-              marginTop: 8,
-              fontFamily: 'monospace',
+              color: BRAND_COLORS.yellow,
+              letterSpacing: '1px',
+              marginTop: 10,
+              textShadow: `0 0 15px ${BRAND_COLORS.yellowGlow}`,
             }}
           >
-            University of Makati · Verified AI Assistant
+            Taga-sagot sa mga tanong ng bawat Tagak.
           </div>
         </div>
 
@@ -205,8 +187,7 @@ export const Scene7OutroV3: React.FC = () => {
                 color: '#FFFFFF',
                 fontSize: 26,
                 fontWeight: 900,
-                letterSpacing: '2px',
-                fontFamily: 'monospace',
+                letterSpacing: '1.5px',
               }}
             >
               taga-askai.vercel.app

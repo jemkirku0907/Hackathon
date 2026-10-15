@@ -2,7 +2,6 @@ import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { BentoCard } from '../../components/v3/BentoCard';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
@@ -11,49 +10,57 @@ export const Scene3SolutionV3: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Central Solution Banner Spring
-  const titleSpring = spring({ frame: frame - 6, fps, config: SPRINGS.snappy });
+  // Central Solution Headline Spring
+  const titleSpring = spring({ frame: frame - 4, fps, config: SPRINGS.snappy });
 
-  // 4 Source Cards Staggered Springs
-  const s1Spring = spring({ frame: frame - 18, fps, config: SPRINGS.snappy });
-  const s2Spring = spring({ frame: frame - 28, fps, config: SPRINGS.snappy });
-  const s3Spring = spring({ frame: frame - 38, fps, config: SPRINGS.snappy });
-  const s4Spring = spring({ frame: frame - 48, fps, config: SPRINGS.snappy });
+  // Singularity bloom expanding at the start (frames 0 -> 24)
+  const singularityScale = interpolate(frame, [0, 20], [0.1, 1.8], { extrapolateRight: 'clamp' });
+  const singularityOpacity = interpolate(frame, [0, 10, 25], [0, 0.9, 0], { extrapolateRight: 'clamp' });
+
+  // 4 Source Cards Staggered Springs (fan out)
+  const s1Spring = spring({ frame: frame - 16, fps, config: SPRINGS.bouncy });
+  const s2Spring = spring({ frame: frame - 24, fps, config: SPRINGS.bouncy });
+  const s3Spring = spring({ frame: frame - 32, fps, config: SPRINGS.bouncy });
+  const s4Spring = spring({ frame: frame - 40, fps, config: SPRINGS.bouncy });
 
   const floatY = Math.sin(frame * 0.045) * 6;
 
   const sources = [
     {
-      id: 'SOURCE 01',
-      title: 'Student Handbook & Policies',
-      desc: 'CCIS 85% retention rules, grading, university academic policies',
+      id: 'Source01',
+      title: 'Student Handbook & Academic Policies',
+      desc: 'CCIS retention rules, grading criteria, university student regulations',
       springVal: s1Spring,
       color: BRAND_COLORS.blue,
       pages: '84 Pages',
+      icon: '📘',
     },
     {
-      id: 'SOURCE 02',
-      title: 'Scholarships & Admissions',
-      desc: "Dean's List token fee exemption, financial aid & qualifications",
+      id: 'Source02',
+      title: 'Scholarships & Admissions Directory',
+      desc: "Dean's List token fee exemption, financial aid & academic honors",
       springVal: s2Spring,
       color: BRAND_COLORS.cyan,
       pages: '42 Pages',
+      icon: '📑',
     },
     {
-      id: 'SOURCE 03',
+      id: 'Source03',
       title: 'Building & Office Directory',
-      desc: 'Admin Building South Wing 2F, CIT office, University Registrar',
+      desc: 'Admin Building South Wing 2F, CIT office, Registrar & Departments',
       springVal: s3Spring,
       color: BRAND_COLORS.yellow,
       pages: '36 Pages',
+      icon: '🏢',
     },
     {
-      id: 'SOURCE 04',
-      title: 'Campus Map & Facilities',
-      desc: 'Building blueprints, floor maps, wings, labs & facility access',
+      id: 'Source04',
+      title: 'Campus Map & Facilities Guide',
+      desc: 'Building blueprints, floor layouts, wings, laboratories & navigation',
       springVal: s4Spring,
       color: BRAND_COLORS.green,
       pages: '28 Pages',
+      icon: '🗺️',
     },
   ];
 
@@ -65,10 +72,22 @@ export const Scene3SolutionV3: React.FC = () => {
         cameraMove="pushIn"
         durationInFrames={232}
       >
-        <HudOverlay
-          label="03 // THE SOLUTION"
-          sublabel="GROUNDED RAG KNOWLEDGE BASE"
-          globalFrameOffset={314}
+        {/* Glowing Singularity Bloom */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '40%',
+            left: '50%',
+            width: 300,
+            height: 300,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${BRAND_COLORS.yellow} 0%, ${BRAND_COLORS.cyan} 50%, transparent 75%)`,
+            transform: `translate(-50%, -50%) scale(${singularityScale})`,
+            opacity: singularityOpacity,
+            filter: 'blur(40px)',
+            pointerEvents: 'none',
+            zIndex: 15,
+          }}
         />
 
         {/* Section Headline */}
@@ -86,64 +105,34 @@ export const Scene3SolutionV3: React.FC = () => {
             opacity: titleSpring,
           }}
         >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'rgba(33, 173, 227, 0.16)',
-              border: `1px solid ${BRAND_COLORS.cyan}`,
-              borderRadius: 999,
-              padding: '6px 22px',
-              marginBottom: 10,
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: BRAND_COLORS.cyan,
-                boxShadow: `0 0 10px ${BRAND_COLORS.cyan}`,
-              }}
-            />
-            <span
-              style={{
-                color: BRAND_COLORS.cyan,
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Strictly Grounded RAG
-            </span>
-          </div>
           <h2
             style={{
-              fontSize: 48,
+              fontSize: 54,
               fontWeight: 900,
               color: '#FFFFFF',
-              letterSpacing: '-0.5px',
+              letterSpacing: '-1px',
               margin: 0,
               textShadow: '0 4px 25px rgba(0,0,0,0.9)',
+              textAlign: 'center',
             }}
           >
             Meet <span style={{ color: BRAND_COLORS.yellow }}>TAGA-asK AI</span>
           </h2>
           <p
             style={{
-              color: '#94A3B8',
-              fontSize: 20,
-              marginTop: 6,
-              letterSpacing: '0.5px',
+              color: BRAND_COLORS.cyan,
+              fontSize: 22,
+              fontWeight: 700,
+              marginTop: 10,
+              letterSpacing: '0.2px',
+              textShadow: `0 0 15px ${BRAND_COLORS.cyanGlow}`,
             }}
           >
-            Answers grounded directly in 4 official University of Makati documents
+            Answers grounded directly in official University of Makati sources
           </p>
         </div>
 
-        {/* 4 Official Source Cards Grid */}
+        {/* 4 Official Source Cards Grid (Fan Out) */}
         <div
           style={{
             position: 'relative',
@@ -160,43 +149,45 @@ export const Scene3SolutionV3: React.FC = () => {
             <div
               key={idx}
               style={{
-                transform: `translateY(${interpolate(src.springVal, [0, 1], [80, 0])}px) scale(${src.springVal})`,
+                transform: `translateY(${interpolate(src.springVal, [0, 1], [90, 0])}px) scale(${src.springVal})`,
                 opacity: src.springVal,
               }}
             >
               <BentoCard
                 width={380}
                 height={290}
-                badge={src.id}
-                badgeColor={src.color}
                 glowColor={`${src.color}35`}
                 style={{
-                  border: `1px solid ${src.color}50`,
+                  border: `1.5px solid ${src.color}60`,
                 }}
               >
+                {/* Document Type & Badge */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    marginBottom: 14,
+                    marginBottom: 16,
                   }}
                 >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 22 }}>{src.icon}</span>
+                    <span
+                      style={{
+                        fontSize: 14,
+                        color: src.color,
+                        fontWeight: 800,
+                        letterSpacing: '0.5px',
+                      }}
+                    >
+                      {src.id}.pdf
+                    </span>
+                  </div>
                   <span
                     style={{
                       fontSize: 13,
-                      color: src.color,
-                      fontWeight: 800,
-                      letterSpacing: '1px',
-                    }}
-                  >
-                    PDF DOCUMENT
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      color: 'rgba(255,255,255,0.4)',
-                      fontFamily: 'monospace',
+                      color: '#94A3B8',
+                      fontWeight: 600,
                     }}
                   >
                     {src.pages}
@@ -206,7 +197,7 @@ export const Scene3SolutionV3: React.FC = () => {
                 <div
                   style={{
                     color: '#FFFFFF',
-                    fontSize: 22,
+                    fontSize: 21,
                     fontWeight: 800,
                     lineHeight: 1.35,
                     marginBottom: 12,
@@ -227,7 +218,7 @@ export const Scene3SolutionV3: React.FC = () => {
 
                 <div
                   style={{
-                    marginTop: 22,
+                    marginTop: 24,
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
@@ -241,18 +232,17 @@ export const Scene3SolutionV3: React.FC = () => {
                       height: 6,
                       borderRadius: '50%',
                       backgroundColor: BRAND_COLORS.green,
+                      boxShadow: `0 0 8px ${BRAND_COLORS.green}`,
                     }}
                   />
                   <span
                     style={{
-                      color: '#CBD5E1',
-                      fontSize: 12,
+                      color: '#E2E8F0',
+                      fontSize: 13,
                       fontWeight: 700,
-                      letterSpacing: '1px',
-                      textTransform: 'uppercase',
                     }}
                   >
-                    100% Verified UMak Data
+                    Official University Document
                   </span>
                 </div>
               </BentoCard>

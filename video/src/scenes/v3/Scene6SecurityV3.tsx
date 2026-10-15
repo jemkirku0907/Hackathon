@@ -2,7 +2,6 @@ import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { BentoCard } from '../../components/v3/BentoCard';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
@@ -20,14 +19,7 @@ export const Scene6SecurityV3: React.FC = () => {
     extrapolateRight: 'clamp',
   });
 
-  // Shield pulsing ring
-  const shieldScale = interpolate(
-    Math.sin(frame * 0.15),
-    [-1, 1],
-    [0.98, 1.04]
-  );
-
-  // 429 Toast pop (frames 65 -> 120)
+  // 429 Toast pop (frames 60 -> 120)
   const toastSpring = spring({ frame: frame - 60, fps, config: SPRINGS.bouncy });
 
   // Google SSO email transition (frames 130 -> 240)
@@ -48,17 +40,11 @@ export const Scene6SecurityV3: React.FC = () => {
         cameraMove="pushIn"
         durationInFrames={260}
       >
-        <HudOverlay
-          label="06 // SECURITY & ACCESS"
-          sublabel="15 REQ/MIN RATE LIMIT + UMAK OAUTH GATE"
-          globalFrameOffset={1195}
-        />
-
         {/* Section Headline */}
         <div
           style={{
             position: 'absolute',
-            top: 95,
+            top: 85,
             left: 0,
             right: 0,
             display: 'flex',
@@ -67,47 +53,15 @@ export const Scene6SecurityV3: React.FC = () => {
             zIndex: 35,
           }}
         >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'rgba(63, 86, 202, 0.2)',
-              border: `1px solid ${BRAND_COLORS.blue}`,
-              borderRadius: 999,
-              padding: '6px 22px',
-              marginBottom: 8,
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: BRAND_COLORS.blue,
-                boxShadow: `0 0 10px ${BRAND_COLORS.blue}`,
-              }}
-            />
-            <span
-              style={{
-                color: '#FFFFFF',
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Enterprise Security Architecture
-            </span>
-          </div>
           <h2
             style={{
-              fontSize: 44,
+              fontSize: 48,
               fontWeight: 900,
               color: '#FFFFFF',
-              letterSpacing: '-0.5px',
+              letterSpacing: '-1px',
               margin: 0,
               textShadow: '0 4px 25px rgba(0,0,0,0.9)',
+              textAlign: 'center',
             }}
           >
             Built-In Protection &amp; UMak Institutional Access
@@ -136,16 +90,14 @@ export const Scene6SecurityV3: React.FC = () => {
             <BentoCard
               width={640}
               height={430}
-              badge="Anti-Bot Rate Limiting"
-              badgeColor={BRAND_COLORS.blue}
               glowColor="rgba(63, 86, 202, 0.4)"
               style={{ padding: 28 }}
             >
               <div style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 800, marginBottom: 8 }}>
-                Intelligent Request Throttling
+                Request Throttling
               </div>
               <div style={{ color: '#94A3B8', fontSize: 15, marginBottom: 20 }}>
-                Protects the AI cluster from automated scraping and spam bursts
+                Reduces excessive requests and prevents automated bot spam
               </div>
 
               {/* Rate Gauge Meter Box */}
@@ -162,7 +114,7 @@ export const Scene6SecurityV3: React.FC = () => {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
                   <span style={{ color: '#E2E8F0', fontSize: 15, fontWeight: 700 }}>
-                    Requests Throttle Ceiling
+                    Requests Limit Ceiling
                   </span>
                   <span style={{ color: BRAND_COLORS.yellow, fontSize: 16, fontWeight: 800 }}>
                     {Math.round(meterValue)} / 15 req/min
@@ -188,7 +140,6 @@ export const Scene6SecurityV3: React.FC = () => {
                           ? `linear-gradient(90deg, ${BRAND_COLORS.yellow}, ${BRAND_COLORS.red})`
                           : `linear-gradient(90deg, ${BRAND_COLORS.cyan}, ${BRAND_COLORS.blue})`,
                       boxShadow: '0 0 14px rgba(255, 214, 10, 0.6)',
-                      transition: 'width 0.2s ease-out',
                     }}
                   />
                 </div>
@@ -241,16 +192,14 @@ export const Scene6SecurityV3: React.FC = () => {
             <BentoCard
               width={640}
               height={430}
-              badge="Domain-Restricted OAuth"
-              badgeColor={BRAND_COLORS.green}
               glowColor="rgba(34, 197, 94, 0.35)"
               style={{ padding: 28 }}
             >
               <div style={{ color: '#FFFFFF', fontSize: 24, fontWeight: 800, marginBottom: 8 }}>
-                @umak.edu.ph Verified Access
+                UMak Email Sign-In Only
               </div>
               <div style={{ color: '#94A3B8', fontSize: 15, marginBottom: 20 }}>
-                Strict Google SSO gate prevents unauthorized external access
+                Sign-in is limited exclusively to official UMak email accounts
               </div>
 
               {/* Simulated Google SSO Login Box */}
@@ -282,7 +231,7 @@ export const Scene6SecurityV3: React.FC = () => {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span style={{ fontSize: 18 }}>❌</span>
-                    <span style={{ color: '#CBD5E1', fontSize: 16, fontFamily: 'monospace' }}>
+                    <span style={{ color: '#CBD5E1', fontSize: 16 }}>
                       personal.user@gmail.com
                     </span>
                   </div>
@@ -321,13 +270,12 @@ export const Scene6SecurityV3: React.FC = () => {
                             color: '#FFFFFF',
                             fontSize: 16,
                             fontWeight: 700,
-                            fontFamily: 'monospace',
                           }}
                         >
                           student.umak@umak.edu.ph
                         </div>
                         <div style={{ color: BRAND_COLORS.green, fontSize: 12, marginTop: 2 }}>
-                          Institutional Identity Confirmed
+                          UMak Student Account Verified
                         </div>
                       </div>
                     </div>

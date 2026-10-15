@@ -3,7 +3,6 @@ import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig }
 import { FileText, MapPin, ShieldCheck } from 'lucide-react';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { BentoCard } from '../../components/v3/BentoCard';
-import { HudOverlay } from '../../components/v3/HudOverlay';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
 import { BRAND_COLORS, SPRINGS } from '../../theme';
@@ -15,7 +14,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
   // 1. Entrance of Chat Window (Spring)
   const windowSpring = spring({ frame: frame - 4, fps, config: SPRINGS.snappy });
 
-  // 2. User Question Typing Animation (frames 12 -> 75)
+  // 2. User Question Typing Animation (frames 12 -> 70)
   // Voiceover says "Ask where the CIT is in the Admin Building." (local frames 12 -> 94)
   const fullUserQuery = 'Where is the CIT in the Admin Building?';
   const typeProgress = interpolate(frame, [12, 70], [0, fullUserQuery.length], {
@@ -25,7 +24,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
   const typedUserText = fullUserQuery.slice(0, Math.floor(typeProgress));
   const showUserCaret = frame < 85 && Math.floor(frame / 6) % 2 === 0;
 
-  // 3. AI Assistant Response Stream (frames 85 -> 195)
+  // 3. AI Assistant Response Stream (frames 85 -> 185)
   // Voiceover says "TAGA-asK AI answers: Second Floor, South Wing." (local frames 114 -> 233)
   const aiBubbleSpring = spring({ frame: frame - 82, fps, config: SPRINGS.smooth });
   const aiTokens = [
@@ -48,7 +47,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
   const citationPulse = interpolate(
     Math.sin(frame * 0.18),
     [-1, 1],
-    [0.75, 1.0]
+    [0.8, 1.0]
   );
 
   // 6. Right-Column PDF Document Inspector Card Pop (frame >= 210)
@@ -75,17 +74,11 @@ export const Scene4CitationDemoV3: React.FC = () => {
         cameraMove="pushIn"
         durationInFrames={410}
       >
-        <HudOverlay
-          label="04 // VERIFIED CITATION"
-          sublabel="DYNAMIC CHAT STREAM / SOURCE03 PAGE 1 PROOF"
-          globalFrameOffset={546}
-        />
-
         {/* Section Headline */}
         <div
           style={{
             position: 'absolute',
-            top: 80,
+            top: 75,
             left: 0,
             right: 0,
             display: 'flex',
@@ -94,47 +87,15 @@ export const Scene4CitationDemoV3: React.FC = () => {
             zIndex: 35,
           }}
         >
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              backgroundColor: 'rgba(255, 214, 10, 0.16)',
-              border: `1px solid ${BRAND_COLORS.yellow}80`,
-              borderRadius: 999,
-              padding: '6px 22px',
-              marginBottom: 8,
-            }}
-          >
-            <span
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: BRAND_COLORS.yellow,
-                boxShadow: `0 0 10px ${BRAND_COLORS.yellow}`,
-              }}
-            />
-            <span
-              style={{
-                color: BRAND_COLORS.yellow,
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: '2px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Exact Source Citation
-            </span>
-          </div>
           <h2
             style={{
-              fontSize: 44,
+              fontSize: 48,
               fontWeight: 900,
               color: '#FFFFFF',
-              letterSpacing: '-0.5px',
+              letterSpacing: '-1px',
               margin: 0,
               textShadow: '0 4px 25px rgba(0,0,0,0.9)',
+              textAlign: 'center',
             }}
           >
             Zero Hallucinations. Strictly Verified.
@@ -162,8 +123,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
           >
             <div
               style={{
-                width: 850,
-                height: 490,
+                width: 860,
+                height: 500,
                 backgroundColor: '#0F172A',
                 borderRadius: 22,
                 border: '1.5px solid rgba(255, 255, 255, 0.18)',
@@ -203,27 +164,12 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    fontSize: 12,
+                    fontSize: 13,
                     color: '#94A3B8',
-                    fontFamily: 'monospace',
                   }}
                 >
                   <span style={{ color: '#10B981' }}>🔒</span>
                   <span style={{ color: '#FFFFFF', fontWeight: 600 }}>https://taga-askai.vercel.app</span>
-                </div>
-
-                <div
-                  style={{
-                    backgroundColor: 'rgba(33, 173, 227, 0.2)',
-                    color: BRAND_COLORS.cyan,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    padding: '3px 10px',
-                    borderRadius: 6,
-                    letterSpacing: '1px',
-                  }}
-                >
-                  LIVE DEMO
                 </div>
               </div>
 
@@ -231,10 +177,10 @@ export const Scene4CitationDemoV3: React.FC = () => {
               <div
                 style={{
                   flex: 1,
-                  padding: '20px 24px',
+                  padding: '22px 26px',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 14,
+                  gap: 16,
                   backgroundColor: '#0B1120',
                   overflow: 'hidden',
                   position: 'relative',
@@ -249,7 +195,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     gap: 4,
                   }}
                 >
-                  <div style={{ color: '#94A3B8', fontSize: 11, fontWeight: 600 }}>
+                  <div style={{ color: '#94A3B8', fontSize: 12, fontWeight: 600 }}>
                     You · 01:06 AM
                   </div>
                   <div
@@ -257,7 +203,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                       backgroundColor: BRAND_COLORS.blue,
                       color: '#FFFFFF',
                       borderRadius: '16px 16px 4px 16px',
-                      padding: '10px 18px',
+                      padding: '11px 20px',
                       fontSize: 17,
                       fontWeight: 600,
                       maxWidth: '85%',
@@ -286,8 +232,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     {/* Official Heron Avatar */}
                     <div
                       style={{
-                        width: 42,
-                        height: 42,
+                        width: 44,
+                        height: 44,
                         borderRadius: 12,
                         backgroundColor: '#1E293B',
                         border: `1.5px solid ${BRAND_COLORS.yellow}`,
@@ -301,7 +247,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     >
                       <Img
                         src={staticFile('heron-mascot.png')}
-                        style={{ width: 32, height: 32, objectFit: 'contain' }}
+                        style={{ width: 34, height: 34, objectFit: 'contain' }}
                       />
                     </div>
 
@@ -311,17 +257,17 @@ export const Scene4CitationDemoV3: React.FC = () => {
                         flex: 1,
                         backgroundColor: '#1E293B',
                         borderRadius: '4px 18px 18px 18px',
-                        padding: '16px 20px',
+                        padding: '18px 22px',
                         border: '1px solid rgba(255, 255, 255, 0.12)',
                         boxShadow: '0 8px 25px rgba(0, 0, 0, 0.5)',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 10,
+                        gap: 12,
                       }}
                     >
-                      {/* Header + Strictly Grounded Badge */}
+                      {/* Header */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <span style={{ color: '#FFFFFF', fontSize: 14, fontWeight: 800 }}>
+                        <span style={{ color: '#FFFFFF', fontSize: 15, fontWeight: 800 }}>
                           TAGA-asK AI
                         </span>
                         <div
@@ -339,7 +285,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                           }}
                         >
                           <ShieldCheck size={13} color="#22C55E" />
-                          <span>Strictly Grounded &amp; Verified</span>
+                          <span>Grounded in Sources</span>
                         </div>
                       </div>
 
@@ -347,7 +293,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                       <div
                         style={{
                           color: '#F8FAFC',
-                          fontSize: 15,
+                          fontSize: 16,
                           lineHeight: 1.55,
                           fontWeight: 500,
                         }}
@@ -395,8 +341,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div
                               style={{
-                                width: 30,
-                                height: 30,
+                                width: 32,
+                                height: 32,
                                 borderRadius: 8,
                                 backgroundColor: 'rgba(33, 173, 227, 0.2)',
                                 display: 'flex',
@@ -452,39 +398,27 @@ export const Scene4CitationDemoV3: React.FC = () => {
                         >
                           <div
                             style={{
-                              color: '#94A3B8',
-                              fontSize: 10,
-                              fontWeight: 800,
-                              letterSpacing: '1px',
-                              textTransform: 'uppercase',
-                            }}
-                          >
-                            Official Citations (Click to inspect exact quote):
-                          </div>
-
-                          <div
-                            style={{
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 8,
-                              backgroundColor: 'rgba(255, 214, 10, 0.12)',
+                              backgroundColor: 'rgba(255, 214, 10, 0.14)',
                               border: `1.5px solid ${BRAND_COLORS.yellow}`,
                               borderRadius: 8,
-                              padding: '5px 14px',
+                              padding: '6px 16px',
                               width: 'fit-content',
-                              boxShadow: `0 0 15px ${BRAND_COLORS.yellowGlow}`,
+                              boxShadow: `0 0 18px ${BRAND_COLORS.yellowGlow}`,
                               opacity: citationPulse,
                             }}
                           >
-                            <FileText size={14} color={BRAND_COLORS.yellow} />
+                            <FileText size={15} color={BRAND_COLORS.yellow} />
                             <span
                               style={{
                                 color: BRAND_COLORS.yellow,
-                                fontSize: 12,
+                                fontSize: 13,
                                 fontWeight: 800,
                               }}
                             >
-                              📖 Source03.pdf - Page 1
+                              Source03.pdf, Page 1
                             </span>
                           </div>
                         </div>
@@ -501,25 +435,24 @@ export const Scene4CitationDemoV3: React.FC = () => {
             <svg
               style={{
                 position: 'absolute',
-                top: 360,
-                left: 795,
-                width: 95,
-                height: 50,
-                zIndex: 30,
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                zIndex: 35,
                 pointerEvents: 'none',
-                overflow: 'visible',
               }}
             >
               <path
-                d="M 5 35 C 40 35, 55 5, 90 5"
+                d="M 275 295 C 470 295, 680 235, 892 235"
                 fill="none"
                 stroke={BRAND_COLORS.yellow}
-                strokeWidth="3"
-                strokeDasharray="110"
-                strokeDashoffset={110 * (1 - lineProgress)}
+                strokeWidth="2.5"
+                strokeDasharray="700"
+                strokeDashoffset={700 * (1 - lineProgress)}
+                filter="drop-shadow(0 0 10px rgba(244, 235, 42, 0.85))"
               />
-              <circle cx="5" cy="35" r="5" fill={BRAND_COLORS.yellow} />
-              <circle cx="90" cy="5" r="5" fill={BRAND_COLORS.yellow} />
+              <circle cx="275" cy="295" r="4.5" fill={BRAND_COLORS.yellow} />
+              <circle cx="892" cy="235" r="4.5" fill={BRAND_COLORS.yellow} />
             </svg>
           )}
 
@@ -531,16 +464,15 @@ export const Scene4CitationDemoV3: React.FC = () => {
             }}
           >
             <BentoCard
-              width={510}
-              height={490}
-              badge="Official Document Source"
-              badgeColor={BRAND_COLORS.yellow}
+              width={520}
+              height={500}
               glowColor="rgba(255, 214, 10, 0.35)"
               style={{
                 border: `1.5px solid ${BRAND_COLORS.yellow}70`,
                 padding: 24,
               }}
             >
+              {/* Document Header */}
               <div
                 style={{
                   display: 'flex',
@@ -552,12 +484,12 @@ export const Scene4CitationDemoV3: React.FC = () => {
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 22 }}>📄</span>
+                  <span style={{ fontSize: 24 }}>📄</span>
                   <div>
                     <div style={{ color: '#FFFFFF', fontSize: 16, fontWeight: 800 }}>
                       Source03_Building_Directory.pdf
                     </div>
-                    <div style={{ color: '#94A3B8', fontSize: 11 }}>
+                    <div style={{ color: '#94A3B8', fontSize: 12 }}>
                       University of Makati Official Document
                     </div>
                   </div>
@@ -567,12 +499,12 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     backgroundColor: 'rgba(255, 214, 10, 0.2)',
                     color: BRAND_COLORS.yellow,
                     fontWeight: 800,
-                    fontSize: 12,
-                    padding: '3px 10px',
+                    fontSize: 13,
+                    padding: '4px 12px',
                     borderRadius: 6,
                   }}
                 >
-                  PAGE 1
+                  Page 1
                 </span>
               </div>
 
@@ -585,10 +517,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
                   fontSize: 15,
                   color: '#94A3B8',
                   lineHeight: 1.8,
-                  fontFamily: 'monospace',
                 }}
               >
-                <div>[SECTION 4.2: ADMINISTRATIVE DIRECTORY]</div>
                 <div>Office of the President — Admin Bldg, 3rd Floor</div>
                 <div>University Registrar — Admin Bldg, 1st Floor</div>
 
@@ -626,14 +556,12 @@ export const Scene4CitationDemoV3: React.FC = () => {
                   marginTop: 22,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
                   color: BRAND_COLORS.green,
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: 700,
                 }}
               >
-                <span>✓ 100% Grounded Source Match</span>
-                <span style={{ color: '#CBD5E1', fontSize: 11 }}>SHA-256 Verified Hash</span>
+                <span>✓ Verified UMak Source Match</span>
               </div>
             </BentoCard>
           </div>
