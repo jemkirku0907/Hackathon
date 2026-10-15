@@ -21,7 +21,19 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
 
   if (!isOpen) return null;
 
-  const handleGoogleSignIn = () => {
+  const handleGoogleSignIn = async () => {
+    try {
+      const res = await fetch('/api/auth/google');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.configured && data.url) {
+          window.location.href = data.url;
+          return;
+        }
+      }
+    } catch {
+      // fallback
+    }
     setGoogleInfo(
       'UMak Google Workspace SSO (@umak.edu.ph) requires institution-level OAuth client ID setup. For this application, you can sign in directly using your UMak email and password below.'
     );
@@ -33,8 +45,10 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
     setGoogleInfo(null);
 
     const cleanEmail = email.trim().toLowerCase();
-    if (!cleanEmail.endsWith('@umak.edu.ph')) {
-      setError('Access is restricted to University of Makati students. Please enter your official @umak.edu.ph email.');
+    const atIndex = cleanEmail.lastIndexOf('@');
+    const domain = atIndex !== -1 ? cleanEmail.slice(atIndex + 1) : '';
+    if (domain !== 'umak.edu.ph') {
+      setError('Please sign in with your UMak email (@umak.edu.ph).');
       return;
     }
 
@@ -68,6 +82,9 @@ export function LoginModal({ isOpen, onLoginSuccess }: LoginModalProps) {
 
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 403) {
+          throw new Error('Please sign in with your UMak email (@umak.edu.ph).');
+        }
         throw new Error(data.error || 'Authentication failed');
       }
 

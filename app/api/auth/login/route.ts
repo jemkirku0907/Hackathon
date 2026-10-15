@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       recordFailedAttempt(rateLimitKey);
       return NextResponse.json(
         { 
-          error: 'Access restricted to verified University of Makati students. You must use an official @umak.edu.ph email address.' 
+          error: 'Please sign in with your UMak email (@umak.edu.ph).' 
         },
         { status: 403 }
       );

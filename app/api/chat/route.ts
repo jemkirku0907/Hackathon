@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1. IP identification & Rate Limiting
+    // 1. IP identification & Rate Limiting per verified user
     const forwarded = req.headers.get('x-forwarded-for');
     const ip = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
     
-    const rateCheck = checkRateLimit(ip);
+    const rateCheck = checkRateLimit(session.email);
     if (!rateCheck.allowed) {
       return NextResponse.json(
         {
