@@ -1,6 +1,6 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BookOpen, CheckCircle2, Compass, FileText, MapPin, Menu, Moon, Send, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle2, Compass, MapPin, Moon, Send, Sparkles } from 'lucide-react';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
@@ -50,15 +50,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
   const citationPulse = interpolate(
     Math.sin(frame * 0.18),
     [-1, 1],
-    [0.85, 1.0]
+    [0.96, 1.04]
   );
-
-  // 7. Official Document Inspection Card slide-in (frame >= 215)
-  const docModalSpring = spring({ frame: frame - 215, fps, config: SPRINGS.snappy });
-  const highlightWidth = interpolate(frame, [250, 310], [0, 100], {
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
 
   return (
     <WhipPanWrapper durationInFrames={410} direction="left">
@@ -72,7 +65,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
         <div
           style={{
             position: 'absolute',
-            top: 60,
+            top: 55,
             left: 0,
             right: 0,
             display: 'flex',
@@ -83,7 +76,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
         >
           <h2
             style={{
-              fontSize: 46,
+              fontSize: 44,
               fontWeight: 900,
               color: '#FFFFFF',
               letterSpacing: '-1px',
@@ -96,14 +89,14 @@ export const Scene4CitationDemoV3: React.FC = () => {
           </h2>
         </div>
 
-        {/* Real Authentic Application Window (Clean Light UI matching screenshot) */}
+        {/* Real Authentic Application Window (Clean Light UI matching user's screenshot 1:1) */}
         <div
           style={{
             position: 'relative',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 50,
+            marginTop: 20,
             zIndex: 25,
             transform: `scale(${windowSpring})`,
             opacity: windowSpring,
@@ -112,8 +105,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
           <div
             style={{
               position: 'relative',
-              width: 1400,
-              height: 650,
+              width: 1360,
+              height: 680,
               backgroundColor: '#FFFFFF',
               borderRadius: 20,
               border: '1.5px solid rgba(255, 255, 255, 0.4)',
@@ -134,7 +127,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '0 24px',
+                padding: '0 28px',
                 flexShrink: 0,
               }}
             >
@@ -174,7 +167,8 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 6,
-                    backgroundColor: '#F1F5F9',
+                    backgroundColor: '#F8FAFC',
+                    border: '1px solid #E2E8F0',
                     color: '#334155',
                     fontSize: 12,
                     fontWeight: 600,
@@ -219,27 +213,79 @@ export const Scene4CitationDemoV3: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Main Chat Viewport (Pristine 2-Column Side-by-Side Layout) */}
+            {/* 2. Main Chat Viewport (Spacious Light Mode Single-Column Layout matching screenshot) */}
             <div
               style={{
                 flex: 1,
                 backgroundColor: '#F8FAFC',
-                padding: '20px 28px',
+                padding: '24px 44px',
                 display: 'flex',
-                gap: 24,
+                flexDirection: 'column',
+                gap: 18,
                 overflow: 'hidden',
                 position: 'relative',
               }}
             >
-              {/* LEFT COLUMN: Heron Avatar + Complete AI Response Card */}
+              {/* User Message (Top Right) */}
+              {userSent && (
+                <div
+                  style={{
+                    alignSelf: 'flex-end',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    gap: 5,
+                    transform: `scale(${userBubbleSpring})`,
+                    opacity: userBubbleSpring,
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <span style={{ color: '#64748B', fontSize: 11.5, fontWeight: 600 }}>
+                      You · 03:36 PM
+                    </span>
+                    <div
+                      style={{
+                        width: 26,
+                        height: 26,
+                        borderRadius: '50%',
+                        backgroundColor: '#E2E8F0',
+                        color: '#475569',
+                        fontSize: 10.5,
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      You
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: '#2A3990',
+                      color: '#FFFFFF',
+                      borderRadius: '18px 4px 18px 18px',
+                      padding: '10px 22px',
+                      fontSize: 16,
+                      fontWeight: 600,
+                      boxShadow: '0 4px 14px rgba(42, 57, 144, 0.22)',
+                    }}
+                  >
+                    {fullUserQuery}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Assistant Response (Aligned Left with Heron Mascot) */}
               {frame >= 82 && (
                 <div
                   style={{
+                    alignSelf: 'flex-start',
                     display: 'flex',
                     alignItems: 'flex-start',
                     gap: 14,
-                    width: 680,
-                    flexShrink: 0,
+                    width: '100%',
+                    maxWidth: 880,
                     transform: `scale(${aiBubbleSpring})`,
                     opacity: aiBubbleSpring,
                   }}
@@ -252,7 +298,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                       borderRadius: '50%',
                       backgroundColor: '#FFFFFF',
                       border: '1.5px solid #F4EB2A',
-                      boxShadow: '0 2px 10px rgba(0,0,0,0.08), 0 0 12px rgba(244, 235, 42, 0.4)',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.08), 0 0 14px rgba(244, 235, 42, 0.4)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -266,380 +312,218 @@ export const Scene4CitationDemoV3: React.FC = () => {
                     />
                   </div>
 
-                  {/* AI Response Card (Clean White, crisp border) */}
+                  {/* AI Response Card Container */}
                   <div
                     style={{
-                      flex: 1,
-                      minWidth: 0,
-                      backgroundColor: '#FFFFFF',
-                      borderRadius: 16,
-                      border: '1.5px solid #E2E8F0',
-                      boxShadow: '0 4px 18px rgba(0, 0, 0, 0.05)',
-                      padding: '16px 20px',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: 12,
+                      gap: 6,
+                      flex: 1,
+                      minWidth: 0,
                     }}
                   >
-                    {/* Assistant Header & Grounded Badge */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-                      <span style={{ color: '#64748B', fontSize: 12, fontWeight: 700 }}>
-                        TAGA-asK AI · 03:36 PM
-                      </span>
+                    {/* Header Label */}
+                    <span style={{ color: '#64748B', fontSize: 12, fontWeight: 700 }}>
+                      TAGA-asK AI · 03:36 PM
+                    </span>
+
+                    {/* Clean White Card */}
+                    <div
+                      style={{
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 16,
+                        border: '1.5px solid #E2E8F0',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                        padding: '18px 24px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 14,
+                      }}
+                    >
+                      {/* Strictly Grounded & Verified Badge */}
                       <div
                         style={{
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: 5,
+                          gap: 6,
                           backgroundColor: '#EAFBF1',
                           border: '1px solid #A3E7BD',
                           borderRadius: 7,
-                          padding: '2px 8px',
+                          padding: '3px 10px',
                           color: '#15803D',
-                          fontSize: 11,
+                          fontSize: 12,
                           fontWeight: 700,
-                          flexShrink: 0,
+                          width: 'fit-content',
                         }}
                       >
-                        <CheckCircle2 size={13} color="#16A34A" />
+                        <CheckCircle2 size={14} color="#16A34A" />
                         <span>Strictly Grounded &amp; Verified</span>
                       </div>
-                    </div>
 
-                    {/* Streamed Answer Text (2 clean wrapped lines, zero clipping) */}
-                    <div
-                      style={{
-                        color: '#1E293B',
-                        fontSize: 16,
-                        lineHeight: 1.55,
-                        fontWeight: 500,
-                        wordBreak: 'normal',
-                      }}
-                    >
-                      {aiTokens.slice(0, streamedCount).map((token, idx) => {
-                        const isKeyLocation = idx >= 9; // "Second Floor, South Wing, Admin Building."
-                        return (
-                          <span
-                            key={idx}
-                            style={{
-                              marginRight: 4,
-                              fontWeight: isKeyLocation ? 800 : 500,
-                              color:
-                                isKeyLocation && frame >= 180
-                                  ? '#2A3990'
-                                  : '#1E293B',
-                              backgroundColor:
-                                isKeyLocation && frame >= 180
-                                  ? 'rgba(244, 235, 42, 0.35)'
-                                  : 'transparent',
-                              borderRadius: 4,
-                              padding: isKeyLocation && frame >= 180 ? '1px 4px' : '0',
-                              transition: 'all 0.2s ease',
-                              display: 'inline',
-                            }}
-                          >
-                            {token}
-                          </span>
-                        );
-                      })}
-                    </div>
-
-                    {/* Location Visualizer Card (Light Mode matching screenshot) */}
-                    {frame >= 170 && (
+                      {/* Streamed Answer Text */}
                       <div
                         style={{
-                          transform: `scale(${widgetSpring})`,
-                          opacity: widgetSpring,
-                          backgroundColor: '#EEF4FF',
-                          border: '1.5px solid rgba(42, 57, 144, 0.25)',
-                          borderRadius: 12,
-                          padding: '10px 16px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: 12,
+                          color: '#1E293B',
+                          fontSize: 16.5,
+                          lineHeight: 1.55,
+                          fontWeight: 500,
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div
-                            style={{
-                              width: 34,
-                              height: 34,
-                              borderRadius: 8,
-                              backgroundColor: 'rgba(42, 57, 144, 0.12)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                            }}
-                          >
-                            <MapPin size={17} color="#2A3990" />
-                          </div>
-                          <div>
+                        {aiTokens.slice(0, streamedCount).map((token, idx) => {
+                          const isKeyLocation = idx >= 9; // "Second Floor, South Wing, Admin Building."
+                          return (
+                            <span
+                              key={idx}
+                              style={{
+                                marginRight: 4,
+                                fontWeight: isKeyLocation ? 800 : 500,
+                                color:
+                                  isKeyLocation && frame >= 180
+                                    ? '#2A3990'
+                                    : '#1E293B',
+                                backgroundColor:
+                                  isKeyLocation && frame >= 180
+                                    ? 'rgba(244, 235, 42, 0.4)'
+                                    : 'transparent',
+                                borderRadius: 4,
+                                padding: isKeyLocation && frame >= 180 ? '2px 5px' : '0',
+                                transition: 'all 0.2s ease',
+                                display: 'inline',
+                              }}
+                            >
+                              {token}
+                            </span>
+                          );
+                        })}
+                      </div>
+
+                      {/* Location Visualizer Card (Light Mode matching screenshot) */}
+                      {frame >= 170 && (
+                        <div
+                          style={{
+                            transform: `scale(${widgetSpring})`,
+                            opacity: widgetSpring,
+                            backgroundColor: '#EEF4FF',
+                            border: '1.5px solid rgba(42, 57, 144, 0.2)',
+                            borderRadius: 12,
+                            padding: '12px 18px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: 16,
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                             <div
                               style={{
-                                color: '#0F172A',
-                                fontSize: 13.5,
+                                width: 36,
+                                height: 36,
+                                borderRadius: 8,
+                                backgroundColor: 'rgba(42, 57, 144, 0.1)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                              }}
+                            >
+                              <MapPin size={18} color="#2A3990" />
+                            </div>
+                            <div>
+                              <div
+                                style={{
+                                  color: '#0F172A',
+                                  fontSize: 14.5,
+                                  fontWeight: 800,
+                                }}
+                              >
+                                Center for Information Technology (CIT)
+                              </div>
+                              <div style={{ color: '#64748B', fontSize: 12 }}>
+                                Admin Building · Second Floor (South Wing)
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              backgroundColor: '#2A3990',
+                              color: '#FFFFFF',
+                              padding: '8px 16px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              flexShrink: 0,
+                              boxShadow: '0 4px 12px rgba(42, 57, 144, 0.25)',
+                            }}
+                          >
+                            <Compass size={14} color="#F4EB2A" />
+                            <span>📍 View on Campus Map</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Official Citations Section */}
+                      {frame >= 200 && (
+                        <div
+                          style={{
+                            transform: `scale(${citationChipSpring})`,
+                            opacity: citationChipSpring,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 8,
+                            paddingTop: 10,
+                            borderTop: '1px solid #F1F5F9',
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: '#64748B',
+                              fontSize: 11,
+                              fontWeight: 800,
+                              letterSpacing: '0.8px',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Official Citations (Click to inspect exact quote):
+                          </span>
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 8,
+                              backgroundColor: frame >= 210 ? 'rgba(244, 235, 42, 0.15)' : '#EEF2FC',
+                              border: `1.5px solid ${frame >= 210 ? BRAND_COLORS.yellow : '#3F56CA'}`,
+                              borderRadius: 8,
+                              padding: '7px 16px',
+                              width: 'fit-content',
+                              boxShadow:
+                                frame >= 210
+                                  ? `0 0 18px ${BRAND_COLORS.yellowGlow}`
+                                  : '0 2px 6px rgba(0,0,0,0.04)',
+                              transform: `scale(${citationPulse})`,
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            <BookOpen size={15} color="#21ADE3" />
+                            <span
+                              style={{
+                                color: '#2A3990',
+                                fontSize: 13,
                                 fontWeight: 800,
                               }}
                             >
-                              Center for Information Technology (CIT)
-                            </div>
-                            <div style={{ color: '#64748B', fontSize: 11.5 }}>
-                              Admin Building · Second Floor (South Wing)
-                            </div>
+                              Source03.pdf · Page 1
+                            </span>
                           </div>
                         </div>
-
-                        <div
-                          style={{
-                            backgroundColor: '#2A3990',
-                            color: '#FFFFFF',
-                            padding: '7px 14px',
-                            borderRadius: 8,
-                            fontSize: 11.5,
-                            fontWeight: 700,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            flexShrink: 0,
-                            boxShadow: '0 4px 10px rgba(42, 57, 144, 0.25)',
-                          }}
-                        >
-                          <Compass size={13} color="#F4EB2A" />
-                          <span>📍 View on Campus Map</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Official Citations Section */}
-                    {frame >= 200 && (
-                      <div
-                        style={{
-                          transform: `scale(${citationChipSpring})`,
-                          opacity: citationChipSpring,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 6,
-                          paddingTop: 8,
-                          borderTop: '1px solid #F1F5F9',
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: '#64748B',
-                            fontSize: 10.5,
-                            fontWeight: 800,
-                            letterSpacing: '0.8px',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          Official Citations (Click to inspect exact quote):
-                        </span>
-                        <div
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 7,
-                            backgroundColor: frame >= 210 ? 'rgba(244, 235, 42, 0.15)' : '#EEF2FC',
-                            border: `1.5px solid ${frame >= 210 ? BRAND_COLORS.yellow : '#3F56CA'}`,
-                            borderRadius: 8,
-                            padding: '6px 14px',
-                            width: 'fit-content',
-                            boxShadow:
-                              frame >= 210
-                                ? `0 0 16px ${BRAND_COLORS.yellowGlow}`
-                                : '0 2px 6px rgba(0,0,0,0.04)',
-                            transform: `scale(${citationPulse})`,
-                            transition: 'all 0.2s ease',
-                          }}
-                        >
-                          <BookOpen size={14} color="#21ADE3" />
-                          <span
-                            style={{
-                              color: '#2A3990',
-                              fontSize: 12.5,
-                              fontWeight: 800,
-                            }}
-                          >
-                            Source03.pdf · Page 1
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
-
-              {/* RIGHT COLUMN: User Message (Top) + Verified Document Inspector Drawer (Below) */}
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 12,
-                  minWidth: 0,
-                }}
-              >
-                {/* User Message (Right Side) */}
-                {userSent && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-end',
-                      gap: 4,
-                      transform: `scale(${userBubbleSpring})`,
-                      opacity: userBubbleSpring,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <span style={{ color: '#64748B', fontSize: 11, fontWeight: 600 }}>
-                        You · 03:36 PM
-                      </span>
-                      <div
-                        style={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: '50%',
-                          backgroundColor: '#E2E8F0',
-                          color: '#475569',
-                          fontSize: 10,
-                          fontWeight: 700,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        You
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        backgroundColor: '#2A3990',
-                        color: '#FFFFFF',
-                        borderRadius: '16px 4px 16px 16px',
-                        padding: '10px 20px',
-                        fontSize: 16,
-                        fontWeight: 600,
-                        boxShadow: '0 4px 14px rgba(42, 57, 144, 0.25)',
-                      }}
-                    >
-                      {fullUserQuery}
-                    </div>
-                  </div>
-                )}
-
-                {/* Verified Official Document Inspector (Smooth Pop-In, No Overlap with AI message) */}
-                {frame >= 215 && (
-                  <div
-                    style={{
-                      width: 540,
-                      alignSelf: 'flex-end',
-                      backgroundColor: 'rgba(15, 23, 42, 0.96)',
-                      backdropFilter: 'blur(20px)',
-                      border: `2px solid ${BRAND_COLORS.yellow}`,
-                      borderRadius: 14,
-                      padding: '16px 18px',
-                      boxShadow: '0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(244, 235, 42, 0.25)',
-                      transform: `scale(${docModalSpring})`,
-                      opacity: docModalSpring,
-                      color: '#FFFFFF',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 10,
-                    }}
-                  >
-                    {/* Drawer Header */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        borderBottom: '1px solid rgba(255,255,255,0.12)',
-                        paddingBottom: 8,
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <FileText size={16} color={BRAND_COLORS.yellow} />
-                        <span style={{ fontSize: 13, fontWeight: 800 }}>
-                          Source03_Building_Directory.pdf
-                        </span>
-                      </div>
-                      <span
-                        style={{
-                          backgroundColor: 'rgba(244, 235, 42, 0.2)',
-                          color: BRAND_COLORS.yellow,
-                          fontSize: 10.5,
-                          fontWeight: 800,
-                          padding: '2px 7px',
-                          borderRadius: 5,
-                        }}
-                      >
-                        Page 1
-                      </span>
-                    </div>
-
-                    {/* Document Excerpt Body */}
-                    <div
-                      style={{
-                        backgroundColor: 'rgba(0,0,0,0.45)',
-                        borderRadius: 8,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.6,
-                        color: '#94A3B8',
-                        fontFamily: 'monospace',
-                      }}
-                    >
-                      <div>Office of the President — Admin Bldg, 3F</div>
-                      <div>University Registrar — Admin Bldg, 1F</div>
-
-                      {/* Animated Yellow Highlight Row */}
-                      <div
-                        style={{
-                          position: 'relative',
-                          color: '#FFFFFF',
-                          fontWeight: 800,
-                          margin: '3px 0',
-                          display: 'inline-block',
-                          width: '100%',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: `${highlightWidth}%`,
-                            backgroundColor: 'rgba(244, 235, 42, 0.45)',
-                            borderBottom: `2px solid ${BRAND_COLORS.yellow}`,
-                            borderRadius: 3,
-                            zIndex: -1,
-                          }}
-                        />
-                        &gt; CIT Office — Admin Bldg, 2F South Wing
-                      </div>
-
-                      <div>Accounting &amp; Finance — Admin Bldg, 1F</div>
-                      <div>CCIS Faculty Lounge — Admin Bldg, 4F</div>
-                    </div>
-
-                    {/* Grounded Badge Footer */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        color: BRAND_COLORS.green,
-                        fontSize: 11.5,
-                        fontWeight: 700,
-                      }}
-                    >
-                      <span>✓ 100% Grounded Source Match</span>
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
 
             {/* 3. Bottom Prompt Bar matching real app UI */}
@@ -717,10 +601,17 @@ export const Scene4CitationDemoV3: React.FC = () => {
               </div>
 
               {/* Bottom footer text */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                 <span style={{ color: '#94A3B8', fontSize: 11 }}>
                   TAGA-asK AI adheres strictly to Source01-Source04. Hallucinations are actively prevented server-side.
                 </span>
+                <span style={{ color: '#CBD5E1', fontSize: 11 }}>•</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#2A3990' }} />
+                  <span style={{ color: '#64748B', fontSize: 11, fontWeight: 600 }}>
+                    Developed by DoErrorIn
+                  </span>
+                </div>
               </div>
             </div>
           </div>
