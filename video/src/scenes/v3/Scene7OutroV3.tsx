@@ -112,28 +112,29 @@ export const Scene7OutroV3: React.FC = () => {
         >
           <div
             style={{
-              fontSize: 42,
+              fontSize: 48,
               fontStyle: 'italic',
-              fontWeight: 400,
+              fontWeight: 500,
               fontFamily: "'Playfair Display', Georgia, serif",
               color: '#FFFFFF',
               letterSpacing: '0.5px',
-              textShadow: '0 4px 20px rgba(0,0,0,0.9)',
+              textShadow: '0 4px 25px rgba(0,0,0,0.9)',
             }}
           >
-            Less waiting. Easier access to information.
+            &ldquo;Every Tagak, just ask.&rdquo;
           </div>
           <div
             style={{
               fontSize: 22,
               fontWeight: 700,
               color: BRAND_COLORS.yellow,
-              letterSpacing: '1px',
-              marginTop: 10,
-              textShadow: `0 0 15px ${BRAND_COLORS.yellowGlow}`,
+              letterSpacing: '1.5px',
+              marginTop: 12,
+              textTransform: 'uppercase',
+              textShadow: `0 0 16px ${BRAND_COLORS.yellowGlow}`,
             }}
           >
-            Taga-sagot sa mga tanong ng bawat Tagak.
+            Less waiting. Easier access to information.
           </div>
         </div>
 
