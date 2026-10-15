@@ -1574,7 +1574,15 @@ export default function Home() {
 
       {/* Cinematic Landing Page Overlay with Animated Logo Reveal */}
       {showLandingPage && (
-        <CinematicLandingPage onEnterChat={() => setShowLandingPage(false)} />
+        <CinematicLandingPage 
+          currentUser={currentUser}
+          onEnterChat={() => setShowLandingPage(false)}
+          onOpenLogin={() => setIsLoginOpen(true)}
+          onLoginSuccess={(user) => {
+            setCurrentUser(user);
+            setShowLandingPage(false);
+          }}
+        />
       )}
     </div>
   );

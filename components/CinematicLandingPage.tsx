@@ -5,32 +5,57 @@ import Image from 'next/image';
 import { 
   ArrowRight, 
   Sparkles, 
-  ShieldCheck, 
-  BookOpen, 
-  MapPin, 
-  Paperclip, 
-  Lock, 
   Volume2, 
   VolumeX,
   FastForward,
-  GraduationCap
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
+import { INSTITUTIONAL_ERROR_MESSAGE } from '@/lib/auth';
 
 interface CinematicLandingPageProps {
   onEnterChat: () => void;
+  currentUser?: { email: string; studentId: string; fullName: string } | null;
+  onOpenLogin?: () => void;
+  onLoginSuccess?: (user: { email: string; studentId: string; fullName: string }) => void;
 }
 
-export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps) {
+export function CinematicLandingPage({ 
+  onEnterChat, 
+  currentUser,
+  onOpenLogin,
+  onLoginSuccess
+}: CinematicLandingPageProps) {
   // Animation stages: 
-  // 0 = Dark ambient backdrop fade-in (0ms)
-  // 1 = Silhouette & Mascot scale reveal (500ms)
-  // 2 = Logo wordmark impact + boom (1300ms)
-  // 3 = Tagline & Feature grid reveal (2000ms)
+  // 0 = Initial mount (0ms)
+  // 1 = Silhouette & Mascot scale reveal (300ms)
+  // 2 = Logo wordmark impact + boom (1100ms)
+  // 3 = Content & CTA reveal (1800ms)
   const [animationStage, setAnimationStage] = useState<number>(0);
   const [isExiting, setIsExiting] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [rememberPreference, setRememberPreference] = useState(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
+
+  // Check URL params for auth errors or skip intro preference on mount
+  useEffect(() => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('auth_error')) {
+        setAuthErrorMessage(INSTITUTIONAL_ERROR_MESSAGE);
+        // Clear any stale session on error
+        fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+      }
+      const skipPref = localStorage.getItem('taga_ask_skip_intro');
+      if (skipPref === 'true') {
+        setRememberPreference(true);
+      }
+    } catch {
+      // fallback
+    }
+  }, []);
 
   // Synthesize cinematic boom effect via Web Audio API without needing external mp3 files
   const playCinematicBoom = () => {
@@ -76,7 +101,7 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
       setAnimationStage(2);
       playCinematicBoom();
     }, 1100);
-    const t3 = setTimeout(() => setAnimationStage(3), 1900);
+    const t3 = setTimeout(() => setAnimationStage(3), 1800);
 
     return () => {
       clearTimeout(t1);
@@ -85,18 +110,71 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
     };
   }, [soundEnabled]);
 
-  const handleEnter = () => {
+  const handleGetStarted = async () => {
+    // Save skip intro preference if checked
     if (rememberPreference) {
       try {
         localStorage.setItem('taga_ask_skip_intro', 'true');
       } catch {
         // ignore
       }
+    } else {
+      try {
+        localStorage.removeItem('taga_ask_skip_intro');
+      } catch {
+        // ignore
+      }
     }
-    setIsExiting(true);
-    setTimeout(() => {
-      onEnterChat();
-    }, 450);
+
+    // Check if session already active
+    if (currentUser) {
+      setIsExiting(true);
+      setTimeout(() => onEnterChat(), 400);
+      return;
+    }
+
+    // Verify session with server before redirecting
+    setIsAuthenticating(true);
+    try {
+      const res = await fetch('/api/auth/session');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.authenticated && data.user) {
+          if (onLoginSuccess) {
+            onLoginSuccess(data.user);
+          }
+          setIsExiting(true);
+          setTimeout(() => onEnterChat(), 400);
+          return;
+        }
+      }
+    } catch {
+      // Proceed to login
+    } finally {
+      setIsAuthenticating(false);
+    }
+
+    // User is not logged in: initiate Google OAuth or open UMak authentication modal
+    try {
+      const googleRes = await fetch('/api/auth/google');
+      if (googleRes.ok) {
+        const googleData = await googleRes.json();
+        if (googleData.configured && googleData.url) {
+          window.location.href = googleData.url;
+          return;
+        }
+      }
+    } catch {
+      // fallback to modal
+    }
+
+    // If Google Client ID not yet configured in local environment, open UMak authentication modal
+    if (onOpenLogin) {
+      onOpenLogin();
+    } else {
+      setIsExiting(true);
+      setTimeout(() => onEnterChat(), 400);
+    }
   };
 
   const handleSkip = () => {
@@ -105,71 +183,93 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
 
   return (
     <div 
-      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto bg-[#070B14] text-white transition-opacity duration-500 selection:bg-[#3F56CA] selection:text-white ${
+      className={`fixed inset-0 z-50 flex flex-col justify-between overflow-y-auto bg-[#0E2A8F] text-white transition-opacity duration-500 selection:bg-[#3F56CA] selection:text-white ${
         isExiting ? 'opacity-0 scale-98 pointer-events-none' : 'opacity-100 scale-100'
       }`}
     >
-      {/* Dynamic Ambient Background Gradients */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* 
+        1. BACKGROUND: Full-Bleed UMak Administration Building Photo 
+        Blended like a branded UMak "ADVISORY" poster with royal blue overlays
+      */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
+        {/* Solid fallback color prevents flashing */}
+        <div className="absolute inset-0 bg-[#0E2A8F] -z-20" />
+
+        {/* Ambient drift container with 1.04 to 1.08 slow scale over 30s */}
+        <div className="relative w-full h-full animate-ambient-drift">
+          <Image
+            src="/images/umak-building.jpg"
+            alt="University of Makati Administration Building"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-bottom filter grayscale-[40%] blur-[2px] transform-gpu"
+          />
+        </div>
+
+        {/* Blue color wash to give desaturated building the branded UMak advisory poster tint */}
         <div 
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[720px] h-[720px] rounded-full blur-[140px] opacity-35 transition-all duration-1000"
+          className="absolute inset-0 bg-[#1535A8] mix-blend-multiply opacity-60" 
+        />
+
+        {/* 
+          Base Overlay: linear-gradient from top-left solid blue (#1535A8 to #0E2A8F at ~94% opacity)
+          fading toward bottom-right to ~70% opacity so the building and trees show faintly through
+        */}
+        <div 
+          className="absolute inset-0 hidden md:block"
           style={{
-            background: 'radial-gradient(circle, #3F56CA 0%, rgba(33, 173, 227, 0.4) 50%, transparent 70%)'
+            background: 'linear-gradient(135deg, rgba(21, 53, 168, 0.94) 0%, rgba(14, 42, 143, 0.90) 45%, rgba(14, 42, 143, 0.70) 100%)',
           }}
         />
+        {/* Mobile: slightly darker overlay so text stays ultra-readable on small screens */}
         <div 
-          className="absolute bottom-10 -left-20 w-[500px] h-[500px] rounded-full blur-[130px] opacity-25"
+          className="absolute inset-0 block md:hidden"
           style={{
-            background: 'radial-gradient(circle, #D1CA25 0%, transparent 70%)'
+            background: 'linear-gradient(135deg, rgba(21, 53, 168, 0.96) 0%, rgba(14, 42, 143, 0.93) 50%, rgba(14, 42, 143, 0.76) 100%)',
           }}
         />
+
+        {/* Second Subtle Vignette: dark navy (#050A24 at 35%) at the edges for depth */}
         <div 
-          className="absolute top-1/2 -right-20 w-[550px] h-[550px] rounded-full blur-[130px] opacity-20"
+          className="absolute inset-0"
           style={{
-            background: 'radial-gradient(circle, #EC202B 0%, transparent 70%)'
-          }}
-        />
-        {/* Subtle Tech Grid Texture */}
-        <div 
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px)',
-            backgroundSize: '36px 36px'
+            background: 'radial-gradient(ellipse at center, transparent 35%, rgba(5, 10, 36, 0.35) 100%)',
           }}
         />
       </div>
 
-      {/* Top Bar with Controls */}
+      {/* Top Bar with UMak Seal, Official Title, and Controls */}
       <header className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        {/* University Crest */}
+        {/* UMak Seal & Institutional Title */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 p-0.5 border border-white/20 backdrop-blur-md">
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10 p-0.5 border border-white/20 backdrop-blur-md shadow-md">
             <Image
               src="/umak-seal.png"
-              alt="University of Makati"
-              width={36}
-              height={36}
+              alt="University of Makati Seal"
+              width={40}
+              height={40}
               className="w-full h-full object-contain"
             />
           </div>
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300 block">
+            <span className="text-xs font-bold uppercase tracking-wider text-white block drop-shadow-xs">
               University of Makati
             </span>
-            <span className="text-[10px] text-slate-500 font-medium">
+            <span className="text-[10px] text-blue-200/90 font-medium">
               Official Institutional Assistant
             </span>
           </div>
         </div>
 
-        {/* Top Right Accessibility / Skip Controls */}
+        {/* Top Right Controls (Sound Toggle & Skip Intro) */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => setSoundEnabled(prev => !prev)}
             aria-label={soundEnabled ? "Mute sound" : "Enable sound"}
             title={soundEnabled ? "Sound enabled" : "Sound muted"}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white transition"
+            className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-blue-200 hover:text-white backdrop-blur-md transition cursor-pointer"
           >
             {soundEnabled ? <Volume2 className="w-4 h-4 text-[#D1CA25]" /> : <VolumeX className="w-4 h-4" />}
           </button>
@@ -178,7 +278,7 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
             <button
               type="button"
               onClick={handleSkip}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-300 hover:text-white transition"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white backdrop-blur-md transition cursor-pointer"
             >
               <FastForward className="w-3.5 h-3.5" />
               <span>Skip Intro</span>
@@ -187,23 +287,37 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
         </div>
       </header>
 
-      {/* Hero Section & Cinematic Logo Reveal */}
-      <main className="relative z-10 w-full max-w-4xl mx-auto px-6 py-8 flex flex-col items-center justify-center text-center my-auto">
+      {/* 
+        2. HERO SECTION: Generously Centered Vertically and Horizontally
+        Feature cards deleted; only Mascot, Title, Subtitle, Description, and "Get Started" CTA
+      */}
+      <main className="relative z-10 w-full max-w-3xl mx-auto px-6 py-12 flex flex-col items-center justify-center text-center my-auto flex-1">
         
+        {/* On Rejection / Auth Error Banner */}
+        {authErrorMessage && (
+          <div 
+            role="alert" 
+            className="mb-8 w-full max-w-lg px-4 py-3 rounded-2xl bg-[#050A24]/90 border border-[#EC202B]/60 text-white text-xs sm:text-sm font-semibold flex items-center justify-center gap-3 backdrop-blur-md shadow-2xl animate-in fade-in"
+          >
+            <AlertCircle className="w-5 h-5 text-[#EC202B] shrink-0" />
+            <span>{authErrorMessage}</span>
+          </div>
+        )}
+
         {/* Animated TAGAK Mascot Reveal */}
         <div className="relative mb-6">
-          {/* Glowing Aura Ring */}
+          {/* Subtle Golden-Blue Halo */}
           <div 
             className={`absolute -inset-4 rounded-3xl blur-2xl transition-all duration-1000 ${
               animationStage >= 1 
-                ? 'opacity-80 bg-gradient-to-r from-[#3F56CA] via-[#21ADE3] to-[#D1CA25]' 
+                ? 'opacity-70 bg-gradient-to-r from-[#1535A8] via-[#21ADE3] to-[#D1CA25]' 
                 : 'opacity-0'
             }`}
           />
 
           {/* Mascot Container */}
           <div 
-            className={`relative w-28 h-28 md:w-36 md:h-36 rounded-3xl bg-[#0B132B]/90 border-2 border-[#21ADE3]/60 p-4 shadow-2xl flex items-center justify-center transition-all duration-700 ease-out ${
+            className={`relative w-28 h-28 md:w-36 md:h-36 rounded-3xl bg-[#0E2A8F]/80 border-2 border-[#21ADE3]/50 p-4 shadow-2xl backdrop-blur-md flex items-center justify-center transition-all duration-700 ease-out ${
               animationStage >= 1 
                 ? 'scale-100 opacity-100 translate-y-0 rotate-0' 
                 : 'scale-75 opacity-0 translate-y-6 rotate-[-6deg]'
@@ -215,12 +329,12 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
               width={120}
               height={120}
               priority
-              className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
+              className="w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)]"
             />
           </div>
         </div>
 
-        {/* Animated Wordmark: TAGA-asK AI */}
+        {/* Wordmark: TAGA-asK AI */}
         <div 
           className={`transition-all duration-700 ease-out ${
             animationStage >= 2 
@@ -228,122 +342,90 @@ export function CinematicLandingPage({ onEnterChat }: CinematicLandingPageProps)
               : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#3F56CA]/20 border border-[#3F56CA]/40 text-[#21ADE3] text-xs font-bold tracking-wide uppercase mb-3">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 text-[#21ADE3] text-xs font-bold tracking-wide uppercase mb-3 backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5 text-[#D1CA25]" />
             <span>Official Campus Intelligence</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-2">
-            TAGA-asK <span className="text-[#D1CA25] drop-shadow-[0_0_25px_rgba(209,202,37,0.5)]">AI</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-2 drop-shadow-md">
+            TAGA-asK <span className="text-[#D1CA25] drop-shadow-[0_0_25px_rgba(209,202,37,0.6)]">AI</span>
           </h1>
 
-          <p className="text-xl sm:text-2xl font-bold text-slate-200 tracking-tight mb-2">
+          <p className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-3 drop-shadow-xs">
             Your UMak AI Companion.
           </p>
 
-          <p className="text-sm md:text-base text-slate-400 max-w-xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-base text-blue-100/90 max-w-xl mx-auto leading-relaxed">
             Grounded strictly in University of Makati official knowledge sources. Zero hallucinations, verifiable citations, and real-time campus guidance.
           </p>
         </div>
 
-        {/* Content & Action Reveal (Stage 3) */}
+        {/* 
+          3. SINGLE PRIMARY CTA: "Get Started" Button (Centered, Large, with Arrow)
+          Cards are completely removed; spacing is generous and balanced.
+        */}
         <div 
-          className={`w-full mt-8 transition-all duration-700 ease-out ${
+          className={`w-full mt-10 flex flex-col items-center justify-center transition-all duration-700 ease-out ${
             animationStage >= 3 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 translate-y-8 pointer-events-none'
           }`}
         >
-          {/* Primary Action Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-            <button
-              type="button"
-              onClick={handleEnter}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-[#3F56CA] to-[#2B3C8E] hover:from-[#4D66DC] hover:to-[#384CB8] text-white font-bold text-base shadow-[0_0_35px_rgba(63,86,202,0.5)] hover:shadow-[0_0_50px_rgba(63,86,202,0.7)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer group border border-white/20"
-            >
-              <span>Enter TAGA-asK AI</span>
-              <ArrowRight className="w-5 h-5 text-[#D1CA25] group-hover:translate-x-1 transition-transform" />
-            </button>
+          <button
+            type="button"
+            onClick={handleGetStarted}
+            disabled={isAuthenticating}
+            className="w-full sm:w-auto min-w-[240px] inline-flex items-center justify-center gap-3 px-10 py-4 rounded-2xl bg-gradient-to-r from-[#1535A8] to-[#0E2A8F] hover:from-[#1E45C4] hover:to-[#1535A8] text-white font-bold text-lg shadow-[0_10px_35px_rgba(14,42,143,0.6)] hover:shadow-[0_12px_45px_rgba(33,173,227,0.4)] transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer group border border-white/30 backdrop-blur-md disabled:opacity-60"
+          >
+            {isAuthenticating ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin text-[#D1CA25]" />
+                <span>Checking Credentials...</span>
+              </>
+            ) : (
+              <>
+                <span>Get Started</span>
+                <ArrowRight className="w-5 h-5 text-[#D1CA25] group-hover:translate-x-1.5 transition-transform" />
+              </>
+            )}
+          </button>
 
-            <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer select-none hover:text-slate-300">
-              <input
-                type="checkbox"
-                checked={rememberPreference}
-                onChange={(e) => setRememberPreference(e.target.checked)}
-                className="w-3.5 h-3.5 rounded bg-slate-800 border-slate-700 text-[#3F56CA] focus:ring-0"
-              />
-              <span>Remember choice &amp; skip intro next time</span>
-            </label>
-          </div>
-
-          {/* Core Feature Highlights */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-left max-w-4xl mx-auto">
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#3F56CA]/50 transition">
-              <div className="w-8 h-8 rounded-xl bg-[#3F56CA]/20 flex items-center justify-center text-[#3F56CA] mb-2.5">
-                <BookOpen className="w-4 h-4 text-[#21ADE3]" />
-              </div>
-              <h3 className="font-bold text-sm text-white mb-1">Grounded RAG</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Strictly cites Source01–Source04 with verifiable page references.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#D1CA25]/50 transition">
-              <div className="w-8 h-8 rounded-xl bg-[#D1CA25]/20 flex items-center justify-center text-[#D1CA25] mb-2.5">
-                <Paperclip className="w-4 h-4 text-[#D1CA25]" />
-              </div>
-              <h3 className="font-bold text-sm text-white mb-1">File Uploads</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Attach images and PDF documents for multimodal analysis.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#21ADE3]/50 transition">
-              <div className="w-8 h-8 rounded-xl bg-[#21ADE3]/20 flex items-center justify-center text-[#21ADE3] mb-2.5">
-                <MapPin className="w-4 h-4 text-[#21ADE3]" />
-              </div>
-              <h3 className="font-bold text-sm text-white mb-1">Campus Map</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Interactive pin visualizer for Admin, HPSB, and academic buildings.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-xs hover:border-[#EC202B]/50 transition">
-              <div className="w-8 h-8 rounded-xl bg-[#EC202B]/20 flex items-center justify-center text-[#EC202B] mb-2.5">
-                <ShieldCheck className="w-4 h-4 text-[#EC202B]" />
-              </div>
-              <h3 className="font-bold text-sm text-white mb-1">UMak Security</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Institutional Google login with server-side rate limit protection.
-              </p>
-            </div>
-          </div>
+          {/* Functional "Remember choice & skip intro next time" Checkbox */}
+          <label className="mt-5 flex items-center gap-2.5 text-xs sm:text-sm text-blue-100/90 cursor-pointer select-none hover:text-white transition">
+            <input
+              type="checkbox"
+              checked={rememberPreference}
+              onChange={(e) => setRememberPreference(e.target.checked)}
+              className="w-4 h-4 rounded bg-white/10 border-white/30 text-[#1535A8] focus:ring-0 cursor-pointer"
+            />
+            <span>Remember choice &amp; skip intro next time</span>
+          </label>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 border-t border-white/10">
+      <footer className="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-blue-200/80 border-t border-white/15">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-900 border border-white/20">
+          <div className="w-5 h-5 rounded-full overflow-hidden bg-slate-900 border border-white/20 shadow-xs">
             <Image
               src="/doerrorin-logo.png"
-              alt="DoError!n"
+              alt="DoError!n Logo"
               width={20}
               height={20}
               className="w-full h-full object-contain"
             />
           </div>
-          <span>Developed with pride by <strong className="font-semibold text-slate-300">DoError!n</strong></span>
+          <span>Developed with pride by <strong className="font-semibold text-white">DoError!n</strong></span>
         </div>
 
-        <div className="flex items-center gap-4 text-slate-400">
-          <span>Infotech 2026 Hackathon</span>
+        <div className="flex items-center gap-4 text-blue-200/90">
+          <span>University of Makati</span>
           <span>•</span>
           <a 
             href="https://taga-askai.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-[#21ADE3] hover:underline"
+            className="text-[#D1CA25] hover:underline font-semibold"
           >
             taga-askai.vercel.app
           </a>

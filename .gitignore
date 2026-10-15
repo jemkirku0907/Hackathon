@@ -7,3 +7,4 @@ video/node_modules
 video/out
 .remotion
 scratch/
+public/video/*.mp4
