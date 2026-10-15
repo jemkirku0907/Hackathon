@@ -13,40 +13,40 @@ export const Scene4CitationDemoV3: React.FC = () => {
   // 1. Entrance of App Window (Spring)
   const windowSpring = spring({ frame: frame - 4, fps, config: SPRINGS.snappy });
 
-  // 2. User Question Typing Animation (frames 12 -> 70)
-  // Voiceover says "Ask where the CIT is in the Admin Building." (local frames 12 -> 94)
+  // 2. User Question Typing Animation (frames 6 -> 48)
+  // Voiceover says "Ask where the CIT is in the Admin Building." (local frames 0 -> 76)
   const fullUserQuery = 'where is cit';
-  const typeProgress = interpolate(frame, [12, 65], [0, fullUserQuery.length], {
+  const typeProgress = interpolate(frame, [6, 48], [0, fullUserQuery.length], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const typedUserText = fullUserQuery.slice(0, Math.floor(typeProgress));
-  const showUserCaret = frame < 75 && Math.floor(frame / 6) % 2 === 0;
+  const showUserCaret = frame < 55 && Math.floor(frame / 6) % 2 === 0;
 
-  // 3. User message sent at frame >= 68
-  const userSent = frame >= 68;
-  const userBubbleSpring = spring({ frame: frame - 68, fps, config: SPRINGS.snappy });
+  // 3. User message sent at frame >= 52
+  const userSent = frame >= 52;
+  const userBubbleSpring = spring({ frame: frame - 52, fps, config: SPRINGS.snappy });
 
-  // 4. AI Assistant Response Stream (frames 85 -> 185)
-  // Voiceover says "TAGA-asK AI answers: Second Floor, South Wing." (local frames 114 -> 233)
-  const aiBubbleSpring = spring({ frame: frame - 82, fps, config: SPRINGS.smooth });
+  // 4. AI Assistant Response Stream (frames 78 -> 175)
+  // Voiceover says "TAGA-asK AI answers: Second Floor, South Wing." (local frames 86 -> 190)
+  const aiBubbleSpring = spring({ frame: frame - 78, fps, config: SPRINGS.smooth });
   const aiTokens = [
     'The', 'Center', 'for', 'Information', 'Technology', '(CIT)',
     'is', 'on', 'the', 'Second', 'Floor,', 'South', 'Wing,', 'Admin', 'Building.'
   ];
   const streamedCount = Math.floor(
-    interpolate(frame, [95, 185], [0, aiTokens.length], {
+    interpolate(frame, [88, 175], [0, aiTokens.length], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
   );
 
-  // 5. Location Widget Appearance (frame >= 170)
-  const widgetSpring = spring({ frame: frame - 170, fps, config: SPRINGS.snappy });
+  // 5. Location Widget Appearance (frame >= 148)
+  const widgetSpring = spring({ frame: frame - 148, fps, config: SPRINGS.snappy });
 
-  // 6. Citation Chip Pop & Pulse (frame >= 200)
-  // Voiceover says "And it shows where that answer came from: Source zero three, page one." (local frames 253 -> 401)
-  const citationChipSpring = spring({ frame: frame - 200, fps, config: SPRINGS.bouncy });
+  // 6. Citation Chip Pop & Pulse (frame >= 225)
+  // Voiceover says "And it shows where that answer came from: Source zero three, page one." (local frames 196 -> 327)
+  const citationChipSpring = spring({ frame: frame - 225, fps, config: SPRINGS.bouncy });
   const citationPulse = interpolate(
     Math.sin(frame * 0.18),
     [-1, 1],
@@ -54,12 +54,12 @@ export const Scene4CitationDemoV3: React.FC = () => {
   );
 
   return (
-    <WhipPanWrapper durationInFrames={410} direction="left">
+    <WhipPanWrapper sceneId="scene4" direction="left">
       <CinematicEnvironment
         primaryGlow={BRAND_COLORS.blue}
         secondaryGlow={BRAND_COLORS.yellow}
         cameraMove="pushIn"
-        durationInFrames={410}
+        durationInFrames={343}
       >
         {/* Section Headline */}
         <div
@@ -277,7 +277,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
               )}
 
               {/* AI Assistant Response (Aligned Left with Heron Mascot) */}
-              {frame >= 82 && (
+              {frame >= 78 && (
                 <div
                   style={{
                     alignSelf: 'flex-start',
@@ -378,15 +378,15 @@ export const Scene4CitationDemoV3: React.FC = () => {
                                 marginRight: 4,
                                 fontWeight: isKeyLocation ? 800 : 500,
                                 color:
-                                  isKeyLocation && frame >= 180
+                                  isKeyLocation && frame >= 148
                                     ? '#2A3990'
                                     : '#1E293B',
                                 backgroundColor:
-                                  isKeyLocation && frame >= 180
+                                  isKeyLocation && frame >= 148
                                     ? 'rgba(244, 235, 42, 0.4)'
                                     : 'transparent',
                                 borderRadius: 4,
-                                padding: isKeyLocation && frame >= 180 ? '2px 5px' : '0',
+                                padding: isKeyLocation && frame >= 148 ? '2px 5px' : '0',
                                 transition: 'all 0.2s ease',
                                 display: 'inline',
                               }}
@@ -398,7 +398,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                       </div>
 
                       {/* Location Visualizer Card (Light Mode matching screenshot) */}
-                      {frame >= 170 && (
+                      {frame >= 148 && (
                         <div
                           style={{
                             transform: `scale(${widgetSpring})`,
@@ -466,7 +466,7 @@ export const Scene4CitationDemoV3: React.FC = () => {
                       )}
 
                       {/* Official Citations Section */}
-                      {frame >= 200 && (
+                      {frame >= 225 && (
                         <div
                           style={{
                             transform: `scale(${citationChipSpring})`,
@@ -494,13 +494,13 @@ export const Scene4CitationDemoV3: React.FC = () => {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: 8,
-                              backgroundColor: frame >= 210 ? 'rgba(244, 235, 42, 0.15)' : '#EEF2FC',
-                              border: `1.5px solid ${frame >= 210 ? BRAND_COLORS.yellow : '#3F56CA'}`,
+                              backgroundColor: frame >= 240 ? 'rgba(244, 235, 42, 0.15)' : '#EEF2FC',
+                              border: `1.5px solid ${frame >= 240 ? BRAND_COLORS.yellow : '#3F56CA'}`,
                               borderRadius: 8,
                               padding: '7px 16px',
                               width: 'fit-content',
                               boxShadow:
-                                frame >= 210
+                                frame >= 240
                                   ? `0 0 18px ${BRAND_COLORS.yellowGlow}`
                                   : '0 2px 6px rgba(0,0,0,0.04)',
                               transform: `scale(${citationPulse})`,

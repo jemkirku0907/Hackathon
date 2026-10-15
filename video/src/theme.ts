@@ -33,11 +33,11 @@ export const BRAND_COLORS = {
 };
 
 export const SPRINGS = {
-  snappy: { damping: 14, mass: 0.8, stiffness: 120 },
-  smooth: { damping: 18, mass: 1.0, stiffness: 100 },
-  bouncy: { damping: 12, mass: 0.7, stiffness: 140 },
-  heavy: { damping: 20, mass: 1.2, stiffness: 90 },
-  gentle: { damping: 24, mass: 1.0, stiffness: 80 },
+  snappy: { damping: 16, mass: 0.75, stiffness: 150 },
+  smooth: { damping: 20, mass: 0.9, stiffness: 120 },
+  bouncy: { damping: 14, mass: 0.65, stiffness: 160 },
+  heavy: { damping: 22, mass: 1.1, stiffness: 100 },
+  gentle: { damping: 26, mass: 1.0, stiffness: 90 },
 };
 
 export const LAYOUT = {

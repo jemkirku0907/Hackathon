@@ -1,22 +1,30 @@
 import React from 'react';
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
 import { SPRINGS } from '../../theme';
+import { VOICEOVER_DATA } from '../../voiceover-timings';
 
 interface WhipPanWrapperProps {
   children: React.ReactNode;
-  durationInFrames: number;
+  durationInFrames?: number;
   direction?: 'left' | 'right' | 'up';
+  sceneId?: string;
 }
 
 export const WhipPanWrapper: React.FC<WhipPanWrapperProps> = ({
   children,
-  durationInFrames,
+  durationInFrames: customDuration,
   direction = 'left',
+  sceneId,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // 1. Snappy entrance spring (0 -> 14 frames)
+  const sceneDuration = sceneId
+    ? VOICEOVER_DATA.scenes.find((s) => s.id === sceneId)?.durationInFrames
+    : undefined;
+  const durationInFrames = customDuration ?? sceneDuration ?? 150;
+
+  // 1. Snappy entrance spring (0 -> 16 frames) with smooth settle
   const enterSpring = spring({
     frame,
     fps,
@@ -25,14 +33,14 @@ export const WhipPanWrapper: React.FC<WhipPanWrapperProps> = ({
 
   const enterTranslateX =
     direction === 'left'
-      ? interpolate(enterSpring, [0, 1], [300, 0])
-      : interpolate(enterSpring, [0, 1], [-300, 0]);
-  const enterScale = interpolate(enterSpring, [0, 1], [0.94, 1]);
-  const enterBlur = interpolate(enterSpring, [0, 1], [10, 0]);
+      ? interpolate(enterSpring, [0, 1], [320, 0])
+      : interpolate(enterSpring, [0, 1], [-320, 0]);
+  const enterScale = interpolate(enterSpring, [0, 1], [0.95, 1]);
+  const enterBlur = interpolate(enterSpring, [0, 1], [8, 0]);
   const enterOpacity = interpolate(enterSpring, [0, 1], [0, 1]);
 
-  // 2. High-momentum exit whip (last 8 frames)
-  const exitWindow = 8;
+  // 2. High-momentum exit whip (last 9 frames)
+  const exitWindow = 9;
   const exitStart = Math.max(0, durationInFrames - exitWindow);
   const exitProgress = interpolate(
     frame,
@@ -41,13 +49,13 @@ export const WhipPanWrapper: React.FC<WhipPanWrapperProps> = ({
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
 
-  // Exponential acceleration curve for exit whip
+  // Smooth acceleration curve for exit whip
   const exitTranslateX =
     direction === 'left'
-      ? -Math.pow(exitProgress, 2.5) * 850
-      : Math.pow(exitProgress, 2.5) * 850;
-  const exitBlur = exitProgress * 16;
-  const exitOpacity = 1 - Math.pow(exitProgress, 2);
+      ? -Math.pow(exitProgress, 2.2) * 900
+      : Math.pow(exitProgress, 2.2) * 900;
+  const exitBlur = exitProgress * 12;
+  const exitOpacity = 1 - Math.pow(exitProgress, 1.8);
 
   const totalTranslateX = frame < 20 ? enterTranslateX : exitTranslateX;
   const totalScale = frame < 20 ? enterScale : 1 + exitProgress * 0.08;

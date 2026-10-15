@@ -3,15 +3,16 @@ import { Composition } from 'remotion';
 import { PromoVideo } from './PromoVideo';
 import { PromoVideoV2Landscape } from './PromoVideoV2Landscape';
 import { PromoVideoV3Landscape } from './PromoVideoV3Landscape';
+import { VOICEOVER_DATA } from './voiceover-timings';
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      {/* Master V3 Cinematic Landscape 16:9 Film (1920x1080 @ 30 FPS, 57.0 seconds = 1710 frames) */}
+      {/* Master V3 Cinematic Landscape 16:9 Film */}
       <Composition
         id="PromoVideoV3Landscape"
         component={PromoVideoV3Landscape}
-        durationInFrames={1710}
+        durationInFrames={VOICEOVER_DATA.totalDurationFrames}
         fps={30}
         width={1920}
         height={1080}
@@ -21,7 +22,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="PromoVideoLandscape"
         component={PromoVideoV3Landscape}
-        durationInFrames={1710}
+        durationInFrames={VOICEOVER_DATA.totalDurationFrames}
         fps={30}
         width={1920}
         height={1080}

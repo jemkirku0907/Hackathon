@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:rag": "node scripts/test-rag.cjs"
+    "test:rag": "node scripts/test-rag.cjs",
+    "video:preview": "npm --prefix video run start",
+    "video:render": "npm --prefix video run render-v3",
+    "video:voice": "node scripts/build-elevenlabs-master.cjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

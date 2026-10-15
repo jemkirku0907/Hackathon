@@ -7,7 +7,8 @@
     "build": "remotion render src/index.ts PromoVideo out/taga-ask-ai-promo.mp4",
     "render": "remotion render src/index.ts PromoVideo out/taga-ask-ai-promo.mp4",
     "render-landscape": "remotion render src/index.ts PromoVideoLandscape out/taga-ask-ai-promo-landscape.mp4",
-    "render-v2": "remotion render src/index.ts PromoVideoV2Landscape out/taga-ask-ai-promo-v2.mp4"
+    "render-v2": "remotion render src/index.ts PromoVideoV2Landscape out/taga-ask-ai-promo-v2.mp4",
+    "render-v3": "remotion render src/index.ts PromoVideoV3Landscape out/taga-ask-ai-promo-v3.mp4"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.260",
