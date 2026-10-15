@@ -1,6 +1,6 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
-import { BookOpen, CheckCircle2, Compass, FileText, MapPin, Menu, Moon, Send, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle2, Compass, FileText, MapPin, Menu, Moon, Send, Sparkles, X } from 'lucide-react';
 import { CinematicEnvironment } from '../../components/CinematicEnvironment';
 import { KineticKaraoke } from '../../components/v3/KineticKaraoke';
 import { WhipPanWrapper } from '../../components/v3/WhipPanWrapper';
@@ -530,112 +530,250 @@ export const Scene4CitationDemoV3: React.FC = () => {
                   </div>
                 )}
 
-                {/* Verified Official Document Inspector (Smooth Pop-In, No Overlap with AI message) */}
+                {/* Official Citation Inspector (Matches real app screenshot media_1792051912278_4043bbf1.png) */}
                 {frame >= 215 && (
                   <div
                     style={{
-                      width: 540,
+                      width: 530,
                       alignSelf: 'flex-end',
-                      backgroundColor: 'rgba(15, 23, 42, 0.96)',
-                      backdropFilter: 'blur(20px)',
-                      border: `2px solid ${BRAND_COLORS.yellow}`,
+                      backgroundColor: '#FFFFFF',
                       borderRadius: 14,
-                      padding: '16px 18px',
-                      boxShadow: '0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(244, 235, 42, 0.25)',
+                      border: '1.5px solid #CBD5E1',
+                      overflow: 'hidden',
+                      boxShadow: '0 20px 45px rgba(0, 0, 0, 0.12), 0 0 25px rgba(56, 82, 223, 0.15)',
                       transform: `scale(${docModalSpring})`,
                       opacity: docModalSpring,
-                      color: '#FFFFFF',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: 10,
                     }}
                   >
-                    {/* Drawer Header */}
+                    {/* 1. Royal Blue Header Bar */}
                     <div
                       style={{
+                        backgroundColor: '#3852DF',
+                        padding: '10px 16px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        borderBottom: '1px solid rgba(255,255,255,0.12)',
-                        paddingBottom: 8,
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <FileText size={16} color={BRAND_COLORS.yellow} />
-                        <span style={{ fontSize: 13, fontWeight: 800 }}>
-                          Source03_Building_Directory.pdf
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <BookOpen size={16} color="#F4EB2A" />
+                        <span style={{ color: '#FFFFFF', fontSize: 14.5, fontWeight: 700 }}>
+                          Official Citation Inspector
                         </span>
                       </div>
-                      <span
-                        style={{
-                          backgroundColor: 'rgba(244, 235, 42, 0.2)',
-                          color: BRAND_COLORS.yellow,
-                          fontSize: 10.5,
-                          fontWeight: 800,
-                          padding: '2px 7px',
-                          borderRadius: 5,
-                        }}
-                      >
-                        Page 1
-                      </span>
+                      <X size={16} color="#FFFFFF" style={{ opacity: 0.85 }} />
                     </div>
 
-                    {/* Document Excerpt Body */}
+                    {/* 2. Inspector Body Content */}
                     <div
                       style={{
-                        backgroundColor: 'rgba(0,0,0,0.45)',
-                        borderRadius: 8,
-                        padding: 10,
-                        fontSize: 12,
-                        lineHeight: 1.6,
-                        color: '#94A3B8',
-                        fontFamily: 'monospace',
+                        padding: '14px 18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 12,
+                        backgroundColor: '#FFFFFF',
                       }}
                     >
-                      <div>Office of the President — Admin Bldg, 3F</div>
-                      <div>University Registrar — Admin Bldg, 1F</div>
+                      {/* Top Row: Source Document + Page Provenance */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                        <div>
+                          <div
+                            style={{
+                              color: '#64748B',
+                              fontSize: 10,
+                              fontWeight: 800,
+                              letterSpacing: '0.8px',
+                              textTransform: 'uppercase',
+                              marginBottom: 4,
+                            }}
+                          >
+                            Source Document
+                          </div>
+                          <div
+                            style={{
+                              color: '#3852DF',
+                              fontSize: 14.5,
+                              fontWeight: 700,
+                            }}
+                          >
+                            Source03.pdf
+                          </div>
+                        </div>
 
-                      {/* Animated Yellow Highlight Row */}
-                      <div
-                        style={{
-                          position: 'relative',
-                          color: '#FFFFFF',
-                          fontWeight: 800,
-                          margin: '3px 0',
-                          display: 'inline-block',
-                          width: '100%',
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            width: `${highlightWidth}%`,
-                            backgroundColor: 'rgba(244, 235, 42, 0.45)',
-                            borderBottom: `2px solid ${BRAND_COLORS.yellow}`,
-                            borderRadius: 3,
-                            zIndex: -1,
-                          }}
-                        />
-                        &gt; CIT Office — Admin Bldg, 2F South Wing
+                        <div style={{ textAlign: 'right' }}>
+                          <div
+                            style={{
+                              color: '#64748B',
+                              fontSize: 10,
+                              fontWeight: 800,
+                              letterSpacing: '0.8px',
+                              textTransform: 'uppercase',
+                              marginBottom: 4,
+                            }}
+                          >
+                            Page Provenance
+                          </div>
+                          <div
+                            style={{
+                              color: '#0F172A',
+                              fontSize: 15,
+                              fontWeight: 800,
+                            }}
+                          >
+                            Page 1
+                          </div>
+                        </div>
                       </div>
 
-                      <div>Accounting &amp; Finance — Admin Bldg, 1F</div>
-                      <div>CCIS Faculty Lounge — Admin Bldg, 4F</div>
+                      {/* Row 2: Supported Statement */}
+                      <div>
+                        <div
+                          style={{
+                            color: '#64748B',
+                            fontSize: 10,
+                            fontWeight: 800,
+                            letterSpacing: '0.8px',
+                            textTransform: 'uppercase',
+                            marginBottom: 5,
+                          }}
+                        >
+                          Supported Statement
+                        </div>
+                        <div
+                          style={{
+                            backgroundColor: '#F8FAFC',
+                            border: '1px solid #E2E8F0',
+                            borderRadius: 8,
+                            padding: '9px 13px',
+                            color: '#0F172A',
+                            fontSize: 13,
+                            fontWeight: 600,
+                          }}
+                        >
+                          Location of Center for Information Technology (CIT)
+                        </div>
+                      </div>
+
+                      {/* Row 3: Exact Extracted Passage with Verified Badge */}
+                      <div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: 5,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: '#64748B',
+                              fontSize: 10,
+                              fontWeight: 800,
+                              letterSpacing: '0.8px',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Exact Extracted Passage
+                          </span>
+                          <div
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              backgroundColor: '#EAFBF1',
+                              border: '1px solid #A3E7BD',
+                              borderRadius: 999,
+                              padding: '2px 8px',
+                              color: '#15803D',
+                              fontSize: 10.5,
+                              fontWeight: 700,
+                            }}
+                          >
+                            <CheckCircle2 size={12} color="#16A34A" />
+                            <span>Verified from PDF</span>
+                          </div>
+                        </div>
+
+                        {/* Passage Quote Container */}
+                        <div
+                          style={{
+                            position: 'relative',
+                            backgroundColor: '#EFF6FF',
+                            borderLeft: '3.5px solid #21ADE3',
+                            borderRadius: '0 8px 8px 0',
+                            padding: '10px 14px',
+                            color: '#1E293B',
+                            fontSize: 13,
+                            fontStyle: 'italic',
+                            fontWeight: 600,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {/* Animated highlighter sweep when voiceover emphasizes citation */}
+                          {frame >= 250 && (
+                            <span
+                              style={{
+                                position: 'absolute',
+                                inset: 0,
+                                width: `${highlightWidth}%`,
+                                backgroundColor: 'rgba(244, 235, 42, 0.35)',
+                                zIndex: 0,
+                                pointerEvents: 'none',
+                              }}
+                            />
+                          )}
+                          <span style={{ position: 'relative', zIndex: 1 }}>
+                            &ldquo;Center for Information Technology (CIT)&rdquo;
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Grounded Badge Footer */}
+                    {/* 3. Footer Bar with Action Buttons */}
                     <div
                       style={{
+                        backgroundColor: '#F8FAFC',
+                        borderTop: '1px solid #E2E8F0',
+                        padding: '10px 16px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 5,
-                        color: BRAND_COLORS.green,
-                        fontSize: 11.5,
-                        fontWeight: 700,
+                        justifyContent: 'space-between',
                       }}
                     >
-                      <span>✓ 100% Grounded Source Match</span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          backgroundColor: '#FFFFFF',
+                          border: '1.5px solid #CBD5E1',
+                          borderRadius: 8,
+                          padding: '6px 13px',
+                          color: '#3852DF',
+                          fontSize: 11.5,
+                          fontWeight: 700,
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                      >
+                        <BookOpen size={13} color="#3852DF" />
+                        <span>Open PDF at Page 1</span>
+                      </div>
+
+                      <div
+                        style={{
+                          backgroundColor: '#3852DF',
+                          color: '#FFFFFF',
+                          borderRadius: 8,
+                          padding: '6px 15px',
+                          fontSize: 11.5,
+                          fontWeight: 700,
+                          boxShadow: '0 2px 6px rgba(56, 82, 223, 0.25)',
+                        }}
+                      >
+                        Close Inspector
+                      </div>
                     </div>
                   </div>
                 )}
