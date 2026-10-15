@@ -2,124 +2,145 @@ import React from 'react';
 import { interpolate, spring, staticFile, Img, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BackgroundGlow } from '../../components/BackgroundGlow';
 import { SubtitleOverlay } from '../../components/SubtitleOverlay';
+import { FloatingParticles, BrandMotionRings, LightSweep } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const EnhScene6Outro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
+  // Floating lines and cards converge towards the center in frames 0 to 25
+  const converge = interpolate(frame, [0, 25], [160, 0], { extrapolateRight: 'clamp' });
+  const convergeOpacity = interpolate(frame, [0, 15, 30], [0, 0.8, 0], { extrapolateRight: 'clamp' });
+
+  // Logo reveal with smooth spring
   const logoScale = spring({
-    frame,
+    frame: frame - 10,
     fps,
     config: { damping: 11, mass: 0.8 },
   });
 
-  const floatY = Math.sin(frame / 10) * 8;
-  const pulseAura = interpolate(Math.sin(frame / 12), [-1, 1], [0.85, 1.25]);
+  const floatY = Math.sin(frame / 12) * 8;
 
-  // Fade to black at the end (last 20 frames)
-  const fadeToBlack = interpolate(frame, [190, 210], [0, 1], { extrapolateRight: 'clamp' });
+  // Fade to black at the end (last 25 frames)
+  const fadeToBlack = interpolate(frame, [275, 300], [0, 1], { extrapolateRight: 'clamp' });
 
   return (
     <div
       style={{
         position: 'relative',
-        width: '100%',
-        height: '100%',
+        width: '1080px',
+        height: '1920px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
       <BackgroundGlow primaryColor={BRAND_COLORS.blue} secondaryColor={BRAND_COLORS.yellow} />
+      <FloatingParticles count={25} color={BRAND_COLORS.yellow} seed={6} />
+      <BrandMotionRings size={920} color={BRAND_COLORS.blue} accentColor={BRAND_COLORS.yellow} />
 
-      {/* Center Mascot & Logo Reveal */}
+      {/* Converging graphics into center */}
+      {frame < 35 && (
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              width: 160,
+              height: 2,
+              backgroundColor: BRAND_COLORS.cyan,
+              top: `calc(50% - 220px - ${converge}px)`,
+              left: `calc(50% - 120px - ${converge}px)`,
+              transform: 'rotate(-30deg)',
+              opacity: convergeOpacity,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: 160,
+              height: 2,
+              backgroundColor: BRAND_COLORS.yellow,
+              bottom: `calc(50% - 170px - ${converge}px)`,
+              right: `calc(50% - 120px - ${converge}px)`,
+              transform: 'rotate(30deg)',
+              opacity: convergeOpacity,
+            }}
+          />
+        </>
+      )}
+
+      {/* Center Official Logo Reveal */}
       <div
         style={{
           transform: `scale(${logoScale}) translateY(${floatY}px)`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          marginTop: -60,
+          marginTop: -50,
+          zIndex: 10,
         }}
       >
-        {/* Glow Halo */}
+        {/* Soft Radial Spotlight Halo */}
         <div
           style={{
             position: 'absolute',
-            width: 460,
-            height: 460,
+            width: 700,
+            height: 520,
             borderRadius: '50%',
-            background: `radial-gradient(circle, ${BRAND_COLORS.cyan}50 0%, transparent 70%)`,
-            filter: 'blur(60px)',
-            transform: `scale(${pulseAura})`,
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(200, 220, 255, 0.55) 40%, rgba(63, 86, 202, 0.25) 70%, transparent 85%)',
+            filter: 'blur(50px)',
             zIndex: -1,
           }}
         />
 
-        {/* Mascot Card */}
+        {/* Official Logo (Transparent with exact typography & mascot) */}
         <div
           style={{
-            width: 320,
-            height: 320,
-            borderRadius: 72,
-            backgroundColor: '#0F172A',
-            border: `4px solid ${BRAND_COLORS.yellow}`,
-            boxShadow: `0 0 80px ${BRAND_COLORS.yellow}60`,
+            position: 'relative',
+            width: 720,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 24,
+            filter: 'drop-shadow(0 20px 50px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 35px rgba(209, 202, 37, 0.45))',
           }}
         >
+          <LightSweep startFrame={28} duration={32} color="rgba(255, 255, 255, 0.7)" />
+
           <Img
-            src={staticFile('taga-bird.png')}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            src={staticFile('official-logo-transparent.png')}
+            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
           />
         </div>
 
-        {/* Title Wordmark */}
-        <h1
-          style={{
-            fontSize: 78,
-            fontWeight: 900,
-            letterSpacing: '-2px',
-            margin: '36px 0 0',
-            color: '#FFFFFF',
-            textAlign: 'center',
-            textShadow: '0 10px 40px rgba(0, 0, 0, 0.9)',
-          }}
-        >
-          TAGA-asK <span style={{ color: BRAND_COLORS.yellow }}>AI</span>
-        </h1>
-
-        {/* Primary Slogan / Quote */}
+        {/* Primary Motto */}
         <div
           style={{
-            marginTop: 16,
-            fontSize: 32,
+            marginTop: 36,
+            fontSize: 34,
             fontWeight: 900,
             color: BRAND_COLORS.yellow,
             textAlign: 'center',
-            letterSpacing: '1px',
+            letterSpacing: '2px',
             textTransform: 'uppercase',
-            textShadow: `0 0 30px ${BRAND_COLORS.yellow}60`,
+            textShadow: `0 0 30px ${BRAND_COLORS.yellow}80`,
           }}
         >
           &ldquo;Every Tagak, just ask.&rdquo;
         </div>
 
-        {/* Subtitle Slogan */}
+        {/* Closing Tagline */}
         <p
           style={{
             fontSize: 24,
-            fontWeight: 600,
+            fontWeight: 700,
             color: '#CBD5E1',
             margin: '12px 0 0',
             textAlign: 'center',
-            letterSpacing: '0.5px',
+            letterSpacing: '0.8px',
           }}
         >
           Ask smarter. Find answers. Stay connected with UMak.
@@ -128,7 +149,7 @@ export const EnhScene6Outro: React.FC = () => {
         {/* Deployment URL Pill */}
         <div
           style={{
-            marginTop: 28,
+            marginTop: 26,
             backgroundColor: 'rgba(63, 86, 202, 0.35)',
             border: `2px solid ${BRAND_COLORS.blue}`,
             borderRadius: 999,
@@ -147,7 +168,7 @@ export const EnhScene6Outro: React.FC = () => {
         {/* DoError!n Developer Signature */}
         <div
           style={{
-            marginTop: 32,
+            marginTop: 28,
             display: 'flex',
             alignItems: 'center',
             gap: 14,
@@ -174,7 +195,7 @@ export const EnhScene6Outro: React.FC = () => {
       />
 
       {/* Fade to black overlay */}
-      {frame > 190 && (
+      {frame > 275 && (
         <div
           style={{
             position: 'absolute',

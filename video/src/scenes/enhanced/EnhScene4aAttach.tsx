@@ -2,6 +2,8 @@ import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BackgroundGlow } from '../../components/BackgroundGlow';
 import { SubtitleOverlay } from '../../components/SubtitleOverlay';
+import { AnimatedCursor } from '../../components/AnimatedCursor';
+import { FloatingParticles } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const EnhScene4aAttach: React.FC = () => {
@@ -43,6 +45,7 @@ export const EnhScene4aAttach: React.FC = () => {
       }}
     >
       <BackgroundGlow primaryColor={BRAND_COLORS.yellow} secondaryColor={BRAND_COLORS.blue} />
+      <FloatingParticles count={20} color={BRAND_COLORS.yellow} seed={5} />
 
       {/* Top Feature Tag */}
       <div
@@ -226,6 +229,30 @@ export const EnhScene4aAttach: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Mouse Cursor Interaction: Hover & Click Attach Button, then Hover Input, then Click Ask AI */}
+      {frame < 80 && (
+        <AnimatedCursor
+          startX={600}
+          startY={1180}
+          targetX={210}
+          targetY={1120}
+          startFrame={10}
+          endFrame={36}
+          clickFrame={38}
+        />
+      )}
+      {frame >= 80 && (
+        <AnimatedCursor
+          startX={210}
+          startY={1120}
+          targetX={860}
+          targetY={1120}
+          startFrame={150}
+          endFrame={190}
+          clickFrame={195}
+        />
+      )}
 
       <SubtitleOverlay
         badge="Multimodal Question Answering"

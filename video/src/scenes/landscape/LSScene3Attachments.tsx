@@ -1,6 +1,7 @@
 import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { RefStyleCaption } from '../../components/RefStyleCaption';
+import { AnimatedCursor } from '../../components/AnimatedCursor';
 import { BRAND_COLORS } from '../../types';
 
 export const LSScene3Attachments: React.FC = () => {
@@ -138,6 +139,40 @@ export const LSScene3Attachments: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Mouse Cursor Navigation: Move to Attach button, click to trigger chip, hover attachment, hover prompt input */}
+      {frame < 35 && (
+        <AnimatedCursor
+          startX={1200}
+          startY={800}
+          targetX={960}
+          targetY={620}
+          startFrame={5}
+          endFrame={24}
+          clickFrame={25}
+        />
+      )}
+      {frame >= 35 && frame < 120 && (
+        <AnimatedCursor
+          startX={960}
+          startY={620}
+          targetX={1120}
+          targetY={570}
+          startFrame={36}
+          endFrame={65}
+        />
+      )}
+      {frame >= 120 && (
+        <AnimatedCursor
+          startX={1120}
+          startY={570}
+          targetX={900}
+          targetY={670}
+          startFrame={125}
+          endFrame={160}
+          clickFrame={165}
+        />
+      )}
 
       <RefStyleCaption
         title="Ask with attachments."

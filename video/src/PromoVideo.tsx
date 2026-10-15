@@ -1,13 +1,12 @@
 import React from 'react';
-import { Audio, Sequence, staticFile } from 'remotion';
-import { EnhScene1Intro } from './scenes/enhanced/EnhScene1Intro';
-import { EnhScene2Problem } from './scenes/enhanced/EnhScene2Problem';
-import { EnhScene3AppCIT } from './scenes/enhanced/EnhScene3AppCIT';
-import { EnhScene4aAttach } from './scenes/enhanced/EnhScene4aAttach';
-import { EnhScene4bMap } from './scenes/enhanced/EnhScene4bMap';
-import { EnhScene4cAcademic } from './scenes/enhanced/EnhScene4cAcademic';
-import { EnhScene5WhyMatters } from './scenes/enhanced/EnhScene5WhyMatters';
-import { EnhScene6Outro } from './scenes/enhanced/EnhScene6Outro';
+import { Audio, Sequence, Loop, staticFile } from 'remotion';
+import { MasterScene1Intro } from './scenes/master/MasterScene1Intro';
+import { MasterScene2Problem } from './scenes/master/MasterScene2Problem';
+import { MasterScene3Solution } from './scenes/master/MasterScene3Solution';
+import { MasterScene4DemoCIT } from './scenes/master/MasterScene4DemoCIT';
+import { MasterScene5Features } from './scenes/master/MasterScene5Features';
+import { MasterScene6Security } from './scenes/master/MasterScene6Security';
+import { MasterScene7Outro } from './scenes/master/MasterScene7Outro';
 
 export const PromoVideo: React.FC = () => {
   return (
@@ -20,52 +19,78 @@ export const PromoVideo: React.FC = () => {
         overflow: 'hidden',
       }}
     >
-      {/* 1. Cinematic Intro (0 - 235 frames / ~7.8s) */}
-      <Sequence from={0} durationInFrames={235}>
-        <EnhScene1Intro />
-        <Audio src={staticFile('audio/enhanced/enh_scene1_intro.mp3')} volume={1.0} />
+      {/* Background Music Bed (Subtle Uplifting Tech Ambient Loop) */}
+      <Loop durationInFrames={660}>
+        <Audio src={staticFile('audio/v2/music_bed.mp3')} volume={0.16} />
+      </Loop>
+
+      {/* 1. Cinematic Animated Logo Reveal (0 - 150 frames / ~5.0s) */}
+      <Sequence from={0} durationInFrames={150}>
+        <MasterScene1Intro />
+        <Audio src={staticFile('audio/master/m_scene1_intro.mp3')} volume={1.0} />
+        {/* Synchronized Cinematic Impact Boom */}
+        <Sequence from={38} durationInFrames={80}>
+          <Audio src={staticFile('audio/v2/sfx_impact.mp3')} volume={0.85} />
+        </Sequence>
       </Sequence>
 
-      {/* 2. The Student Problem - Facebook Feed with Keli Post & 0 Comments (235 - 500 frames / ~8.8s) */}
-      <Sequence from={235} durationInFrames={265}>
-        <EnhScene2Problem />
-        <Audio src={staticFile('audio/enhanced/enh_scene2_problem.mp3')} volume={1.0} />
+      {/* 2. The Problem: Students Asking on Facebook (150 - 360 frames / ~7.0s) */}
+      <Sequence from={150} durationInFrames={210}>
+        <MasterScene2Problem />
+        <Audio src={staticFile('audio/master/m_scene2_problem.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* 3. Transition into Real App - CIT Query & Exact Citation (500 - 890 frames / ~13.0s) */}
-      <Sequence from={500} durationInFrames={390}>
-        <EnhScene3AppCIT />
-        <Audio src={staticFile('audio/enhanced/enh_scene3_app_cit.mp3')} volume={1.0} />
+      {/* 3. Introduce the Solution: Meet TAGA-asK AI (360 - 510 frames / ~5.0s) */}
+      <Sequence from={360} durationInFrames={150}>
+        <MasterScene3Solution />
+        <Audio src={staticFile('audio/master/m_scene3_solution.mp3')} volume={1.0} />
       </Sequence>
 
-      {/* 4A. Multimodal Attachments (890 - 1125 frames / ~7.8s) */}
-      <Sequence from={890} durationInFrames={235}>
-        <EnhScene4aAttach />
-        <Audio src={staticFile('audio/enhanced/enh_scene4a_attach.mp3')} volume={1.0} />
+      {/* 4. Successful Chatbot Demonstration: CIT Query & Citation (510 - 930 frames / ~14.0s) */}
+      <Sequence from={510} durationInFrames={420}>
+        <MasterScene4DemoCIT />
+        <Audio src={staticFile('audio/master/m_scene4_demo.mp3')} volume={1.0} />
+        {/* Send Click Pop */}
+        <Sequence from={65} durationInFrames={30}>
+          <Audio src={staticFile('audio/v2/sfx_pop.mp3')} volume={0.6} />
+        </Sequence>
+        {/* Citation Emerge Riser */}
+        <Sequence from={195} durationInFrames={60}>
+          <Audio src={staticFile('audio/v2/sfx_rise.mp3')} volume={0.5} />
+        </Sequence>
       </Sequence>
 
-      {/* 4B. Campus Map Visualizer (1125 - 1350 frames / ~7.5s) */}
-      <Sequence from={1125} durationInFrames={225}>
-        <EnhScene4bMap />
-        <Audio src={staticFile('audio/enhanced/enh_scene4b_map.mp3')} volume={1.0} />
+      {/* 5. Demonstrate Real Features: Multimodal & Campus Tools (930 - 1230 frames / ~10.0s) */}
+      <Sequence from={930} durationInFrames={300}>
+        <MasterScene5Features />
+        <Audio src={staticFile('audio/master/m_scene5_features.mp3')} volume={1.0} />
+        <Sequence from={50} durationInFrames={40}>
+          <Audio src={staticFile('audio/v2/sfx_whoosh.mp3')} volume={0.5} />
+        </Sequence>
       </Sequence>
 
-      {/* 4C. Academic Policies & Security (1350 - 1635 frames / ~9.5s) */}
-      <Sequence from={1350} durationInFrames={285}>
-        <EnhScene4cAcademic />
-        <Audio src={staticFile('audio/enhanced/enh_scene4c_academic.mp3')} volume={1.0} />
+      {/* 6. Security & Responsible Rate Limiting (1230 - 1470 frames / ~8.0s) */}
+      <Sequence from={1230} durationInFrames={240}>
+        <MasterScene6Security />
+        <Audio src={staticFile('audio/master/m_scene6_security.mp3')} volume={1.0} />
+        {/* Protective Shield Activation */}
+        <Sequence from={35} durationInFrames={50}>
+          <Audio src={staticFile('audio/v2/sfx_shield.mp3')} volume={0.7} />
+        </Sequence>
+        {/* Rate Limit Deny Tone */}
+        <Sequence from={105} durationInFrames={40}>
+          <Audio src={staticFile('audio/v2/sfx_deny.mp3')} volume={0.65} />
+        </Sequence>
       </Sequence>
 
-      {/* 5. Why It Matters - Comparison & Every Tagak, Just Ask (1635 - 1820 frames / ~6.1s) */}
-      <Sequence from={1635} durationInFrames={185}>
-        <EnhScene5WhyMatters />
-        <Audio src={staticFile('audio/enhanced/enh_scene5_matters.mp3')} volume={1.0} />
-      </Sequence>
-
-      {/* 6. Cinematic Outro & "Every Tagak, just ask." (1820 - 2120 frames / ~10.0s) */}
-      <Sequence from={1820} durationInFrames={300}>
-        <EnhScene6Outro />
-        <Audio src={staticFile('audio/enhanced/enh_scene6_outro.mp3')} volume={1.0} />
+      {/* 7. Closing: Matching Cinematic Logo Outro (1470 - 1710 frames / ~8.0s) */}
+      <Sequence from={1470} durationInFrames={240}>
+        <MasterScene7Outro />
+        <Audio src={staticFile('audio/master/m_scene7_outro.mp3')} volume={1.0} />
+        {/* Soft Logo Outro Impact Boom */}
+        <Sequence from={35} durationInFrames={80}>
+          <Audio src={staticFile('audio/v2/sfx_impact_soft.mp3')} volume={0.8} />
+        </Sequence>
       </Sequence>
     </div>
   );

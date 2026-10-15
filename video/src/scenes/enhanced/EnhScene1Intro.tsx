@@ -2,43 +2,110 @@ import React from 'react';
 import { Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BackgroundGlow } from '../../components/BackgroundGlow';
 import { SubtitleOverlay } from '../../components/SubtitleOverlay';
+import { FloatingParticles, BrandMotionRings, LightSweep } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const EnhScene1Intro: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entrance spring animation for mascot
-  const mascotScale = spring({
-    frame,
+  // Converging abstract shapes and light trails towards center (0 to 35 frames)
+  const convergeProgress = interpolate(frame, [0, 35], [220, 0], { extrapolateRight: 'clamp' });
+  const trailOpacity = interpolate(frame, [0, 20, 35, 45], [0, 0.9, 0.8, 0], { extrapolateRight: 'clamp' });
+
+  // Official Logo scale with cinematic spring impact
+  const logoScale = spring({
+    frame: frame - 10,
     fps,
-    config: { damping: 12, mass: 0.8 },
+    config: { damping: 11, mass: 0.8 },
   });
 
-  // Light sweep shimmer across the logo
-  const shimmerPos = interpolate(frame, [25, 60], [-100, 200], { extrapolateRight: 'clamp' });
+  // Impact flash and camera shake when logo settles (frames 36 to 45)
+  const impactShake = frame >= 36 && frame <= 44 ? (frame % 2 === 0 ? 3 : -3) : 0;
+  const impactFlash = interpolate(frame, [36, 42, 50], [0, 0.45, 0], { extrapolateRight: 'clamp' });
 
-  // Wordmark opacity and vertical entrance
-  const titleOpacity = interpolate(frame, [15, 30], [0, 1], { extrapolateRight: 'clamp' });
-  const titleY = interpolate(frame, [15, 30], [40, 0], { extrapolateRight: 'clamp' });
+  // Tagline reveal
+  const taglineSpring = spring({
+    frame: frame - 38,
+    fps,
+    config: { damping: 13, mass: 0.8 },
+  });
+  const taglineY = interpolate(taglineSpring, [0, 1], [30, 0]);
 
-  // Idle hover motion
-  const floatY = Math.sin(frame / 12) * 10;
+  // Floating idle motion
+  const floatY = Math.sin(frame * 0.08) * 8;
 
   return (
     <div
       style={{
         position: 'relative',
-        width: '100%',
-        height: '100%',
+        width: '1080px',
+        height: '1920px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        overflow: 'hidden',
         fontFamily: 'system-ui, -apple-system, sans-serif',
       }}
     >
       <BackgroundGlow primaryColor={BRAND_COLORS.blue} secondaryColor={BRAND_COLORS.yellow} />
+      <FloatingParticles count={25} color={BRAND_COLORS.cyan} seed={1} />
+      <BrandMotionRings size={920} color={BRAND_COLORS.blue} accentColor={BRAND_COLORS.yellow} />
+
+      {/* Converging Light Trails from corners toward center */}
+      {frame < 50 && (
+        <>
+          <div
+            style={{
+              position: 'absolute',
+              width: 3,
+              height: 200,
+              background: `linear-gradient(to bottom, transparent, ${BRAND_COLORS.cyan}, transparent)`,
+              top: `calc(50% - 260px - ${convergeProgress}px)`,
+              left: `calc(50% - 180px - ${convergeProgress * 0.8}px)`,
+              transform: 'rotate(-45deg)',
+              opacity: trailOpacity,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: 3,
+              height: 200,
+              background: `linear-gradient(to bottom, transparent, ${BRAND_COLORS.yellow}, transparent)`,
+              top: `calc(50% - 260px - ${convergeProgress}px)`,
+              right: `calc(50% - 180px - ${convergeProgress * 0.8}px)`,
+              transform: 'rotate(45deg)',
+              opacity: trailOpacity,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: 3,
+              height: 200,
+              background: `linear-gradient(to bottom, transparent, ${BRAND_COLORS.blue}, transparent)`,
+              bottom: `calc(50% - 120px - ${convergeProgress}px)`,
+              left: `calc(50% - 200px - ${convergeProgress * 0.8}px)`,
+              transform: 'rotate(45deg)',
+              opacity: trailOpacity,
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: 3,
+              height: 200,
+              background: `linear-gradient(to bottom, transparent, ${BRAND_COLORS.red}, transparent)`,
+              bottom: `calc(50% - 120px - ${convergeProgress}px)`,
+              right: `calc(50% - 200px - ${convergeProgress * 0.8}px)`,
+              transform: 'rotate(-45deg)',
+              opacity: trailOpacity,
+            }}
+          />
+        </>
+      )}
 
       {/* University Crest Header */}
       <div
@@ -52,7 +119,8 @@ export const EnhScene1Intro: React.FC = () => {
           border: '1px solid rgba(255, 255, 255, 0.15)',
           padding: '12px 28px',
           borderRadius: 999,
-          opacity: titleOpacity,
+          opacity: Math.min(1, frame / 20),
+          zIndex: 20,
         }}
       >
         <Img
@@ -72,85 +140,86 @@ export const EnhScene1Intro: React.FC = () => {
         </span>
       </div>
 
-      {/* Mascot Card */}
+      {/* Official Animated Logo Centerpiece */}
       <div
         style={{
-          transform: `scale(${mascotScale}) translateY(${floatY}px)`,
+          transform: `scale(${logoScale}) translateY(${floatY + impactShake}px)`,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          marginTop: -60,
+          marginTop: -40,
+          zIndex: 10,
         }}
       >
+        {/* Soft Radial Ambient Spotlight Glow */}
+        <div
+          style={{
+            position: 'absolute',
+            width: 700,
+            height: 520,
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(200, 220, 255, 0.6) 40%, rgba(63, 86, 202, 0.2) 70%, transparent 85%)',
+            filter: 'blur(45px)',
+            zIndex: -1,
+          }}
+        />
+
+        {/* Official Logo (Transparent, containing exact official wordmark & heron) */}
         <div
           style={{
             position: 'relative',
-            width: 320,
-            height: 320,
-            borderRadius: 72,
-            background: 'linear-gradient(135deg, rgba(63, 86, 202, 0.3) 0%, rgba(33, 173, 227, 0.2) 100%)',
-            border: `3px solid ${BRAND_COLORS.cyan}`,
-            boxShadow: `0 0 80px ${BRAND_COLORS.blue}80, inset 0 0 40px ${BRAND_COLORS.cyan}40`,
+            width: 720,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 30,
-            overflow: 'hidden',
+            filter: 'drop-shadow(0 20px 50px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 35px rgba(209, 202, 37, 0.4))',
           }}
         >
-          {/* Shimmer light sweep */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: `${shimmerPos}%`,
-              width: '40%',
-              height: '100%',
-              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-              transform: 'skewX(-20deg)',
-              pointerEvents: 'none',
-            }}
-          />
+          <LightSweep startFrame={38} duration={32} color="rgba(255, 255, 255, 0.7)" />
+
           <Img
-            src={staticFile('taga-bird.png')}
-            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            src={staticFile('official-logo-transparent.png')}
+            style={{ width: '100%', height: 'auto', objectFit: 'contain' }}
           />
         </div>
 
-        {/* Wordmark */}
+        {/* Tagline Reveal */}
         <div
           style={{
-            marginTop: 48,
+            marginTop: 40,
             textAlign: 'center',
-            opacity: titleOpacity,
-            transform: `translateY(${titleY}px)`,
+            opacity: taglineSpring,
+            transform: `translateY(${taglineY}px)`,
           }}
         >
-          <h1
+          <div
             style={{
-              fontSize: 74,
-              fontWeight: 900,
-              letterSpacing: '-2px',
-              margin: 0,
-              color: '#FFFFFF',
-              textShadow: '0 10px 40px rgba(0, 0, 0, 0.8)',
-            }}
-          >
-            TAGA-asK <span style={{ color: BRAND_COLORS.yellow }}>AI</span>
-          </h1>
-          <p
-            style={{
-              fontSize: 28,
-              fontWeight: 700,
-              color: BRAND_COLORS.cyan,
-              margin: '12px 0 0',
-              letterSpacing: '1.5px',
+              fontSize: 34,
+              fontWeight: 800,
+              color: BRAND_COLORS.yellow,
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              textShadow: `0 0 25px ${BRAND_COLORS.yellow}80`,
             }}
           >
             Your UMak AI Companion.
-          </p>
+          </div>
         </div>
       </div>
+
+      {/* Cinematic Flash upon settling */}
+      {impactFlash > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: '#FFFFFF',
+            opacity: impactFlash,
+            pointerEvents: 'none',
+            zIndex: 100,
+          }}
+        />
+      )}
 
       <SubtitleOverlay
         badge="Official UMak AI"

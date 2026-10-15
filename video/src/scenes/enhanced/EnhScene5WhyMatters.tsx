@@ -2,6 +2,7 @@ import React from 'react';
 import { interpolate, spring, staticFile, Img, useCurrentFrame, useVideoConfig } from 'remotion';
 import { BackgroundGlow } from '../../components/BackgroundGlow';
 import { SubtitleOverlay } from '../../components/SubtitleOverlay';
+import { FloatingParticles } from '../../components/FloatingElements';
 import { BRAND_COLORS } from '../../types';
 
 export const EnhScene5WhyMatters: React.FC = () => {
@@ -31,6 +32,7 @@ export const EnhScene5WhyMatters: React.FC = () => {
       }}
     >
       <BackgroundGlow primaryColor={BRAND_COLORS.blue} secondaryColor={BRAND_COLORS.yellow} />
+      <FloatingParticles count={22} color={BRAND_COLORS.cyan} seed={9} />
 
       {/* Top Header Badge */}
       <div
